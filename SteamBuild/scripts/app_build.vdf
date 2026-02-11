@@ -1,0 +1,13 @@
+"AppBuild"
+{
+	// 여기에 실제 Steam App ID를 입력하세요 (Steamworks 파트너 사이트에서 발급)
+	"AppID" "YOUR_APP_ID"
+	"Desc" "My Game build upload"
+	"BuildOutput" "../output"
+	"ContentRoot" ""
+	"Depots"
+	{
+		// 여기에 실제 Depot ID를 입력하세요 (보통 App ID + 1)
+		"YOUR_DEPOT_ID" "depot_build.vdf"
+	}
+}

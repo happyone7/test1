@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  productName: MyGame
+  companyName: MyCompany
+  defaultScreenWidth: 1920
+  defaultScreenHeight: 1080
+  fullscreenMode: 3
+  runInBackground: 1
+  resizableWindow: 1
+  apiCompatibilityLevel: 6
+  scriptingBackend: 1
+  il2CppCompilerConfiguration: 2
+  allowedAutorotateToLandscapeLeft: 1
+  allowedAutorotateToLandscapeRight: 1
+  buildNumber:
+    Standalone: 0
+  bundleVersion: 0.1.0
+  scriptingDefineSymbols:
+    Standalone:

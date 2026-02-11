@@ -1,0 +1,46 @@
+# Unity generated
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Unity asset meta backup
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crashlytics
+crashlytics-build.properties
+
+# Steam build output (빌드 결과물은 git에 포함하지 않음)
+SteamBuild/content/
+SteamBuild/output/
+
+# Steamworks SDK 바이너리
+Assets/Plugins/Steamworks.NET/*.dll
+Assets/Plugins/Steamworks.NET/*.bundle
+Assets/Plugins/Steamworks.NET/*.so
