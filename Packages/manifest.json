@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.codergamester.mcp-unity": "https://github.com/CoderGamester/mcp-unity.git",
+    "com.gamelovers.mcp-unity": "https://github.com/CoderGamester/mcp-unity.git",
     "com.unity.inputsystem": "1.7.0",
     "com.unity.textmeshpro": "3.0.6"
   }
