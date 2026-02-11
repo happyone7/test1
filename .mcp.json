@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "mcp-unity": {
+      "command": "node",
+      "args": ["Packages/com.codergamester.mcp-unity/Server~/build/index.js"],
+      "env": {
+        "UNITY_PORT": "8090"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}
