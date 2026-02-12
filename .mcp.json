@@ -1,15 +1,15 @@
 {
   "mcpServers": {
     "mcp-unity": {
-      "command": "node",
-      "args": ["Packages/com.gamelovers.mcp-unity/Server~/build/index.js"],
+      "command": "/home/happy/.nvm/versions/node/v20.20.0/bin/node",
+      "args": ["Library/PackageCache/com.gamelovers.mcp-unity@64324a54490e/Server~/build/index.js"],
       "env": {
-        "UNITY_PORT": "8090"
+        "UNITY_PORT": "8095"
       }
     },
     "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
+      "command": "/home/happy/.nvm/versions/node/v20.20.0/bin/npx",
+      "args": ["-y", "@playwright/mcp@latest", "--browser", "chromium", "--executable-path", "/home/happy/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome"]
     }
   }
 }

@@ -8,7 +8,7 @@ REM SteamCMD 경로 (Steamworks SDK 내부 또는 별도 설치)
 SET STEAMCMD_PATH=C:\steamworks_sdk\tools\ContentBuilder\builder\steamcmd.exe
 
 REM Steam 개발자 계정 정보
-SET STEAM_USERNAME=your_steam_username
+SET STEAM_USERNAME=shatterbone7
 
 echo ============================================
 echo  Steam 빌드 업로드 시작

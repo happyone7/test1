@@ -10,7 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 STEAMCMD_PATH="$HOME/steamworks_sdk/tools/ContentBuilder/builder_linux/steamcmd.sh"
 
 # Steam 개발자 계정
-STEAM_USERNAME="your_steam_username"
+STEAM_USERNAME="shatterbone7"
 
 echo "============================================"
 echo " Steam 빌드 업로드 시작"

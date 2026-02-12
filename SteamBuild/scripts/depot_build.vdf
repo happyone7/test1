@@ -1,7 +1,6 @@
 "DepotBuild"
 {
-	// 여기에 실제 Depot ID를 입력하세요
-	"DepotID" "YOUR_DEPOT_ID"
+	"DepotID" "4426341"
 	"ContentRoot" "../content"
 	"FileMapping"
 	{

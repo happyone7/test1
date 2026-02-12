@@ -30,7 +30,7 @@ public class SteamManager : MonoBehaviour
 #if !DISABLESTEAMWORKS
         try
         {
-            if (SteamAPI.RestartAppIfNecessary(new AppId_t(480))) // 480 = 테스트용, 실제 앱 ID로 교체
+            if (SteamAPI.RestartAppIfNecessary(new AppId_t(4426340)))
             {
                 Application.Quit();
                 return;

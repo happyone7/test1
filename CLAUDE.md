@@ -17,7 +17,7 @@ Unity로 만든 3D 게임을 Steam에 빌드/업로드하는 프로젝트.
 - `ProjectSettings/` - Unity 프로젝트 설정
 
 ## MCP 서버
-- **mcp-unity**: Unity Editor 씬/에셋/빌드 제어 (포트 8090)
+- **mcp-unity**: Unity Editor 씬/에셋/빌드 제어 (포트 8095)
 - **playwright**: Steamworks 파트너 사이트 웹 자동화
 
 ## 주요 워크플로우
@@ -27,6 +27,9 @@ Unity로 만든 3D 게임을 Steam에 빌드/업로드하는 프로젝트.
 4. Steamworks 파트너 사이트에서 앱/디포 설정
 5. SteamCMD로 업로드
 
-## 현재 상태
-- Steam App ID: 480 (테스트용, 실제 ID로 교체 필요)
-- VDF 파일: placeholder 상태 (YOUR_APP_ID, YOUR_DEPOT_ID)
+## Steam 정보
+- **게임 이름**: Nodebreaker TD
+- **App ID**: 4426340
+- **Depot ID**: 4426341
+- **Steam 계정**: shatterbone7
+- **Partner ID**: 377547
