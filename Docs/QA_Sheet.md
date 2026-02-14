@@ -131,9 +131,9 @@
 
 | 브랜치 | 커밋 | 변경 요약 | .meta 검증 | 코드 검증 | 머지 상태 |
 |--------|------|-----------|-----------|-----------|----------|
-| dev/ui | d810a9d, e8b7b88 | 스킬트리 UI 시스템 (6개 .cs + 씬 + 에디터) | - | - | - |
-| dev/game-designer | 014694a, 0e32a8f | 난이도 곡선 SO (Stage 2~3, Wave 19개, Node_Shield) + 로고 | - | - | - |
-| dev/ta | daff3af, 67150de | 스킬 아이콘 8종 + 투사체 PPU 수정 | - | - | - |
+| dev/ui | d810a9d, e8b7b88 | 스킬트리 UI 시스템 (6개 .cs + 씬 + 에디터) | PASS | PASS | MERGED (45613ec) |
+| dev/game-designer | 014694a, 0e32a8f, 383865b | 난이도 곡선 SO (Stage 2~3, Wave 19개, Node_Shield) + 로고 + 맵 레이아웃 | PASS | N/A (코드 없음) | MERGED (0aea38d) |
+| dev/ta | daff3af, 67150de | 스킬 아이콘 8종 + 투사체 PPU 수정 | PASS | N/A (코드 없음) | MERGED (11282c8) |
 | dev/programmer | 작업 중 | Cannon/Ice Tower + Quick/Heavy Monster | - | - | 별도 머지 예정 |
 
 ---
@@ -143,3 +143,4 @@
 | 날짜 | 내용 |
 |------|------|
 | 2026-02-15 | Sprint 3 QA 시트 초기 생성 (QA팀장) |
+| 2026-02-15 | dev/ui, dev/game-designer, dev/ta 브랜치 검증 통과 및 sprint3 머지 완료 |
