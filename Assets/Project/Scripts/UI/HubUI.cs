@@ -176,11 +176,6 @@ namespace Nodebreaker.UI
 
         public virtual void Show()
         {
-            // 부모 Canvas가 비활성일 수 있으므로 함께 활성화
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null)
-                parentCanvas.gameObject.SetActive(true);
-
             gameObject.SetActive(true);
             RefreshAll();
         }
@@ -188,11 +183,7 @@ namespace Nodebreaker.UI
         public virtual void Hide()
         {
             gameObject.SetActive(false);
-
-            // 부모 Canvas도 비활성화 (자신이 Canvas가 아닌 경우에만)
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null && parentCanvas.transform != transform)
-                parentCanvas.gameObject.SetActive(false);
+            // 부모 Canvas 비활성화 제거 — InGameUI와 Canvas를 공유하므로 건드리면 안 됨
         }
 
         public void RefreshAll()
@@ -402,12 +393,23 @@ namespace Nodebreaker.UI
 
         private void OnPurchase()
         {
-            if (_selectedSkill == null) return;
+            if (_selectedSkill == null)
+            {
+                Debug.LogWarning("[HubUI] OnPurchase: _selectedSkill is null");
+                return;
+            }
 
             if (Singleton<Core.MetaManager>.HasInstance)
             {
-                Core.MetaManager.Instance.TryPurchaseSkill(_selectedSkill.skillId);
+                Debug.Log($"[HubUI] OnPurchase: skillId='{_selectedSkill.skillId}', Bit={Core.MetaManager.Instance.TotalBit}");
+                bool success = Core.MetaManager.Instance.TryPurchaseSkill(_selectedSkill.skillId);
+                if (success)
+                    Debug.Log($"[HubUI] 구매 성공: {_selectedSkill.skillName}");
                 RefreshAll();
+            }
+            else
+            {
+                Debug.LogWarning("[HubUI] OnPurchase: MetaManager not available");
             }
         }
 
