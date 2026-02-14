@@ -51,34 +51,56 @@ namespace Nodebreaker.Editor
             // TitleScreenUI 컴포넌트 추가
             var titleScreenUI = panelObj.AddComponent<UI.TitleScreenUI>();
 
-            // === 3. 게임 제목: "NODEBREAKER TD" ===
-            // PPT: pos (460, 200), size 1000x100, 48pt 굵게, #2BFF88, Anchor=Top-Center
-            var titleObj = CreateUIElement("TitleText", panelObj.transform);
-            var titleRect = titleObj.GetComponent<RectTransform>();
-            SetAnchorTopCenter(titleRect);
-            titleRect.sizeDelta = new Vector2(1000, 100);
-            // PPT Y=200 from top => anchoredPosition.y = -(200 + 50) = -250 (center of element)
-            titleRect.anchoredPosition = new Vector2(0, -250);
+            // === 2-1. 배경 이미지 (전체 화면, TitleBG_01) ===
+            var bgObj = CreateUIElement("BackgroundImage", panelObj.transform);
+            var bgRect = bgObj.GetComponent<RectTransform>();
+            StretchFull(bgRect);
+            var bgImage = bgObj.AddComponent<Image>();
+            bgImage.color = Color.white;
+            bgImage.preserveAspect = false;
+            bgImage.raycastTarget = false;
+            var bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Backgrounds/TitleBG_01.png");
+            if (bgSprite != null)
+            {
+                bgImage.sprite = bgSprite;
+                Debug.Log("[TitleScreenSetup] 타이틀 배경 이미지 적용: TitleBG_01.png");
+            }
+            else
+            {
+                Debug.LogWarning("[TitleScreenSetup] TitleBG_01.png 스프라이트를 찾을 수 없습니다. 텍스처 임포트 설정을 확인하세요.");
+            }
 
-            var titleText = titleObj.AddComponent<Text>();
-            titleText.text = "NODEBREAKER TD";
-            titleText.fontSize = 48;
-            titleText.fontStyle = FontStyle.Bold;
-            titleText.color = NeonGreen;
-            titleText.alignment = TextAnchor.MiddleCenter;
-            titleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            // === 2-2. 로고 이미지 (상단 중앙, SoulspireLogo_02) ===
+            var logoObj = CreateUIElement("LogoImage", panelObj.transform);
+            var logoRect = logoObj.GetComponent<RectTransform>();
+            SetAnchorTopCenter(logoRect);
+            logoRect.sizeDelta = new Vector2(600, 300);
+            logoRect.anchoredPosition = new Vector2(0, -200);
+            var logoImage = logoObj.AddComponent<Image>();
+            logoImage.color = Color.white;
+            logoImage.preserveAspect = true;
+            logoImage.raycastTarget = false;
+            var logoSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Logo/SoulspireLogo_02.png");
+            if (logoSprite != null)
+            {
+                logoImage.sprite = logoSprite;
+                Debug.Log("[TitleScreenSetup] 타이틀 로고 이미지 적용: SoulspireLogo_02.png");
+            }
+            else
+            {
+                Debug.LogWarning("[TitleScreenSetup] SoulspireLogo_02.png 스프라이트를 찾을 수 없습니다. 텍스처 임포트 설정을 확인하세요.");
+            }
 
-            // === 4. 부제목: "네트워크를 지켜라. Node를 격파하라." ===
+            // === 3. 부제목: "영혼의 첨탑을 지켜라" ===
             // PPT: pos (460, 320), size 1000x40, 16pt, #AFC3E8, Anchor=Top-Center
             var subtitleObj = CreateUIElement("SubtitleText", panelObj.transform);
             var subtitleRect = subtitleObj.GetComponent<RectTransform>();
             SetAnchorTopCenter(subtitleRect);
             subtitleRect.sizeDelta = new Vector2(1000, 40);
-            // PPT Y=320 from top => anchoredPosition.y = -(320 + 20) = -340
-            subtitleRect.anchoredPosition = new Vector2(0, -340);
+            subtitleRect.anchoredPosition = new Vector2(0, -380);
 
             var subtitleText = subtitleObj.AddComponent<Text>();
-            subtitleText.text = "네트워크를 지켜라. Node를 격파하라.";
+            subtitleText.text = "영혼의 첨탑을 지켜라";
             subtitleText.fontSize = 16;
             subtitleText.color = SubText;
             subtitleText.alignment = TextAnchor.MiddleCenter;
@@ -109,6 +131,8 @@ namespace Nodebreaker.Editor
 
             // === 6. TitleScreenUI에 SerializeField 연결 ===
             var so = new SerializedObject(titleScreenUI);
+            so.FindProperty("backgroundImage").objectReferenceValue = bgImage;
+            so.FindProperty("logoImage").objectReferenceValue = logoImage;
             so.FindProperty("startButton").objectReferenceValue = startBtn.GetComponent<Button>();
             so.FindProperty("settingsButton").objectReferenceValue = settingsBtn.GetComponent<Button>();
             so.FindProperty("quitButton").objectReferenceValue = quitBtn.GetComponent<Button>();

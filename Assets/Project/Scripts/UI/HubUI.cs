@@ -25,6 +25,9 @@ namespace Nodebreaker.UI
         public static readonly Color ColorBorder       = new Color32(0x5B, 0x6B, 0x8A, 0xFF);
         #endregion
 
+        [Header("배경")]
+        public Image backgroundImage;
+
         [Header("상단 바 - 재화")]
         public Text totalBitText;
         public Text totalCoreText;

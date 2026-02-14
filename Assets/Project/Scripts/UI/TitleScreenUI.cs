@@ -11,6 +11,10 @@ namespace Nodebreaker.UI
     /// </summary>
     public class TitleScreenUI : MonoBehaviour
     {
+        [Header("배경 및 로고")]
+        [SerializeField] private Image backgroundImage;
+        [SerializeField] private Image logoImage;
+
         [Header("버튼")]
         [SerializeField] private Button startButton;
         [SerializeField] private Button settingsButton;

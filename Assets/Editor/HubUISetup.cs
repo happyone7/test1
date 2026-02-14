@@ -48,6 +48,27 @@ namespace Nodebreaker.Editor
             DestroyChildrenExcept(hubPanel.transform, new string[] { });
 
             // =========================================
+            // 0. 배경 이미지 (전체 화면, HubBG_03_dimmed)
+            // =========================================
+            var hubBgImgObj = CreateChild(hubPanel.transform, "BackgroundImage");
+            var hubBgImgRect = SetupRect(hubBgImgObj, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var hubBgImg = hubBgImgObj.AddComponent<Image>();
+            hubBgImg.color = Color.white;
+            hubBgImg.preserveAspect = false;
+            hubBgImg.raycastTarget = false;
+            var hubBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Backgrounds/HubBG_03_dimmed.png");
+            if (hubBgSprite != null)
+            {
+                hubBgImg.sprite = hubBgSprite;
+                Debug.Log("[HubUISetup] 허브 배경 이미지 적용: HubBG_03_dimmed.png");
+            }
+            else
+            {
+                Debug.LogWarning("[HubUISetup] HubBG_03_dimmed.png 스프라이트를 찾을 수 없습니다. 텍스처 임포트 설정을 확인하세요.");
+            }
+            hubUI.backgroundImage = hubBgImg;
+
+            // =========================================
             // 1. 상단 바 (0,0) 1920x50px
             // =========================================
             var topBar = CreateChild(hubPanel.transform, "TopBar");

@@ -45,6 +45,8 @@ namespace Nodebreaker.Editor
                 "Assets/Art/UI/Frames",
                 "Assets/Art/UI/Buttons",
                 "Assets/Art/UI/Icons",
+                "Assets/Art/UI/Backgrounds",
+                "Assets/Art/UI/Logo",
             };
 
             int count = 0;
@@ -59,21 +61,29 @@ namespace Nodebreaker.Editor
 
                     bool dirty = false;
 
-                    // 기본 설정: Sprite, Single, PPU=16, Point, No compression, no mipmap
+                    // 배경/로고는 고해상도 AI 이미지 → Bilinear, PPU=100, 압축 허용
+                    bool isLargeImage = folder.Contains("Backgrounds") || folder.Contains("Logo");
+                    float targetPPU = isLargeImage ? 100f : 16f;
+                    FilterMode targetFilter = isLargeImage ? FilterMode.Bilinear : FilterMode.Point;
+                    TextureImporterCompression targetCompression = isLargeImage
+                        ? TextureImporterCompression.CompressedHQ
+                        : TextureImporterCompression.Uncompressed;
+
+                    // 기본 설정: Sprite, Single
                     if (importer.textureType != TextureImporterType.Sprite)
                     { importer.textureType = TextureImporterType.Sprite; dirty = true; }
 
                     if (importer.spriteImportMode != SpriteImportMode.Single)
                     { importer.spriteImportMode = SpriteImportMode.Single; dirty = true; }
 
-                    if (!Mathf.Approximately(importer.spritePixelsPerUnit, 16f))
-                    { importer.spritePixelsPerUnit = 16f; dirty = true; }
+                    if (!Mathf.Approximately(importer.spritePixelsPerUnit, targetPPU))
+                    { importer.spritePixelsPerUnit = targetPPU; dirty = true; }
 
-                    if (importer.filterMode != FilterMode.Point)
-                    { importer.filterMode = FilterMode.Point; dirty = true; }
+                    if (importer.filterMode != targetFilter)
+                    { importer.filterMode = targetFilter; dirty = true; }
 
-                    if (importer.textureCompression != TextureImporterCompression.Uncompressed)
-                    { importer.textureCompression = TextureImporterCompression.Uncompressed; dirty = true; }
+                    if (importer.textureCompression != targetCompression)
+                    { importer.textureCompression = targetCompression; dirty = true; }
 
                     if (importer.mipmapEnabled)
                     { importer.mipmapEnabled = false; dirty = true; }
@@ -159,6 +169,8 @@ namespace Nodebreaker.Editor
                 "Assets/Art/UI/Frames",
                 "Assets/Art/UI/Buttons",
                 "Assets/Art/UI/Icons",
+                "Assets/Art/UI/Backgrounds",
+                "Assets/Art/UI/Logo",
             };
 
             int total = 0;
@@ -177,16 +189,23 @@ namespace Nodebreaker.Editor
                     total++;
                     var errors = new List<string>();
 
+                    bool isLargeImage = folder.Contains("Backgrounds") || folder.Contains("Logo");
+                    float expectedPPU = isLargeImage ? 100f : 16f;
+                    FilterMode expectedFilter = isLargeImage ? FilterMode.Bilinear : FilterMode.Point;
+                    TextureImporterCompression expectedCompression = isLargeImage
+                        ? TextureImporterCompression.CompressedHQ
+                        : TextureImporterCompression.Uncompressed;
+
                     if (importer.textureType != TextureImporterType.Sprite)
                         errors.Add($"textureType={importer.textureType} (expected Sprite)");
                     if (importer.spriteImportMode != SpriteImportMode.Single)
                         errors.Add($"spriteMode={importer.spriteImportMode} (expected Single)");
-                    if (!Mathf.Approximately(importer.spritePixelsPerUnit, 16f))
-                        errors.Add($"PPU={importer.spritePixelsPerUnit} (expected 16)");
-                    if (importer.filterMode != FilterMode.Point)
-                        errors.Add($"filterMode={importer.filterMode} (expected Point)");
-                    if (importer.textureCompression != TextureImporterCompression.Uncompressed)
-                        errors.Add($"compression={importer.textureCompression} (expected Uncompressed)");
+                    if (!Mathf.Approximately(importer.spritePixelsPerUnit, expectedPPU))
+                        errors.Add($"PPU={importer.spritePixelsPerUnit} (expected {expectedPPU})");
+                    if (importer.filterMode != expectedFilter)
+                        errors.Add($"filterMode={importer.filterMode} (expected {expectedFilter})");
+                    if (importer.textureCompression != expectedCompression)
+                        errors.Add($"compression={importer.textureCompression} (expected {expectedCompression})");
                     if (importer.mipmapEnabled)
                         errors.Add("mipmap enabled (expected disabled)");
 
