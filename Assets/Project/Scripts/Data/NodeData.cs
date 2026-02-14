@@ -29,5 +29,6 @@ namespace Nodebreaker.Data
         public float speed = 2f;
         public int bitDrop = 5;
         public int damage = 1; // 기지에 주는 데미지
+        public int defense = 0; // 방어력 (받는 데미지 차감, 최소 1)
     }
 }

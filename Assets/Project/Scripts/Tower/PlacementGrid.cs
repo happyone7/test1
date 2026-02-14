@@ -24,6 +24,12 @@ namespace Nodebreaker.Tower
         {
             base.Awake();
             _occupiedCells = new bool[gridSize.x, gridSize.y];
+
+            // TilemapManager가 있으면 Placement Tilemap 자동 연결
+            if (placementTilemap == null && Singleton<TilemapManager>.HasInstance)
+            {
+                placementTilemap = TilemapManager.Instance.placementTilemap;
+            }
         }
 
         /// <summary>

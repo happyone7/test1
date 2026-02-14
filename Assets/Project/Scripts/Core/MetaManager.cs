@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
 using Tesseract.Core;
+using Tesseract.Save;
 using UnityEngine;
 
 namespace Nodebreaker.Core
@@ -10,15 +10,9 @@ namespace Nodebreaker.Core
         [Header("스킬 데이터")]
         public Data.SkillNodeData[] allSkills;
 
-        [Header("신규 세이브 초기값")]
-        [Tooltip("새 세이브 파일 생성 시 지급할 초기 Bit (테스트/튜토리얼용)")]
-        public int initialBit = 500;
-
-        // TODO: Unity 재시작 후 Tesseract.Save.SaveManager로 교체
+        SaveManager<PlayerSaveData> _saveManager;
         PlayerSaveData _data;
         Dictionary<string, int> _skillLevelCache = new Dictionary<string, int>();
-
-        string SavePath => Path.Combine(Application.persistentDataPath, "nodebreaker_save.json");
 
         public int TotalBit => _data.totalBit;
         public int TotalCore => _data.totalCore;
@@ -27,23 +21,13 @@ namespace Nodebreaker.Core
         protected override void Awake()
         {
             base.Awake();
+            _saveManager = new SaveManager<PlayerSaveData>("nodebreaker_save.json");
             Load();
         }
 
         void Load()
         {
-            if (File.Exists(SavePath))
-            {
-                string json = File.ReadAllText(SavePath);
-                _data = JsonUtility.FromJson<PlayerSaveData>(json) ?? new PlayerSaveData();
-                Debug.Log($"[MetaManager] 세이브 로드 완료 - Bit: {_data.totalBit}, Core: {_data.totalCore}, Skills: {_data.skillLevels.Count}");
-            }
-            else
-            {
-                _data = new PlayerSaveData();
-                _data.totalBit = initialBit;
-                Debug.Log($"[MetaManager] 신규 세이브 생성 - 초기 Bit: {initialBit}");
-            }
+            _data = _saveManager.Load();
             RebuildCache();
             EnsureCoreNodeActive();
         }
@@ -64,8 +48,7 @@ namespace Nodebreaker.Core
         public void Save()
         {
             SyncFromCache();
-            string json = JsonUtility.ToJson(_data, true);
-            File.WriteAllText(SavePath, json);
+            _saveManager.Save(_data);
         }
 
         public int GetSkillLevel(string skillId)
@@ -293,6 +276,7 @@ namespace Nodebreaker.Core
         protected override void OnApplicationQuit()
         {
             Save();
+            _saveManager?.Dispose();
             base.OnApplicationQuit();
         }
 
