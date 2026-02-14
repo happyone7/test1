@@ -1,6 +1,7 @@
 using Tesseract.Core;
 using Tesseract.ObjectPool;
 using UnityEngine;
+using Nodebreaker.Audio;
 
 namespace Nodebreaker.Tower
 {
@@ -23,6 +24,33 @@ namespace Nodebreaker.Tower
             data = towerData;
             Level = level;
             _attackTimer = 0f;
+            EnsureCollider2D();
+        }
+
+        /// <summary>
+        /// Physics2D 기반 감지를 위해 BoxCollider2D와 Layer 8(Tower)을 보장합니다.
+        /// prefab에 BoxCollider2D가 없거나 Layer가 잘못 설정된 경우 런타임에서 보정합니다.
+        /// </summary>
+        private void EnsureCollider2D()
+        {
+            var col2d = GetComponent<BoxCollider2D>();
+            if (col2d == null)
+            {
+                col2d = gameObject.AddComponent<BoxCollider2D>();
+            }
+            if (col2d != null)
+            {
+                // 3D BoxCollider 크기를 참조하여 2D 크기 설정
+                var col3d = GetComponent<BoxCollider>();
+                if (col3d != null)
+                {
+                    col2d.size = new Vector2(col3d.size.x, col3d.size.y);
+                    col2d.offset = new Vector2(col3d.center.x, col3d.center.y);
+                }
+            }
+            // Layer 8 = Tower (PlacementGrid.towerLayer가 기대하는 레이어)
+            if (gameObject.layer != 8)
+                gameObject.layer = 8;
         }
 
         void Update()
@@ -71,6 +99,8 @@ namespace Nodebreaker.Tower
 
         void Attack()
         {
+            SoundManager.Instance.PlaySfx(SoundKeys.TowerAttack, 0.85f);
+
             float damage = data.GetDamage(Level);
             if (Singleton<Core.RunManager>.HasInstance)
                 damage *= Core.RunManager.Instance.CurrentModifiers.attackDamageMultiplier;
@@ -94,10 +124,20 @@ namespace Nodebreaker.Tower
         public bool TryMerge(Tower other)
         {
             if (other.data.type != data.type) return false;
-            if (Level >= 5) return false;
+            if (other.Level != Level) return false; // 같은 레벨끼리만 합성
+            if (Level >= 4) return false; // 최대 Lv4
             Level++;
             Destroy(other.gameObject);
             return true;
+        }
+
+        /// <summary>
+        /// 드래그 합성 시 사용: 레벨 1 증가 (소스 타워는 인벤토리에서 별도 제거).
+        /// </summary>
+        public void LevelUp()
+        {
+            if (Level < 4)
+                Level++;
         }
 
         void OnDrawGizmosSelected()
