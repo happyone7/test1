@@ -33,32 +33,22 @@ namespace Nodebreaker.Core
         {
             State = GameState.Hub;
 
-            // InGame UI 요소 숨기기 (Hub 상태이므로)
+            // InGame UI 요소 숨기기
             var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
             if (inGameUI != null)
                 inGameUI.HideAll();
 
-            // DEBUG: 타이틀 스킵 - 바로 허브로 진입
-            var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
-            if (titleUI != null)
-                titleUI.Hide();
-
+            // Hub 숨기기 (타이틀 화면부터 시작)
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
-                hubUI.Show();
+                hubUI.Hide();
+
+            // 타이틀 화면 표시
+            var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
+            if (titleUI != null)
+                titleUI.Show();
 
             SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0f);
-        }
-
-        // DEBUG: 타이틀 스킵용 임시 코드 (나중에 제거)
-        void Update()
-        {
-            if (UnityEngine.Input.GetKeyDown(KeyCode.F1))
-            {
-                var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
-                if (titleUI != null) titleUI.Hide();
-                GoToHub();
-            }
         }
 
         public void StartRun(int stageIndex = -1)
