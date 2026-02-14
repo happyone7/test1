@@ -58,9 +58,9 @@ namespace Nodebreaker.Editor
                 "Assets/Art/UI/Hub/NB_Hub_BaseHP.png");
 
             // --- Prefab SpriteRenderers ---
-            linked += LinkPrefabSprite("Assets/Project/Prefabs/Towers/ArrowTower.prefab",
+            linked += LinkPrefabSprite("Assets/Project/Prefabs/Towers/Tower_Arrow.prefab",
                 "Assets/Art/Towers/NB_Tower_Arrow.png");
-            linked += LinkPrefabSprite("Assets/Project/Prefabs/Nodes/BitNode.prefab",
+            linked += LinkPrefabSprite("Assets/Project/Prefabs/Monsters/Monster_Bit.prefab",
                 "Assets/Art/Nodes/NB_Node_Bit.png");
 
             AssetDatabase.SaveAssets();

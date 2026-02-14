@@ -26,7 +26,7 @@ namespace Nodebreaker.Editor
         {
             // 타워 데이터 로드
             var towerData = AssetDatabase.LoadAssetAtPath<Data.TowerData>("Assets/Data/Towers/Tower_Arrow.asset");
-            var towerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Towers/ArrowTower.prefab");
+            var towerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Project/Prefabs/Towers/Tower_Arrow.prefab");
             if (towerData == null || towerPrefab == null)
             {
                 Debug.LogWarning("[Nodebreaker] Tower 에셋이 없습니다. Create Prototype Assets를 먼저 실행하세요.");

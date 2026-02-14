@@ -166,7 +166,7 @@ namespace Nodebreaker.Editor
 
         static GameObject CreateProjectilePrefab()
         {
-            var path = "Assets/Prefabs/Projectiles/ArrowProjectile.prefab";
+            var path = "Assets/Project/Prefabs/Projectiles/Projectile_Arrow.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (existing != null) return existing;
 
