@@ -34,6 +34,13 @@ namespace Nodebreaker.UI
         public Sprite iconBit;     // 소울(Soul) 아이콘
         public Sprite iconCore;    // 정수(Essence) 아이콘
 
+        [Header("배경")]
+        public Sprite titleBackground;   // 타이틀 배경 (TitleBG_01)
+        public Sprite hubBackground;     // 허브 배경 (HubBG_03_dimmed)
+
+        [Header("로고")]
+        public Sprite logo;              // Soulspire 로고 (SoulspireLogo_02)
+
         /// <summary>
         /// Button에 Basic SpriteSwap 설정 적용.
         /// </summary>
@@ -68,6 +75,73 @@ namespace Nodebreaker.UI
             if (image == null || tooltipFrame == null) return;
             image.sprite = tooltipFrame;
             image.type = UnityEngine.UI.Image.Type.Sliced;
+        }
+
+        /// <summary>
+        /// Image에 9-slice HP Bar Frame 설정.
+        /// </summary>
+        public void ApplyHpBarFrame(UnityEngine.UI.Image image)
+        {
+            if (image == null || hpBarFrame == null) return;
+            image.sprite = hpBarFrame;
+            image.type = UnityEngine.UI.Image.Type.Sliced;
+        }
+
+        /// <summary>
+        /// Image에 HP Bar Fill 설정 (Filled).
+        /// </summary>
+        public void ApplyHpBarFill(UnityEngine.UI.Image image)
+        {
+            if (image == null || hpBarFill == null) return;
+            image.sprite = hpBarFill;
+            image.type = UnityEngine.UI.Image.Type.Filled;
+            image.fillMethod = UnityEngine.UI.Image.FillMethod.Horizontal;
+        }
+
+        /// <summary>
+        /// Image에 9-slice Tower Slot 설정.
+        /// </summary>
+        public void ApplyTowerSlot(UnityEngine.UI.Image image)
+        {
+            if (image == null || towerSlot == null) return;
+            image.sprite = towerSlot;
+            image.type = UnityEngine.UI.Image.Type.Sliced;
+        }
+
+        /// <summary>
+        /// Image에 9-slice Dropdown Frame 설정.
+        /// </summary>
+        public void ApplyDropdownFrame(UnityEngine.UI.Image image)
+        {
+            if (image == null || dropdownFrame == null) return;
+            image.sprite = dropdownFrame;
+            image.type = UnityEngine.UI.Image.Type.Sliced;
+        }
+
+        /// <summary>
+        /// Image에 배경 이미지 설정 (Simple, 전체 표시).
+        /// </summary>
+        public void ApplyBackground(UnityEngine.UI.Image image, bool isHub)
+        {
+            if (image == null) return;
+            Sprite bg = isHub ? hubBackground : titleBackground;
+            if (bg == null) return;
+            image.sprite = bg;
+            image.type = UnityEngine.UI.Image.Type.Simple;
+            image.preserveAspect = false;
+            image.color = Color.white;
+        }
+
+        /// <summary>
+        /// Image에 로고 설정.
+        /// </summary>
+        public void ApplyLogo(UnityEngine.UI.Image image)
+        {
+            if (image == null || logo == null) return;
+            image.sprite = logo;
+            image.type = UnityEngine.UI.Image.Type.Simple;
+            image.preserveAspect = true;
+            image.color = Color.white;
         }
 
         private static void ApplyButtonSprites(

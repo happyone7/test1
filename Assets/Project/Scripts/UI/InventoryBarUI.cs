@@ -31,6 +31,7 @@ namespace Nodebreaker.UI
         private const int LEVEL_FONT_SIZE = 12;
 
         [SerializeField] private Tower.TowerDragController dragController;
+        [SerializeField] private UISprites uiSprites;
 
         // 동적 생성된 슬롯 UI 요소들
         private Image[] _slotBackgrounds;
@@ -96,6 +97,8 @@ namespace Nodebreaker.UI
             Image barBg = gameObject.GetComponent<Image>();
             if (barBg == null)
                 barBg = gameObject.AddComponent<Image>();
+            if (uiSprites != null)
+                uiSprites.ApplyPanelFrame(barBg);
             barBg.color = ColorPanelBg;
             barBg.raycastTarget = true;
 
@@ -144,6 +147,8 @@ namespace Nodebreaker.UI
 
             // 배경 이미지
             Image bg = slotGo.AddComponent<Image>();
+            if (uiSprites != null)
+                uiSprites.ApplyTowerSlot(bg);
             bg.color = ColorBrightPanel;
             bg.raycastTarget = true;
 

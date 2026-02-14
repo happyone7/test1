@@ -23,6 +23,9 @@ namespace Nodebreaker.UI
         public Button claimButton;
         public Text claimButtonText;
 
+        [Header("UI 스프라이트")]
+        public UISprites uiSprites;
+
         private int _pendingBit;
         private float _absenceSeconds;
 
@@ -30,6 +33,14 @@ namespace Nodebreaker.UI
         {
             if (claimButton != null)
                 claimButton.onClick.AddListener(OnClaim);
+
+            // UI 스프라이트 적용
+            if (uiSprites != null)
+            {
+                var bgImage = GetComponent<Image>();
+                uiSprites.ApplyPanelFrame(bgImage);
+                uiSprites.ApplyAccentButton(claimButton);
+            }
 
             gameObject.SetActive(false);
         }

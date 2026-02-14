@@ -65,6 +65,9 @@ namespace Nodebreaker.UI
         public TowerInfoTooltip towerInfoTooltip;
         public Button towerPurchaseButton;  // +구매 버튼
 
+        [Header("UI 스프라이트")]
+        public UISprites uiSprites;
+
         [Header("InGame 컨테이너 (Hub에서 숨길 대상)")]
         public GameObject topHudContainer;      // Canvas/TopHUD
         public GameObject bottomBarContainer;   // Canvas/BottomBar
@@ -113,6 +116,39 @@ namespace Nodebreaker.UI
                 towerPurchasePanel.gameObject.SetActive(false);
             if (towerPurchaseButton != null)
                 towerPurchaseButton.gameObject.SetActive(false);
+
+            // UI 스프라이트 적용
+            ApplyUISprites();
+        }
+
+        /// <summary>
+        /// UISprites SO에서 HP바/패널/버튼 스프라이트 적용.
+        /// </summary>
+        private void ApplyUISprites()
+        {
+            if (uiSprites == null) return;
+
+            // HP 바 프레임 & 채우기
+            uiSprites.ApplyHpBarFrame(hpBarBackground);
+            uiSprites.ApplyHpBarFill(hpBarFill);
+
+            // 런 종료 패널 배경
+            uiSprites.ApplyPanelFrame(runEndPanelBody);
+
+            // 런 종료 버튼
+            uiSprites.ApplyBasicButton(hubButton);
+            uiSprites.ApplyAccentButton(retryButton);
+
+            // 속도/일시정지 버튼
+            if (speedButtons != null)
+            {
+                foreach (var btn in speedButtons)
+                {
+                    if (btn != null)
+                        uiSprites.ApplyBasicButton(btn);
+                }
+            }
+            uiSprites.ApplyBasicButton(pauseButton);
         }
 
         void Update()

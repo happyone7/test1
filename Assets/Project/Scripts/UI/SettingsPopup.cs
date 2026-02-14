@@ -20,10 +20,21 @@ namespace Nodebreaker.UI
         [Header("버튼")]
         public Button closeButton;
 
+        [Header("UI 스프라이트")]
+        public UISprites uiSprites;
+
         void Start()
         {
             if (closeButton != null)
                 closeButton.onClick.AddListener(Hide);
+
+            // UI 스프라이트 적용
+            if (uiSprites != null)
+            {
+                var bgImage = GetComponent<Image>();
+                uiSprites.ApplyPanelFrame(bgImage);
+                uiSprites.ApplyBasicButton(closeButton);
+            }
 
             if (bgmSlider != null)
             {

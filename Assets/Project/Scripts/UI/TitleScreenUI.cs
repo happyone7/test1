@@ -20,6 +20,9 @@ namespace Nodebreaker.UI
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
 
+        [Header("UI 스프라이트")]
+        [SerializeField] private UISprites uiSprites;
+
         // 버튼 테두리 색상 (호버 시 발광 강도 +50%)
         private static readonly Color StartBorderNormal = HexColor("#2BFF88");
         private static readonly Color StartBorderHover = HexColor("#5EFFA6"); // +50% brightness
@@ -46,6 +49,9 @@ namespace Nodebreaker.UI
             SetupButtonInteraction(startButton, StartBorderNormal, StartBorderHover);
             SetupButtonInteraction(settingsButton, SettingsBorderNormal, SettingsBorderHover);
             SetupButtonInteraction(quitButton, QuitBorderNormal, QuitBorderHover);
+
+            // UI 스프라이트 적용
+            ApplyUISprites();
         }
 
         private void OnStartClicked()
@@ -85,6 +91,25 @@ namespace Nodebreaker.UI
         public void Hide()
         {
             gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// UISprites SO에서 배경/로고/버튼 스프라이트 적용.
+        /// </summary>
+        private void ApplyUISprites()
+        {
+            if (uiSprites == null) return;
+
+            // 배경
+            uiSprites.ApplyBackground(backgroundImage, false);
+
+            // 로고
+            uiSprites.ApplyLogo(logoImage);
+
+            // 버튼 - Accent 스타일 (시작), Basic 스타일 (설정/종료)
+            uiSprites.ApplyAccentButton(startButton);
+            uiSprites.ApplyBasicButton(settingsButton);
+            uiSprites.ApplyBasicButton(quitButton);
         }
 
         /// <summary>

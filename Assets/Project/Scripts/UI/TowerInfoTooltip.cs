@@ -28,6 +28,9 @@ namespace Nodebreaker.UI
         [Header("닫기")]
         public Button closeButton;
 
+        [Header("UI 스프라이트")]
+        public UISprites uiSprites;
+
         private Tower.Tower _targetTower;
 
         void Start()
@@ -37,6 +40,15 @@ namespace Nodebreaker.UI
 
             if (sellButton != null)
                 sellButton.onClick.AddListener(OnSell);
+
+            // UI 스프라이트 적용
+            if (uiSprites != null)
+            {
+                var bgImage = GetComponent<Image>();
+                uiSprites.ApplyTooltipFrame(bgImage);
+                uiSprites.ApplyBasicButton(closeButton);
+                uiSprites.ApplyBasicButton(sellButton);
+            }
 
             gameObject.SetActive(false);
         }

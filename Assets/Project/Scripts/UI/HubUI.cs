@@ -66,6 +66,18 @@ namespace Nodebreaker.UI
         public SettingsPopup settingsPopup;
         public IdleBitPopup idleBitPopup;
 
+        [Header("UI 스프라이트")]
+        public UISprites uiSprites;
+
+        [Header("아이콘 이미지")]
+        public Image bitIconImage;     // Bit 재화 아이콘
+        public Image coreIconImage;    // Core 재화 아이콘
+
+        [Header("패널 배경 이미지")]
+        public Image detailPanelImage; // 상세 패널 배경
+        public Image topBarImage;      // 상단 바 배경
+        public Image bottomBarImage;   // 하단 바 배경
+
         [Header("상세 패널 - 추가 (PPT 명세)")]
         public Text detailChangeBeforeText;  // 변경 전 값
         public Text detailChangeAfterText;   // 변경 후 값
@@ -115,6 +127,51 @@ namespace Nodebreaker.UI
 
             if (idleBitPanel != null)
                 idleBitPanel.SetActive(false);
+
+            // UI 스프라이트 적용
+            ApplyUISprites();
+        }
+
+        /// <summary>
+        /// UISprites SO에서 배경/패널/버튼/아이콘/드롭다운 스프라이트 적용.
+        /// </summary>
+        private void ApplyUISprites()
+        {
+            if (uiSprites == null) return;
+
+            // 배경
+            uiSprites.ApplyBackground(backgroundImage, true);
+
+            // 패널 프레임
+            uiSprites.ApplyPanelFrame(detailPanelImage);
+            uiSprites.ApplyPanelFrame(topBarImage);
+            uiSprites.ApplyPanelFrame(bottomBarImage);
+
+            // 아이콘
+            if (bitIconImage != null && uiSprites.iconBit != null)
+            {
+                bitIconImage.sprite = uiSprites.iconBit;
+                bitIconImage.preserveAspect = true;
+            }
+            if (coreIconImage != null && uiSprites.iconCore != null)
+            {
+                coreIconImage.sprite = uiSprites.iconCore;
+                coreIconImage.preserveAspect = true;
+            }
+
+            // 드롭다운 프레임
+            if (stageDropdown != null)
+            {
+                var dropdownImage = stageDropdown.GetComponent<Image>();
+                uiSprites.ApplyDropdownFrame(dropdownImage);
+            }
+
+            // 버튼 스프라이트
+            uiSprites.ApplyAccentButton(startRunButton);
+            uiSprites.ApplyAccentButton(purchaseButton);
+            uiSprites.ApplyBasicButton(settingsButton);
+            uiSprites.ApplyBasicButton(quitButton);
+            uiSprites.ApplyBasicButton(idleBitClaimButton);
         }
 
         public virtual void Show()
