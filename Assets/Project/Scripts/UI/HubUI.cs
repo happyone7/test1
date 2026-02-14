@@ -37,20 +37,22 @@ namespace Nodebreaker.UI
         public Text idleBitText;
         public Button idleBitClaimButton;
 
-        [Header("스킬 트리 영역")]
-        public ScrollRect skillScrollRect;
+        [Header("스킬 트리")]
+        public SkillTreeUI skillTreeUI;
 
-        [Header("스킬 노드")]
-        public SkillNodeUI[] skillNodes;
+        [Header("구매 팝업")]
+        public SkillPurchasePopup purchasePopup;
 
-        [Header("상세 패널")]
-        public GameObject detailPanel;
-        public Text detailNameText;
-        public Text detailDescText;
-        public Text detailLevelText;
-        public Text detailCostText;
-        public Text detailEffectText;
-        public Button purchaseButton;
+        // === 레거시 호환 필드 (기존 Inspector 참조 유지) ===
+        [HideInInspector] public ScrollRect skillScrollRect;
+        [HideInInspector] public SkillNodeUI[] skillNodes;
+        [HideInInspector] public GameObject detailPanel;
+        [HideInInspector] public Text detailNameText;
+        [HideInInspector] public Text detailDescText;
+        [HideInInspector] public Text detailLevelText;
+        [HideInInspector] public Text detailCostText;
+        [HideInInspector] public Text detailEffectText;
+        [HideInInspector] public Button purchaseButton;
 
         [Header("하단 바 - 스테이지 선택")]
         public Dropdown stageDropdown;
@@ -116,10 +118,24 @@ namespace Nodebreaker.UI
             if (detailCloseButton != null)
                 detailCloseButton.onClick.AddListener(OnDetailClose);
 
-            foreach (var node in skillNodes)
+            // 새 스킬트리 시스템: SkillTreeUI의 노드들 초기화
+            if (skillTreeUI != null && skillTreeUI.skillNodes != null)
             {
-                if (node != null)
-                    node.Initialize(OnSkillNodeSelected);
+                foreach (var node in skillTreeUI.skillNodes)
+                {
+                    if (node != null)
+                        node.Initialize(OnSkillNodeSelected);
+                }
+            }
+
+            // 레거시 호환: 기존 직접 참조 노드들
+            if (skillNodes != null)
+            {
+                foreach (var node in skillNodes)
+                {
+                    if (node != null)
+                        node.Initialize(OnSkillNodeSelected);
+                }
             }
 
             if (detailPanel != null)
@@ -176,11 +192,6 @@ namespace Nodebreaker.UI
 
         public virtual void Show()
         {
-            // 부모 Canvas가 비활성일 수 있으므로 함께 활성화
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null)
-                parentCanvas.gameObject.SetActive(true);
-
             gameObject.SetActive(true);
             RefreshAll();
         }
@@ -188,11 +199,6 @@ namespace Nodebreaker.UI
         public virtual void Hide()
         {
             gameObject.SetActive(false);
-
-            // 부모 Canvas도 비활성화 (자신이 Canvas가 아닌 경우에만)
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null && parentCanvas.transform != transform)
-                parentCanvas.gameObject.SetActive(false);
         }
 
         public void RefreshAll()
@@ -211,10 +217,18 @@ namespace Nodebreaker.UI
                 RefreshIdleBitNotification();
             }
 
-            foreach (var node in skillNodes)
+            // 새 스킬트리 시스템 갱신
+            if (skillTreeUI != null)
+                skillTreeUI.RefreshAll();
+
+            // 레거시 호환
+            if (skillNodes != null)
             {
-                if (node != null)
-                    node.Refresh();
+                foreach (var node in skillNodes)
+                {
+                    if (node != null)
+                        node.Refresh();
+                }
             }
 
             if (_selectedSkill != null)
@@ -253,8 +267,6 @@ namespace Nodebreaker.UI
         {
             if (idleBitPanel == null) return;
 
-            // TODO: MetaManager에 방치 보상 시스템 구현 시 연동
-            // 현재는 _pendingIdleBit 필드로 외부에서 설정 가능
             if (_pendingIdleBit > 0)
             {
                 idleBitPanel.SetActive(true);
@@ -306,6 +318,34 @@ namespace Nodebreaker.UI
         {
             _selectedSkill = data;
 
+            // 새 구매 팝업 사용
+            if (purchasePopup != null)
+            {
+                // 노드 상태 확인
+                SkillNodeState nodeState = SkillNodeState.Available;
+                if (skillTreeUI != null && skillTreeUI.skillNodes != null)
+                {
+                    foreach (var node in skillTreeUI.skillNodes)
+                    {
+                        if (node != null && node.data == data)
+                        {
+                            nodeState = node.CurrentState;
+                            break;
+                        }
+                    }
+                }
+
+                purchasePopup.Show(data, nodeState,
+                    onPurchased: () => RefreshAll(),
+                    onGoToPrereq: (prereqId) =>
+                    {
+                        if (skillTreeUI != null)
+                            skillTreeUI.CenterOnNode(prereqId);
+                    });
+                return;
+            }
+
+            // 레거시: 기존 상세 패널
             if (detailPanel != null)
                 detailPanel.SetActive(true);
 
@@ -330,7 +370,6 @@ namespace Nodebreaker.UI
 
             bool isMaxLevel = level >= _selectedSkill.maxLevel;
 
-            // 제목: "공격력 Lv3 -> Lv4" (PPT 명세)
             if (detailNameText != null)
             {
                 if (isMaxLevel)
@@ -345,7 +384,6 @@ namespace Nodebreaker.UI
             if (detailLevelText != null)
                 detailLevelText.text = $"Lv.{level}/{_selectedSkill.maxLevel}";
 
-            // 효과 변경 전/후
             if (detailEffectText != null)
             {
                 float currentValue = _selectedSkill.GetTotalValue(level);
@@ -358,7 +396,6 @@ namespace Nodebreaker.UI
                 }
             }
 
-            // 변경 전/후 텍스트 (새 필드)
             if (detailChangeBeforeText != null)
             {
                 float currentValue = _selectedSkill.GetTotalValue(level);
@@ -376,7 +413,6 @@ namespace Nodebreaker.UI
                 }
             }
 
-            // 비용 텍스트 (자금 부족 시 빨간색)
             if (detailCostText != null)
             {
                 if (isMaxLevel)
@@ -387,12 +423,12 @@ namespace Nodebreaker.UI
                 else
                 {
                     int cost = _selectedSkill.GetCost(level);
-                    detailCostText.text = $"{cost} Bit";
+                    string unit = _selectedSkill.resourceType == Data.SkillResourceType.Core ? "Core" : "Bit";
+                    detailCostText.text = $"{cost} {unit}";
                     detailCostText.color = totalBit >= cost ? ColorYellowGold : ColorRed;
                 }
             }
 
-            // 구매 버튼 텍스트
             if (purchaseButtonText != null)
                 purchaseButtonText.text = isMaxLevel ? "최대" : "구매";
 
