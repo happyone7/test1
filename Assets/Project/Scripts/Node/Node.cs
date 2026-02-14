@@ -15,6 +15,10 @@ namespace Nodebreaker.Node
         float _scaledSpeed;
         int _scaledBitDrop;
 
+        // 감속 디버프
+        float _slowRate;       // 0~1 (0.25 = 25% 감속)
+        float _slowTimer;      // 남은 감속 시간
+
         Transform[] _waypoints;
         int _waypointIndex;
 
@@ -29,6 +33,8 @@ namespace Nodebreaker.Node
             _scaledBitDrop = Mathf.RoundToInt(data.bitDrop * bitMul);
 
             CurrentHp = _scaledHp;
+            _slowRate = 0f;
+            _slowTimer = 0f;
             IsUsing = true;
             transform.position = _waypoints[0].position;
         }
@@ -36,6 +42,11 @@ namespace Nodebreaker.Node
         void Update()
         {
             if (!IsAlive || !IsUsing) return;
+
+            // 감속 타이머 갱신
+            if (_slowTimer > 0f)
+                _slowTimer -= Time.deltaTime;
+
             Move();
         }
 
@@ -48,7 +59,10 @@ namespace Nodebreaker.Node
             }
 
             var target = _waypoints[_waypointIndex].position;
-            transform.position = Vector3.MoveTowards(transform.position, target, _scaledSpeed * Time.deltaTime);
+            float speed = _scaledSpeed;
+            if (_slowTimer > 0f)
+                speed *= (1f - _slowRate);
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, target) < 0.1f)
                 _waypointIndex++;
@@ -60,6 +74,23 @@ namespace Nodebreaker.Node
             CurrentHp -= damage;
             if (CurrentHp <= 0f)
                 Die();
+        }
+
+        /// <summary>
+        /// 감속 디버프 적용. 더 강한 감속률이면 갱신, 아니면 지속시간만 연장.
+        /// </summary>
+        public void ApplySlow(float rate, float duration)
+        {
+            if (rate > _slowRate)
+            {
+                _slowRate = Mathf.Clamp01(rate);
+                _slowTimer = duration;
+            }
+            else if (Mathf.Approximately(rate, _slowRate))
+            {
+                // 같은 감속률이면 지속시간만 갱신 (더 긴 쪽)
+                _slowTimer = Mathf.Max(_slowTimer, duration);
+            }
         }
 
         void Die()

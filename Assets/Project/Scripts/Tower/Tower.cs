@@ -113,7 +113,20 @@ namespace Nodebreaker.Tower
 
                 var proj = go.GetComponent<Projectile.Projectile>();
                 if (proj != null)
+                {
                     proj.Initialize(_currentTarget, damage);
+
+                    // Cannon Tower: AoE 폭발
+                    float expRadius = data.GetExplosionRadius(Level);
+                    if (expRadius > 0f)
+                        proj.SetExplosion(expRadius);
+
+                    // Ice Tower: 감속 디버프
+                    float slowRate = data.GetSlowRate(Level);
+                    float slowDur = data.GetSlowDuration(Level);
+                    if (slowRate > 0f && slowDur > 0f)
+                        proj.SetSlow(slowRate, slowDur);
+                }
             }
             else
             {
