@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b1a935952cbef48b0b28749779b562, type: 3}
+  m_Name: Tower_Arrow
+  m_EditorClassIdentifier: 
+  towerId: arrow
+  towerName: Arrow
+  type: 0
+  icon: {fileID: 0}
+  prefab: {fileID: 4759207171140746229, guid: 51d35c15e240d6d4bbbf11f07ed1ce1f, type: 3}
+  projectilePrefab: {fileID: 4000669846679220856, guid: 027f0af8429894846854a73dfa584032, type: 3}
+  damage:
+  - 10
+  - 15
+  - 22
+  - 33
+  - 50
+  attackSpeed:
+  - 1
+  - 1.1
+  - 1.2
+  - 1.35
+  - 1.5
+  range:
+  - 3
+  - 3
+  - 3.5
+  - 3.5
+  - 4
+  placeCost: 50
