@@ -1,5 +1,6 @@
 using Tesseract.ObjectPool;
 using UnityEngine;
+using Nodebreaker.Audio;
 
 namespace Nodebreaker.Node
 {
@@ -64,14 +65,19 @@ namespace Nodebreaker.Node
         void Die()
         {
             CurrentHp = 0f;
+            SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
+            {
                 Core.RunManager.Instance.AddBit(_scaledBitDrop);
+                Core.RunManager.Instance.OnNodeKilled();
+            }
             RemoveFromWave();
             Poolable.TryPool(gameObject);
         }
 
         void ReachEnd()
         {
+            Debug.Log($"[Node] ReachEnd: damage={Data.damage}, RunManager.HasInstance={Tesseract.Core.Singleton<Core.RunManager>.HasInstance}");
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
                 Core.RunManager.Instance.TakeDamage(Data.damage);
             RemoveFromWave();
