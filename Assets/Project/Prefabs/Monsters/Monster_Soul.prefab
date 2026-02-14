@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4544602998075398653}
   - component: {fileID: 4317632629703959159}
   m_Layer: 0
-  m_Name: Monster_Bit
+  m_Name: Monster_Soul
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
