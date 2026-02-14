@@ -59,8 +59,16 @@ namespace Nodebreaker.UI
 
         void OnDestroy()
         {
-            if (Singleton<Tower.TowerInventory>.HasInstance)
-                Tower.TowerInventory.Instance.OnInventoryChanged -= RefreshSlots;
+            // 앱 종료/씬 전환 시 싱글톤이 이미 파괴되었을 수 있으므로 안전하게 처리
+            try
+            {
+                if (Singleton<Tower.TowerInventory>.HasInstance)
+                    Tower.TowerInventory.Instance.OnInventoryChanged -= RefreshSlots;
+            }
+            catch (System.Exception)
+            {
+                // 앱 종료 중 싱글톤 접근 실패 무시
+            }
         }
 
         /// <summary>
