@@ -11,6 +11,22 @@
       },
       "hash": "64324a54490e4d277c75ae3bba0cc206a6dc7ca3"
     },
+    "com.tesseract.core": {
+      "version": "https://github.com/happyone7/com.tesseract.core.git#v1.1.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "5fd4a0f3f9a8c4558fe47b34d6cd6b8983be6169"
+    },
+    "com.tesseract.objectpool": {
+      "version": "https://github.com/happyone7/com.tesseract.objectpool.git#v1.1.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.tesseract.core": "1.1.0"
+      },
+      "hash": "c0b5c7309806ef4fcbf4ba3dd64c597b7370a6c0"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
