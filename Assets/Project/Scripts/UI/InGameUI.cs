@@ -75,6 +75,12 @@ namespace Nodebreaker.UI
             }
         }
 
+        public void HideAll()
+        {
+            if (runEndPanel != null)
+                runEndPanel.SetActive(false);
+        }
+
         void OnStartRun()
         {
             if (Singleton<Core.GameManager>.HasInstance)

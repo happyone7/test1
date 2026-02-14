@@ -52,6 +52,12 @@ namespace Nodebreaker.Core
                 EndRun(true);
         }
 
+        public void ResetRun()
+        {
+            IsRunning = false;
+            CurrentStage = null;
+        }
+
         void EndRun(bool cleared)
         {
             IsRunning = false;

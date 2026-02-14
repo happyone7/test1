@@ -17,6 +17,6 @@ MonoBehaviour:
   type: 0
   prefab: {fileID: 39702951755536305, guid: b96c78b306e0cc448ac5290dd2e34a52, type: 3}
   hp: 30
-  speed: 2
-  bitDrop: 5
+  speed: 2.5
+  bitDrop: 8
   damage: 1

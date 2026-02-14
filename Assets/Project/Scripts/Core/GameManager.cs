@@ -63,9 +63,36 @@ namespace Nodebreaker.Core
         public void GoToHub()
         {
             State = GameState.Hub;
+
+            // 런 상태 정리
+            if (Singleton<RunManager>.HasInstance)
+                RunManager.Instance.ResetRun();
+
+            // 웨이브 스폰 중지
+            if (Singleton<Node.WaveSpawner>.HasInstance)
+                Node.WaveSpawner.Instance.StopSpawning();
+
+            // 살아있는 노드 정리
+            CleanupNodes();
+
+            // InGameUI 숨기기 (런엔드 패널 포함)
+            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>();
+            if (inGameUI != null)
+                inGameUI.HideAll();
+
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>();
             if (hubUI != null)
                 hubUI.Show();
+        }
+
+        private void CleanupNodes()
+        {
+            var nodes = Object.FindObjectsByType<Node.Node>(FindObjectsSortMode.None);
+            foreach (var node in nodes)
+            {
+                if (node.IsAlive)
+                    Tesseract.ObjectPool.Poolable.TryPool(node.gameObject);
+            }
         }
     }
 }

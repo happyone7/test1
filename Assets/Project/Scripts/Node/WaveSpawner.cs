@@ -78,6 +78,13 @@ namespace Nodebreaker.Node
             }
         }
 
+        public void StopSpawning()
+        {
+            StopAllCoroutines();
+            _spawning = false;
+            _aliveCount = 0;
+        }
+
         public void OnNodeRemoved()
         {
             _aliveCount = Mathf.Max(0, _aliveCount - 1);
