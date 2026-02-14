@@ -15,6 +15,12 @@ public class BuildScript
         string buildPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "SteamBuild", "content");
         string exePath = Path.Combine(buildPath, "MyGame.exe");
 
+        // EditorBuildSettings도 GameScene만 포함하도록 동기화
+        EditorBuildSettings.scenes = new[]
+        {
+            new EditorBuildSettingsScene("Assets/Scenes/GameScene.unity", true)
+        };
+
         // content 폴더 정리
         if (Directory.Exists(buildPath))
             Directory.Delete(buildPath, true);
@@ -23,7 +29,7 @@ public class BuildScript
         // 빌드 실행
         var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
         {
-            scenes = new[] { "Assets/Scenes/MainScene.unity" },
+            scenes = new[] { "Assets/Scenes/GameScene.unity" },
             locationPathName = exePath,
             target = BuildTarget.StandaloneWindows64,
             options = BuildOptions.None

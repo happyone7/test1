@@ -26,6 +26,7 @@ namespace Nodebreaker.Editor
             CreateSingleton<Core.GameManager>("GameManager");
             CreateSingleton<Core.RunManager>("RunManager");
             CreateSingleton<Tower.TowerManager>("TowerManager");
+            CreateSingleton<Tesseract.ObjectPool.PoolManager>("PoolManager");
 
             // WaveSpawner + 웨이포인트
             var spawnerObj = CreateSingleton<Node.WaveSpawner>("WaveSpawner");

@@ -28,6 +28,7 @@ namespace Nodebreaker.Node
             _scaledBitDrop = Mathf.RoundToInt(data.bitDrop * bitMul);
 
             CurrentHp = _scaledHp;
+            IsUsing = true;
             transform.position = _waypoints[0].position;
         }
 

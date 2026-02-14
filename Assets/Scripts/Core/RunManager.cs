@@ -54,6 +54,11 @@ namespace Nodebreaker.Core
         {
             IsRunning = false;
             GameManager.Instance.OnRunEnd(cleared, BitEarned);
+
+            // UI에 런 종료 알림
+            var ui = Object.FindFirstObjectByType<UI.InGameUI>();
+            if (ui != null)
+                ui.ShowRunEnd(cleared, BitEarned);
         }
     }
 }

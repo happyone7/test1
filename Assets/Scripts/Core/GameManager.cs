@@ -15,6 +15,10 @@ namespace Nodebreaker.Core
         [Header("스테이지 데이터")]
         public Data.StageData[] stages;
 
+        [Header("프로토타입 설정")]
+        public bool autoStartRun = true;
+        public float autoStartDelay = 1f;
+
         [Header("현재 상태")]
         public GameState State { get; private set; } = GameState.Hub;
 
@@ -26,6 +30,12 @@ namespace Nodebreaker.Core
         {
             base.Awake();
             LoadData();
+        }
+
+        void Start()
+        {
+            if (autoStartRun)
+                Invoke(nameof(StartRun), autoStartDelay);
         }
 
         public void StartRun()
