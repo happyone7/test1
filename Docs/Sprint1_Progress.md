@@ -50,6 +50,14 @@
   - Soul: 그림자촉수체, Charger: 진홍늑대수, Brute: 보라골렘
 - [x] 타일셋 스타일 락 시안 완료 (5종, 총괄PD 승인)
   - Path/Buildable/Decoration/Entrance/Base
+- [x] 타이틀 배경 이미지 생성 (TitleBG_01, 총괄PD 승인)
+- [x] 허브 배경 이미지 생성 (HubBG_03_dimmed, 총괄PD 승인)
+- [x] 타이틀 로고 생성 (SoulspireLogo_02, 잠정 선택 - 텍스트 후처리 필요)
+
+### UI 적용 (UI팀장)
+- [x] 타이틀 화면에 배경 + 로고 이미지 적용
+- [x] 허브 화면에 배경 이미지 적용
+- [x] 텍스처 임포트 설정 분기 (AI 배경용 Bilinear + CompressedHQ)
 
 ### 인프라 (빌더)
 - [x] Steam 빌드/업로드 파이프라인 (VDF 3종: dev/qa/release)
@@ -117,6 +125,10 @@
 | 2026-02-15 | 팀장별 git author 설정 도입 | 커밋 추적 및 기여도 관리 |
 | 2026-02-15 | QA 조기 착수 프로세스 도입 | 빌드 전 가동 → 병렬 협업 효율성 증대 |
 | 2026-02-15 | 개발PD 3인 체제 정보공유 지침서 작성 | `Docs/DevPD_Guidelines.md` |
+| 2026-02-15 | 타이틀 배경 TitleBG_01 채택 | 보라빛 초승달 + 성 폐허 |
+| 2026-02-15 | 허브 배경 HubBG_03_dimmed 채택 | 천체 성도/별자리, 투명도 조정 |
+| 2026-02-15 | 타이틀 로고 SoulspireLogo_02 잠정 선택 | 텍스트 후처리 보류 |
+| 2026-02-15 | Sprint 1 피드백 v0.2 작성 | `Docs/Design/Sprint1_Feedback_v0.2.md` |
 
 ---
 
@@ -129,7 +141,7 @@
 | 기획팀장 | game-designer | 밸런싱/레벨디자인 작업 착수, BalanceSheet v0.1 작성 중 |
 | 프로그래밍팀장 | unity-gameplay-programmer | 대기 |
 | QA팀장 | unity-qa-engineer | 대기 (빌드 전 가동) |
-| UI팀장 | unity-ui-developer | UI 에셋 Unity 적용 완료 |
-| TA팀장 | unity-technical-artist | 스타일 락 완료, 후처리 대기 |
+| UI팀장 | unity-ui-developer | 배경/로고 적용 완료 |
+| TA팀장 | unity-technical-artist | 배경/로고 생성 완료, 스타일 락 완료 |
 | 빌더 | unity-build-engineer | 대기 |
 | PM | project-manager | 진행 현황 갱신 중 |
