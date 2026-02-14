@@ -1,5 +1,5 @@
 ---
-name: game-designer
+name: 🎲 game-designer
 description: |
   재미, 몰입, 도파민에 특화된 게임 디자인 전문가. Steam 유료 게임($2.99, 3~5시간 플레이)의 메카닉 기획, 난이도 설계, 성장 시스템, 초반 재미 극대화 시 반드시 사용해야 합니다. Nodebuster를 메인 레퍼런스로 합니다.
 

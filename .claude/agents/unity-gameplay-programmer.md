@@ -1,5 +1,5 @@
 ---
-name: unity-gameplay-programmer
+name: ⚔️ unity-gameplay-programmer
 description: |
   Unity 게임플레이 시스템 프로그래머로, 핵심 메카닉, 플레이어 컨트롤러, 게임 로직을 전문으로 합니다. 게임플레이 기능, 캐릭터 컨트롤러, 인벤토리 시스템, 또는 Unity의 핵심 게임 메카닉을 구현할 때 반드시 사용해야 합니다.
 

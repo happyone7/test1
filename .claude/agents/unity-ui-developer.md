@@ -1,5 +1,5 @@
 ---
-name: unity-ui-developer
+name: 🎨 unity-ui-developer
 description: |
   UI Toolkit과 Canvas 기반 시스템 모두에 대한 Unity UI/UX 구현 전문가. 사용자 인터페이스 구현, HUD 디자인, 메뉴 시스템, 또는 반응형 UI 레이아웃 작업 시 반드시 사용해야 합니다.
 

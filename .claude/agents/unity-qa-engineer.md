@@ -1,5 +1,5 @@
 ---
-name: unity-qa-engineer
+name: 🔍 unity-qa-engineer
 description: |
   Unity QA 및 테스트 전문가로서 자동화 테스트, 품질 보증, 테스트 주도 개발을 담당합니다. 테스트 자동화, 품질 지표, 버그 예방, 또는 Unity 프로젝트의 테스트 전략 수립 시 반드시 사용해야 합니다.
 
