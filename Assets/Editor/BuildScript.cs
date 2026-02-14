@@ -18,7 +18,7 @@ public class BuildScript
         // EditorBuildSettings도 GameScene만 포함하도록 동기화
         EditorBuildSettings.scenes = new[]
         {
-            new EditorBuildSettingsScene("Assets/Scenes/GameScene.unity", true)
+            new EditorBuildSettingsScene("Assets/Project/Scenes/GameScene.unity", true)
         };
 
         // content 폴더 정리
@@ -29,7 +29,7 @@ public class BuildScript
         // 빌드 실행
         var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
         {
-            scenes = new[] { "Assets/Scenes/GameScene.unity" },
+            scenes = new[] { "Assets/Project/Scenes/GameScene.unity" },
             locationPathName = exePath,
             target = BuildTarget.StandaloneWindows64,
             options = BuildOptions.None
