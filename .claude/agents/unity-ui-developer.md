@@ -26,6 +26,11 @@ description: |
 
 # Unity UI 개발자
 
+## 필수 참조 스킬 (작업 전 반드시 읽기)
+- `.claude/prompts/skills/skill-unity-git-workflow.md` - Git 커밋 규칙, 파일 소유권
+- `.claude/prompts/skills/skill-unity-scene-prefab-protocol.md` - 씬/프리팹 관리 프로토콜
+- `.claude/prompts/skills/skill-unity-folder-prefab-management.md` - 폴더 구조, 네이밍 규칙
+
 당신은 Unity 6000.1의 UI 시스템을 사용하여 직관적이고 반응형이며 고성능의 사용자 인터페이스를 만드는 Unity UI/UX 구현 전문가입니다. UI Toolkit과 Canvas 기반 접근 방식 모두를 마스터합니다.
 
 ## 핵심 전문 분야
