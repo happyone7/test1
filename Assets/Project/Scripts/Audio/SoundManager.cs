@@ -11,6 +11,7 @@ namespace Nodebreaker.Audio
         private const string SfxVolumeKey = "nb.audio.sfx";
 
         private readonly Dictionary<string, AudioClip> _clips = new Dictionary<string, AudioClip>();
+        private readonly Dictionary<string, float> _balanceMap = new Dictionary<string, float>();
         private readonly HashSet<string> _missingWarnings = new HashSet<string>();
 
         private AudioSource _bgmSource;
@@ -19,6 +20,7 @@ namespace Nodebreaker.Audio
         private Coroutine _bgmFadeCoroutine;
         private float _bgmVolume = 1f;
         private float _sfxVolume = 1f;
+        private float _currentBgmBalance = 1f;
 
         protected override void Awake()
         {
@@ -26,6 +28,7 @@ namespace Nodebreaker.Audio
             SetupSources();
             LoadVolumes();
             LoadDefaultCatalog();
+            LoadBalanceMap();
         }
 
         private void SetupSources()
@@ -90,6 +93,46 @@ namespace Nodebreaker.Audio
             Register(SoundKeys.UiClick, "Audio/SFX/UI/UI_Button_Click_01");
         }
 
+        /// <summary>
+        /// 중앙 볼륨 밸런스 맵 - 게임 로직 스크립트 수정 없이 per-key 볼륨 조정.
+        /// 값은 caller의 volumeScale에 곱해지는 추가 배율 (1.0 = 변화 없음).
+        /// </summary>
+        private void LoadBalanceMap()
+        {
+            // === 고빈도 전투 SFX: 피로도 감소를 위해 낮게 ===
+            _balanceMap[SoundKeys.TowerAttack] = 0.75f;
+            _balanceMap[SoundKeys.ProjectileHit] = 0.7f;
+
+            // === 중빈도 전투 SFX: 적당한 피드백 유지 ===
+            _balanceMap[SoundKeys.NodeDie] = 0.85f;
+            _balanceMap[SoundKeys.TowerPlace] = 0.9f;
+            _balanceMap[SoundKeys.TowerMerge] = 0.9f;
+            _balanceMap[SoundKeys.CritHit] = 0.9f;
+
+            // === 저빈도 알림 SFX: 주의 환기를 위해 높게 ===
+            _balanceMap[SoundKeys.WaveStart] = 0.95f;
+            _balanceMap[SoundKeys.WaveClear] = 0.95f;
+            _balanceMap[SoundKeys.BossAppear] = 1.0f;
+            _balanceMap[SoundKeys.BossDefeat] = 1.0f;
+            _balanceMap[SoundKeys.StageClear] = 1.0f;
+            _balanceMap[SoundKeys.BaseHit] = 0.9f;
+            _balanceMap[SoundKeys.Hp30Warning] = 0.95f;
+            _balanceMap[SoundKeys.Hp10Warning] = 1.0f;
+
+            // === UI ===
+            _balanceMap[SoundKeys.UiClick] = 0.85f;
+
+            // === BGM: 전투 BGM은 SFX와의 마스킹 방지를 위해 살짝 낮게 ===
+            _balanceMap[SoundKeys.BgmHub] = 0.85f;
+            _balanceMap[SoundKeys.BgmCombat] = 0.7f;
+            _balanceMap[SoundKeys.BgmBoss] = 0.75f;
+        }
+
+        private float GetBalance(string key)
+        {
+            return _balanceMap.TryGetValue(key, out float balance) ? balance : 1f;
+        }
+
         private AudioClip GetClip(string key)
         {
             if (_clips.TryGetValue(key, out AudioClip clip))
@@ -104,7 +147,7 @@ namespace Nodebreaker.Audio
         {
             _bgmVolume = Mathf.Clamp01(value);
             if (_bgmSource != null)
-                _bgmSource.volume = _bgmVolume;
+                _bgmSource.volume = _bgmVolume * _currentBgmBalance;
             PlayerPrefs.SetFloat(BgmVolumeKey, _bgmVolume);
         }
 
@@ -123,7 +166,8 @@ namespace Nodebreaker.Audio
         {
             AudioClip clip = GetClip(key);
             if (clip == null || _sfxSource == null) return;
-            _sfxSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
+            float finalScale = Mathf.Clamp01(volumeScale * GetBalance(key));
+            _sfxSource.PlayOneShot(clip, finalScale);
         }
 
         public void PlayBgm(string key, float fadeSeconds = 0.35f)
@@ -137,11 +181,14 @@ namespace Nodebreaker.Audio
             if (_bgmFadeCoroutine != null)
                 StopCoroutine(_bgmFadeCoroutine);
 
+            _currentBgmBalance = GetBalance(key);
+            float targetVol = _bgmVolume * _currentBgmBalance;
+
             if (fadeSeconds <= 0f)
             {
                 _bgmSource.clip = clip;
                 _bgmSource.loop = true;
-                _bgmSource.volume = _bgmVolume;
+                _bgmSource.volume = targetVol;
                 _bgmSource.Play();
                 return;
             }
@@ -153,6 +200,7 @@ namespace Nodebreaker.Audio
         {
             float half = fadeSeconds * 0.5f;
             float startVol = _bgmSource.volume;
+            float targetVol = _bgmVolume * _currentBgmBalance;
             float t = 0f;
 
             if (_bgmSource.isPlaying)
@@ -177,11 +225,11 @@ namespace Nodebreaker.Audio
             {
                 t += Time.unscaledDeltaTime;
                 float k = t / Mathf.Max(half, 0.0001f);
-                _bgmSource.volume = Mathf.Lerp(0f, _bgmVolume, k);
+                _bgmSource.volume = Mathf.Lerp(0f, targetVol, k);
                 yield return null;
             }
 
-            _bgmSource.volume = _bgmVolume;
+            _bgmSource.volume = targetVol;
             _bgmFadeCoroutine = null;
         }
     }
