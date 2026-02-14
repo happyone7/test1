@@ -1,0 +1,85 @@
+using Tesseract.Core;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Nodebreaker.UI
+{
+    /// <summary>
+    /// 방치 Bit 수령 팝업 (PPT 명세 슬라이드 5-4)
+    /// 420x250px, 테두리 #FFD84D 2px
+    /// 제목: "방치 보상", 20pt 굵게, #FFD84D
+    /// Bit 금액: 28pt 굵게, #2BFF88
+    /// 부재 시간: 12pt, #AFC3E8
+    /// 수령 버튼: 220x50px, 채우기=#302810, 테두리=#FFD84D
+    /// </summary>
+    public class IdleBitPopup : MonoBehaviour
+    {
+        [Header("텍스트")]
+        public Text titleText;
+        public Text bitAmountText;
+        public Text absenceTimeText;
+
+        [Header("버튼")]
+        public Button claimButton;
+        public Text claimButtonText;
+
+        private int _pendingBit;
+        private float _absenceSeconds;
+
+        void Start()
+        {
+            if (claimButton != null)
+                claimButton.onClick.AddListener(OnClaim);
+
+            gameObject.SetActive(false);
+        }
+
+        public void Show(int bitAmount, float absenceSeconds)
+        {
+            _pendingBit = bitAmount;
+            _absenceSeconds = absenceSeconds;
+
+            if (titleText != null)
+                titleText.text = "방치 보상";
+
+            if (bitAmountText != null)
+                bitAmountText.text = $"+{bitAmount:N0} Bit";
+
+            if (absenceTimeText != null)
+            {
+                int hours = Mathf.FloorToInt(absenceSeconds / 3600f);
+                int minutes = Mathf.FloorToInt((absenceSeconds % 3600f) / 60f);
+                absenceTimeText.text = hours > 0
+                    ? $"부재 시간: {hours}시간 {minutes}분"
+                    : $"부재 시간: {minutes}분";
+            }
+
+            if (claimButtonText != null)
+                claimButtonText.text = "수령";
+
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void OnClaim()
+        {
+            if (_pendingBit > 0 && Singleton<Core.MetaManager>.HasInstance)
+            {
+                Core.MetaManager.Instance.AddRunRewards(_pendingBit, 0, false, 0);
+                Debug.Log($"[IdleBitPopup] 방치 보상 수령: {_pendingBit} Bit");
+            }
+
+            _pendingBit = 0;
+            Hide();
+
+            // 허브 UI 갱신
+            var hubUI = Object.FindFirstObjectByType<HubUI>();
+            if (hubUI != null)
+                hubUI.RefreshAll();
+        }
+    }
+}

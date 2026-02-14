@@ -83,12 +83,28 @@ namespace Nodebreaker.Editor
             coreText.fontSize = 24;
             hubUI.totalCoreText = coreText;
 
-            var stageText = CreateUIText(topBarObj.transform, "StageInfoText", "Stage 1",
-                new Vector2(0.6f, 0), new Vector2(1, 1),
-                Vector2.zero, Vector2.zero);
-            stageText.alignment = TextAnchor.MiddleCenter;
-            stageText.fontSize = 24;
-            hubUI.stageInfoText = stageText;
+            // 스테이지 드롭다운
+            var stageDropdownObj = FindOrCreateChild(topBarObj.transform, "StageDropdown");
+            var stageDropdownRect = stageDropdownObj.GetComponent<RectTransform>();
+            stageDropdownRect.anchorMin = new Vector2(0.6f, 0.1f);
+            stageDropdownRect.anchorMax = new Vector2(0.95f, 0.9f);
+            stageDropdownRect.offsetMin = Vector2.zero;
+            stageDropdownRect.offsetMax = Vector2.zero;
+            var stageDropdown = stageDropdownObj.GetComponent<Dropdown>();
+            if (stageDropdown == null)
+                stageDropdown = stageDropdownObj.AddComponent<Dropdown>();
+            // 레이블 텍스트
+            var dropdownLabel = CreateUIText(stageDropdownObj.transform, "Label", "Stage 1",
+                Vector2.zero, Vector2.one, new Vector2(10, 0), new Vector2(-25, 0));
+            dropdownLabel.alignment = TextAnchor.MiddleLeft;
+            dropdownLabel.fontSize = 20;
+            stageDropdown.captionText = dropdownLabel;
+            // 배경 이미지
+            var dropdownBg = stageDropdownObj.GetComponent<Image>();
+            if (dropdownBg == null)
+                dropdownBg = stageDropdownObj.AddComponent<Image>();
+            dropdownBg.color = new Color(0.2f, 0.2f, 0.3f, 1f);
+            hubUI.stageDropdown = stageDropdown;
 
             // 6. 스킬 노드 영역 (중앙)
             var skillArea = FindOrCreateChild(hubPanelObj.transform, "SkillArea");
@@ -160,11 +176,11 @@ namespace Nodebreaker.Editor
             }
             hubUI.skillNodes = skillNodes;
 
-            // 7. 상세 패널 (하단)
+            // 7. 상세 패널 (하단, 출전 버튼 위에 배치)
             var detailPanel = FindOrCreateChild(hubPanelObj.transform, "DetailPanel");
             var detailRect = detailPanel.GetComponent<RectTransform>();
-            detailRect.anchorMin = new Vector2(0.15f, 0.05f);
-            detailRect.anchorMax = new Vector2(0.65f, 0.22f);
+            detailRect.anchorMin = new Vector2(0.15f, 0.13f);
+            detailRect.anchorMax = new Vector2(0.65f, 0.24f);
             detailRect.offsetMin = Vector2.zero;
             detailRect.offsetMax = Vector2.zero;
             var detailBg = detailPanel.GetComponent<Image>();
@@ -206,11 +222,11 @@ namespace Nodebreaker.Editor
             dCostText.alignment = TextAnchor.MiddleRight;
             hubUI.detailCostText = dCostText;
 
-            // 8. 구매 버튼
+            // 8. 구매 버튼 (상세 패널 오른쪽, 작은 크기)
             var purchaseBtnObj = FindOrCreateChild(hubPanelObj.transform, "PurchaseButton");
             var purchaseRect = purchaseBtnObj.GetComponent<RectTransform>();
-            purchaseRect.anchorMin = new Vector2(0.68f, 0.08f);
-            purchaseRect.anchorMax = new Vector2(0.85f, 0.19f);
+            purchaseRect.anchorMin = new Vector2(0.67f, 0.15f);
+            purchaseRect.anchorMax = new Vector2(0.76f, 0.23f);
             purchaseRect.offsetMin = Vector2.zero;
             purchaseRect.offsetMax = Vector2.zero;
             var purchaseBg = purchaseBtnObj.GetComponent<Image>();
@@ -227,24 +243,24 @@ namespace Nodebreaker.Editor
             purchaseBtnText.fontStyle = FontStyle.Bold;
             hubUI.purchaseButton = purchaseBtn;
 
-            // 9. 출전 버튼
+            // 9. 출전 버튼 (하단 중앙, 크고 눈에 띄게 — DetailPanel 아래)
             var startBtnObj = FindOrCreateChild(hubPanelObj.transform, "StartRunButton");
             var startRect = startBtnObj.GetComponent<RectTransform>();
-            startRect.anchorMin = new Vector2(0.35f, 0.01f);
-            startRect.anchorMax = new Vector2(0.65f, 0.06f);
+            startRect.anchorMin = new Vector2(0.25f, 0.02f);
+            startRect.anchorMax = new Vector2(0.75f, 0.11f);
             startRect.offsetMin = Vector2.zero;
             startRect.offsetMax = Vector2.zero;
             var startBg = startBtnObj.GetComponent<Image>();
             if (startBg == null)
                 startBg = startBtnObj.AddComponent<Image>();
-            startBg.color = new Color(0.8f, 0.4f, 0.1f, 1f);
+            startBg.color = new Color(0.9f, 0.45f, 0.1f, 1f);
             var startBtn = startBtnObj.GetComponent<Button>();
             if (startBtn == null)
                 startBtn = startBtnObj.AddComponent<Button>();
-            var startBtnText = CreateUIText(startBtnObj.transform, "Text", "출전!",
+            var startBtnText = CreateUIText(startBtnObj.transform, "Text", "▶  출전!",
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             startBtnText.alignment = TextAnchor.MiddleCenter;
-            startBtnText.fontSize = 24;
+            startBtnText.fontSize = 28;
             startBtnText.fontStyle = FontStyle.Bold;
             hubUI.startRunButton = startBtn;
 
