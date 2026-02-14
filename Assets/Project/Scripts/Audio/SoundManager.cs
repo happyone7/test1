@@ -91,6 +91,13 @@ namespace Nodebreaker.Audio
             Register(SoundKeys.Hp10Warning, "Audio/SFX/Alert/ALT_Hp10_Warning_01");
 
             Register(SoundKeys.UiClick, "Audio/SFX/UI/UI_Button_Click_01");
+
+            // Phase 2: Hub
+            Register(SoundKeys.BgmHubPhase2, "Audio/BGM/BGM_Hub_Phase2_01");
+            Register(SoundKeys.SkillPurchase, "Audio/SFX/Hub/SFX_Skill_Purchase_01");
+            Register(SoundKeys.SkillMaxLevel, "Audio/SFX/Hub/SFX_Skill_MaxLevel_01");
+            Register(SoundKeys.UiHubClick, "Audio/SFX/Hub/UI_Hub_Click_01");
+            Register(SoundKeys.RunStart, "Audio/SFX/Hub/SFX_Run_Start_01");
         }
 
         /// <summary>
@@ -126,6 +133,13 @@ namespace Nodebreaker.Audio
             _balanceMap[SoundKeys.BgmHub] = 0.85f;
             _balanceMap[SoundKeys.BgmCombat] = 0.7f;
             _balanceMap[SoundKeys.BgmBoss] = 0.75f;
+
+            // === Phase 2: Hub ===
+            _balanceMap[SoundKeys.BgmHubPhase2] = 0.85f;
+            _balanceMap[SoundKeys.SkillPurchase] = 0.9f;
+            _balanceMap[SoundKeys.SkillMaxLevel] = 0.95f;
+            _balanceMap[SoundKeys.UiHubClick] = 0.85f;
+            _balanceMap[SoundKeys.RunStart] = 1.0f;
         }
 
         private float GetBalance(string key)
