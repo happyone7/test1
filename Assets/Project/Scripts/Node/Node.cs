@@ -14,6 +14,7 @@ namespace Nodebreaker.Node
         float _scaledHp;
         float _scaledSpeed;
         int _scaledBitDrop;
+        int _defense;
 
         // 감속 디버프
         float _slowRate;       // 0~1 (0.25 = 25% 감속)
@@ -31,6 +32,7 @@ namespace Nodebreaker.Node
             _scaledHp = data.hp * hpMul;
             _scaledSpeed = data.speed * speedMul;
             _scaledBitDrop = Mathf.RoundToInt(data.bitDrop * bitMul);
+            _defense = data.defense;
 
             CurrentHp = _scaledHp;
             _slowRate = 0f;
@@ -71,7 +73,9 @@ namespace Nodebreaker.Node
         public void TakeDamage(float damage)
         {
             if (!IsAlive) return;
-            CurrentHp -= damage;
+            // defense 차감: 최소 데미지 1 보장
+            float actualDamage = Mathf.Max(1f, damage - _defense);
+            CurrentHp -= actualDamage;
             if (CurrentHp <= 0f)
                 Die();
         }
