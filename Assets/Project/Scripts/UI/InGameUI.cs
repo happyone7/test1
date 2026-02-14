@@ -69,7 +69,10 @@ namespace Nodebreaker.UI
             if (runEndTitleText != null)
                 runEndTitleText.text = cleared ? "STAGE CLEAR!" : "DEFEATED";
             if (runEndBitText != null)
-                runEndBitText.text = $"+{bitEarned} Bit";
+            {
+                int totalBit = Singleton<Core.GameManager>.HasInstance ? Core.GameManager.Instance.TotalBit : 0;
+                runEndBitText.text = $"+{bitEarned} Bit\n보유: {totalBit} Bit";
+            }
         }
 
         void OnStartRun()

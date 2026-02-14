@@ -1,3 +1,4 @@
+using Tesseract.Core;
 using Tesseract.ObjectPool;
 using UnityEngine;
 
@@ -33,7 +34,11 @@ namespace Nodebreaker.Tower
             if (_currentTarget == null || !_currentTarget.IsAlive)
                 _currentTarget = FindTarget();
 
-            if (_currentTarget != null && _attackTimer >= 1f / data.GetAttackSpeed(Level))
+            float attackSpeed = data.GetAttackSpeed(Level);
+            if (Singleton<Core.RunManager>.HasInstance)
+                attackSpeed *= Core.RunManager.Instance.CurrentModifiers.attackSpeedMultiplier;
+
+            if (_currentTarget != null && _attackTimer >= 1f / attackSpeed)
             {
                 Attack();
                 _attackTimer = 0f;
@@ -66,6 +71,10 @@ namespace Nodebreaker.Tower
 
         void Attack()
         {
+            float damage = data.GetDamage(Level);
+            if (Singleton<Core.RunManager>.HasInstance)
+                damage *= Core.RunManager.Instance.CurrentModifiers.attackDamageMultiplier;
+
             if (data.projectilePrefab != null)
             {
                 var spawnPos = firePoint != null ? firePoint : transform;
@@ -74,12 +83,11 @@ namespace Nodebreaker.Tower
 
                 var proj = go.GetComponent<Projectile.Projectile>();
                 if (proj != null)
-                    proj.Initialize(_currentTarget, data.GetDamage(Level));
+                    proj.Initialize(_currentTarget, damage);
             }
             else
             {
-                // 투사체 없이 즉시 타격
-                _currentTarget.TakeDamage(data.GetDamage(Level));
+                _currentTarget.TakeDamage(damage);
             }
         }
 

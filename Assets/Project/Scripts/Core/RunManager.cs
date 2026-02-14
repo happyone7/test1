@@ -10,6 +10,7 @@ namespace Nodebreaker.Core
         public int CurrentWaveIndex { get; private set; }
         public int BitEarned { get; private set; }
         public bool IsRunning { get; private set; }
+        public RunModifiers CurrentModifiers { get; private set; }
 
         int _baseHp;
         int _baseMaxHp;
@@ -17,12 +18,13 @@ namespace Nodebreaker.Core
         public int BaseHp => _baseHp;
         public int BaseMaxHp => _baseMaxHp;
 
-        public void StartRun(Data.StageData stage)
+        public void StartRun(Data.StageData stage, RunModifiers modifiers)
         {
             CurrentStage = stage;
             CurrentWaveIndex = 0;
             BitEarned = 0;
-            _baseMaxHp = stage.baseHp;
+            CurrentModifiers = modifiers;
+            _baseMaxHp = stage.baseHp + modifiers.bonusBaseHp;
             _baseHp = _baseMaxHp;
             IsRunning = true;
 
