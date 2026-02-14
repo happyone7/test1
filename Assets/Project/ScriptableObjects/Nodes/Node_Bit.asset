@@ -21,3 +21,4 @@ MonoBehaviour:
   speed: 1.5
   bitDrop: 3
   damage: 1
+  defense: 0
