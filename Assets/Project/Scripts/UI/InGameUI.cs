@@ -84,6 +84,9 @@ namespace Nodebreaker.UI
         public Outline hubButtonOutline;        // Hub 버튼 Outline
         public Outline retryButtonOutline;      // 재도전 버튼 Outline
 
+        [Header("런 종료 패널 - 보유 Bit 총액")]
+        public Text runEndTotalBitText;         // "보유 Bit: 1,234" 텍스트
+
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
@@ -306,6 +309,22 @@ public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEar
                 else
                 {
                     runEndCoreText.gameObject.SetActive(false);
+                }
+            }
+
+            // 보유 Bit 총액 표시 (런 보상 적립 후)
+            if (runEndTotalBitText != null)
+            {
+                if (Singleton<Core.MetaManager>.HasInstance)
+                {
+                    int totalBit = Core.MetaManager.Instance.TotalBit;
+                    runEndTotalBitText.text = $"보유 Bit:  {totalBit:N0}";
+                    runEndTotalBitText.color = ColorBitGreen;
+                    runEndTotalBitText.gameObject.SetActive(true);
+                }
+                else
+                {
+                    runEndTotalBitText.gameObject.SetActive(false);
                 }
             }
 

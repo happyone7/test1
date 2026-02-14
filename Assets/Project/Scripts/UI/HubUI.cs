@@ -89,6 +89,28 @@ namespace Nodebreaker.UI
         private int _pendingIdleBit;
 
         /// <summary>
+        /// prerequisite 스킬들이 모두 1레벨 이상인지 확인
+        /// </summary>
+        private bool ArePrerequisitesMet(Data.SkillNodeData skill)
+        {
+            if (skill == null) return false;
+            if (skill.prerequisiteIds == null || skill.prerequisiteIds.Length == 0)
+                return true;
+
+            if (!Singleton<Core.MetaManager>.HasInstance) return false;
+            var meta = Core.MetaManager.Instance;
+
+            foreach (var prereqId in skill.prerequisiteIds)
+            {
+                if (string.IsNullOrEmpty(prereqId)) continue;
+                if (meta.GetSkillLevel(prereqId) <= 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// 현재 드롭다운에서 선택된 스테이지 인덱스
         /// </summary>
         public int SelectedStageIndex => _selectedStageIndex;
@@ -319,12 +341,13 @@ namespace Nodebreaker.UI
             int level = 0;
             bool canPurchase = false;
             int totalBit = 0;
+            bool isLocked = !ArePrerequisitesMet(_selectedSkill);
 
             if (Singleton<Core.MetaManager>.HasInstance)
             {
                 var meta = Core.MetaManager.Instance;
                 level = meta.GetSkillLevel(_selectedSkill.skillId);
-                canPurchase = meta.CanPurchaseSkill(_selectedSkill.skillId);
+                canPurchase = !isLocked && meta.CanPurchaseSkill(_selectedSkill.skillId);
                 totalBit = meta.TotalBit;
             }
 
@@ -333,14 +356,27 @@ namespace Nodebreaker.UI
             // 제목: "공격력 Lv3 -> Lv4" (PPT 명세)
             if (detailNameText != null)
             {
-                if (isMaxLevel)
+                if (isLocked)
+                    detailNameText.text = $"{_selectedSkill.skillName} (잠금)";
+                else if (isMaxLevel)
                     detailNameText.text = $"{_selectedSkill.skillName} Lv{level} (MAX)";
                 else
                     detailNameText.text = $"{_selectedSkill.skillName} Lv{level} -> Lv{level + 1}";
             }
 
             if (detailDescText != null)
-                detailDescText.text = _selectedSkill.description;
+            {
+                if (isLocked)
+                {
+                    // 선행 스킬 이름 표시
+                    string prereqNames = GetPrerequisiteNames(_selectedSkill);
+                    detailDescText.text = $"선행 스킬 필요: {prereqNames}";
+                }
+                else
+                {
+                    detailDescText.text = _selectedSkill.description;
+                }
+            }
 
             if (detailLevelText != null)
                 detailLevelText.text = $"Lv.{level}/{_selectedSkill.maxLevel}";
@@ -348,13 +384,20 @@ namespace Nodebreaker.UI
             // 효과 변경 전/후
             if (detailEffectText != null)
             {
-                float currentValue = _selectedSkill.GetTotalValue(level);
-                if (isMaxLevel)
-                    detailEffectText.text = $"효과: {_selectedSkill.effectType} +{currentValue}";
+                if (isLocked)
+                {
+                    detailEffectText.text = $"효과: {_selectedSkill.effectType} (잠금)";
+                }
                 else
                 {
-                    float nextValue = _selectedSkill.GetTotalValue(level + 1);
-                    detailEffectText.text = $"효과: {_selectedSkill.effectType} +{currentValue} -> +{nextValue}";
+                    float currentValue = _selectedSkill.GetTotalValue(level);
+                    if (isMaxLevel)
+                        detailEffectText.text = $"효과: {_selectedSkill.effectType} +{currentValue}";
+                    else
+                    {
+                        float nextValue = _selectedSkill.GetTotalValue(level + 1);
+                        detailEffectText.text = $"효과: {_selectedSkill.effectType} +{currentValue} -> +{nextValue}";
+                    }
                 }
             }
 
@@ -362,12 +405,14 @@ namespace Nodebreaker.UI
             if (detailChangeBeforeText != null)
             {
                 float currentValue = _selectedSkill.GetTotalValue(level);
-                detailChangeBeforeText.text = $"현재: +{currentValue}";
+                detailChangeBeforeText.text = isLocked ? "현재: -" : $"현재: +{currentValue}";
             }
 
             if (detailChangeAfterText != null)
             {
-                if (isMaxLevel)
+                if (isLocked)
+                    detailChangeAfterText.text = "잠금 상태";
+                else if (isMaxLevel)
                     detailChangeAfterText.text = "최대 레벨";
                 else
                 {
@@ -376,10 +421,15 @@ namespace Nodebreaker.UI
                 }
             }
 
-            // 비용 텍스트 (자금 부족 시 빨간색)
+            // 비용 텍스트 (자금 부족 시 빨간색, 잠금 시 회색)
             if (detailCostText != null)
             {
-                if (isMaxLevel)
+                if (isLocked)
+                {
+                    detailCostText.text = "잠금";
+                    detailCostText.color = ColorTextSecondary;
+                }
+                else if (isMaxLevel)
                 {
                     detailCostText.text = "MAX";
                     detailCostText.color = ColorTextSecondary;
@@ -394,10 +444,51 @@ namespace Nodebreaker.UI
 
             // 구매 버튼 텍스트
             if (purchaseButtonText != null)
-                purchaseButtonText.text = isMaxLevel ? "최대" : "구매";
+            {
+                if (isLocked)
+                    purchaseButtonText.text = "잠금";
+                else if (isMaxLevel)
+                    purchaseButtonText.text = "최대";
+                else
+                    purchaseButtonText.text = "구매";
+            }
 
             if (purchaseButton != null)
                 purchaseButton.interactable = canPurchase;
+        }
+
+        /// <summary>
+        /// 선행 스킬 이름을 쉼표로 구분하여 반환
+        /// </summary>
+        private string GetPrerequisiteNames(Data.SkillNodeData skill)
+        {
+            if (skill.prerequisiteIds == null || skill.prerequisiteIds.Length == 0)
+                return "";
+
+            var names = new List<string>();
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                var meta = Core.MetaManager.Instance;
+                foreach (var prereqId in skill.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    // allSkills에서 이름 찾기
+                    if (meta.allSkills != null)
+                    {
+                        foreach (var s in meta.allSkills)
+                        {
+                            if (s != null && s.skillId == prereqId)
+                            {
+                                names.Add(s.skillName);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return names.Count > 0 ? string.Join(", ", names) : string.Join(", ", skill.prerequisiteIds);
         }
 
         private void OnPurchase()
