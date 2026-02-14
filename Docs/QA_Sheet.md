@@ -117,11 +117,11 @@
 
 | ID | 카테고리 | 항목 | 우선순위 | 상태 | 담당 브랜치 | 메모 |
 |----|---------|------|---------|------|------------|------|
-| Q64 | 통합 | 모든 .cs 파일 컴파일 에러 없음 | P0 | PENDING | sprint3 | 머지 후 |
-| Q65 | 통합 | Console에 에러 로그 없음 (경고 허용) | P0 | PENDING | sprint3 | 머지 후 |
-| Q66 | 통합 | 씬 로드 시 Missing Reference 없음 | P0 | PENDING | sprint3 | 머지 후 |
-| Q67 | 통합 | 에디터 Play 모드 정상 진입 | P0 | PENDING | sprint3 | 머지 후 |
-| Q68 | 통합 | 타이틀 -> 허브 -> 인게임 -> 런 종료 플로우 정상 | P0 | PENDING | sprint3 | 머지 후 |
+| Q64 | 통합 | 모든 .cs 파일 컴파일 에러 없음 | P0 | PASS (정적) | sprint3 | 37개 .cs + 19개 Editor .cs 전수 검증. .meta 56/56 정합. namespace/타입 참조 정상. MCP 미응답으로 에디터 컴파일 미확인 |
+| Q65 | 통합 | Console에 에러 로그 없음 (경고 허용) | P0 | BLOCKED | sprint3 | MCP 세션 미응답 (Unity ping timeout). 에디터 콘솔 확인 불가. 수동 확인 필요 |
+| Q66 | 통합 | 씬 로드 시 Missing Reference 없음 | P0 | BLOCKED | sprint3 | MCP 세션 미응답. manage_scene/get_hierarchy 실행 불가. 수동 확인 필요 |
+| Q67 | 통합 | 에디터 Play 모드 정상 진입 | P0 | BLOCKED | sprint3 | MCP 세션 미응답. manage_editor/play 실행 불가. 수동 확인 필요 |
+| Q68 | 통합 | 타이틀 -> 허브 -> 인게임 -> 런 종료 플로우 정상 | P0 | BLOCKED | sprint3 | MCP 세션 미응답. Play 모드 진입 불가. 수동 확인 필요 |
 
 ---
 
@@ -134,7 +134,30 @@
 | dev/ui | d810a9d, e8b7b88 | 스킬트리 UI 시스템 (6개 .cs + 씬 + 에디터) | PASS | PASS | MERGED (45613ec) |
 | dev/game-designer | 014694a, 0e32a8f, 383865b | 난이도 곡선 SO (Stage 2~3, Wave 19개, Node_Shield) + 로고 + 맵 레이아웃 | PASS | N/A (코드 없음) | MERGED (0aea38d) |
 | dev/ta | daff3af, 67150de | 스킬 아이콘 8종 + 투사체 PPU 수정 | PASS | N/A (코드 없음) | MERGED (11282c8) |
-| dev/programmer | 작업 중 | Cannon/Ice Tower + Quick/Heavy Monster | - | - | 별도 머지 예정 |
+| dev/programmer | 08c4487 | Cannon/Ice Tower, Quick/Heavy Monster, Tilemap 4-layer, defense, MetaManager SaveManager 전환 | PASS | PASS | MERGED (08c4487) |
+
+### Sprint 3 최종 통합 QA (Q64~Q68)
+
+| 항목 | 검증 방법 | 결과 | 비고 |
+|------|----------|------|------|
+| Q64 - 컴파일 에러 | 정적 코드 분석 (37+19개 .cs 전수 검토) | PASS (정적) | .meta 56/56 정합, namespace/타입 참조 정상, Tesseract 패키지 의존성 확인 |
+| Q65 - 에러 로그 | Unity MCP read_console | BLOCKED | MCP 세션 미응답 (ping timeout 반복) |
+| Q66 - Missing Ref | Unity MCP manage_scene | BLOCKED | MCP 세션 미응답 |
+| Q67 - Play 모드 | Unity MCP manage_editor | BLOCKED | MCP 세션 미응답 |
+| Q68 - 게임 플로우 | Unity MCP Play + 수동 확인 | BLOCKED | MCP 세션 미응답 |
+
+**BLOCKER**: Unity MCP 세션(localhost:8080)이 HTTP 404 응답(서버 자체는 활성)하나, 내부 ping 응답이 없어 모든 에디터 제어 명령이 실패함.
+- `refresh_unity`: 60초 timeout 반복
+- `read_console`: "Unity session not ready" 반복
+- `manage_scene`: TimeoutError
+- `manage_editor/telemetry_ping`: queued 성공하나 응답 없음
+
+**추정 원인**: feature/phase1-core-loop -> sprint3 브랜치 전환 후 대량 에셋 re-import 중 MCP 서버 세션이 끊어진 것으로 판단. Unity 에디터에서 Window > MCP for Unity > Start Server 재시작 필요.
+
+**권장 조치**:
+1. 총괄PD가 Unity 에디터에서 MCP 서버 수동 재시작
+2. QA팀장이 Q65~Q68 재검증 수행
+3. 또는 총괄PD가 에디터에서 수동으로 Q65~Q68 직접 확인
 
 ---
 
@@ -144,3 +167,4 @@
 |------|------|
 | 2026-02-15 | Sprint 3 QA 시트 초기 생성 (QA팀장) |
 | 2026-02-15 | dev/ui, dev/game-designer, dev/ta 브랜치 검증 통과 및 sprint3 머지 완료 |
+| 2026-02-15 | Sprint 3 최종 통합 QA (Q64~Q68) 수행. Q64 정적 PASS, Q65~Q68 MCP BLOCKED |
