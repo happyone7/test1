@@ -13,14 +13,13 @@ MonoBehaviour:
   m_Name: Skill_AttackDamage
   m_EditorClassIdentifier: 
   skillId: atk_dmg
-  skillName: "\uACF5\uACA9\uB825 \uAC15\uD654"
-  description: "\uBAA8\uB4E0 \uD0C0\uC6CC\uC758 \uB370\uBBF8\uC9C0\uAC00 \uB808\uBCA8\uB2F9
-    10% \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  skillName: "\uD30C\uAD34\uC758 \uD798"
+  description: "\uD0C0\uC6CC\uC758 \uACF5\uACA9\uB825\uC744 \uAC15\uD654\uD569\uB2C8\uB2E4."
   icon: {fileID: 21300000, guid: 761fe86cae6a3114880e7e944cd17766, type: 3}
   effectType: 0
   valuePerLevel: 0.1
   maxLevel: 20
   baseCost: 50
   growthRate: 1.3
-  position: {x: -1, y: 0}
+  position: {x: 0, y: 0}
   prerequisiteIds: []

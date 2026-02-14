@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Skill_BaseHp
   m_EditorClassIdentifier: 
   skillId: base_hp
-  skillName: "\uAE30\uC9C0 HP \uAC15\uD654"
-  description: "\uAE30\uC9C0\uC758 \uCD5C\uB300 HP\uAC00 \uB808\uBCA8\uB2F9 5 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  skillName: "\uACAC\uACE0\uD55C \uC131\uBCBD"
+  description: "\uAE30\uC9C0\uC758 \uCCB4\uB825\uC744 \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
   icon: {fileID: 21300000, guid: 44193d8a1b75fb1409052c14146de454, type: 3}
   effectType: 2
   valuePerLevel: 5
   maxLevel: 20
-  baseCost: 40
-  growthRate: 1.25
-  position: {x: 0, y: -1}
+  baseCost: 30
+  growthRate: 1.2
+  position: {x: -2, y: 0}
   prerequisiteIds: []
