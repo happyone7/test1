@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
 using Tesseract.Core;
+using Tesseract.Save;
 using UnityEngine;
 
 namespace Nodebreaker.Core
@@ -10,11 +10,9 @@ namespace Nodebreaker.Core
         [Header("스킬 데이터")]
         public Data.SkillNodeData[] allSkills;
 
-        // TODO: Unity 재시작 후 Tesseract.Save.SaveManager로 교체
+        SaveManager<PlayerSaveData> _saveManager;
         PlayerSaveData _data;
         Dictionary<string, int> _skillLevelCache = new Dictionary<string, int>();
-
-        string SavePath => Path.Combine(Application.persistentDataPath, "nodebreaker_save.json");
 
         public int TotalBit => _data.totalBit;
         public int TotalCore => _data.totalCore;
@@ -23,28 +21,20 @@ namespace Nodebreaker.Core
         protected override void Awake()
         {
             base.Awake();
+            _saveManager = new SaveManager<PlayerSaveData>("nodebreaker_save.json");
             Load();
         }
 
         void Load()
         {
-            if (File.Exists(SavePath))
-            {
-                string json = File.ReadAllText(SavePath);
-                _data = JsonUtility.FromJson<PlayerSaveData>(json) ?? new PlayerSaveData();
-            }
-            else
-            {
-                _data = new PlayerSaveData();
-            }
+            _data = _saveManager.Load();
             RebuildCache();
         }
 
         public void Save()
         {
             SyncFromCache();
-            string json = JsonUtility.ToJson(_data, true);
-            File.WriteAllText(SavePath, json);
+            _saveManager.Save(_data);
         }
 
         public int GetSkillLevel(string skillId)
@@ -163,6 +153,7 @@ namespace Nodebreaker.Core
         protected override void OnApplicationQuit()
         {
             Save();
+            _saveManager?.Dispose();
             base.OnApplicationQuit();
         }
 

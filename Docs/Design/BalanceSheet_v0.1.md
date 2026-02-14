@@ -2,7 +2,7 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 0.2 (Sprint 3 SO 동기화 완료, 보물상자/전투밸런스 연동) |
+| 문서 버전 | 0.1 (Sprint 3 갱신) |
 | 최종 수정 | 2026-02-15 |
 | 작성자 | 기획팀장 (Game Designer) |
 | 기준 문서 | GDD v2.0, 부록 A/B |
@@ -246,7 +246,7 @@ GDD 기준 수치. 공격속도는 "공격 간격(초)" 기반.
 | 스킬 | 누적 비용 (Lv5) | 효과 (Lv5) | DPS 환산 기여 | 비용 대비 효율 |
 |------|---------------|-----------|-------------|--------------|
 | 공격력 +10%/Lv | 453 Bit | x1.5 데미지 | +50% DPS | **1.10 DPS%/Bit** |
-| 공격속도 +5%/Lv | 519 Bit | x1.25 공속 | +25% DPS | **0.48 DPS%/Bit** |
+| 공격속도 +5%/Lv | 723 Bit | x1.25 공속 | +25% DPS | **0.35 DPS%/Bit** |
 | 사거리 +0.2/Lv | 416 Bit | +1.0 사거리 | 간접 (더 빨리 공격 시작) | 유틸리티 |
 | 기지 HP +5/Lv | 328 Bit | +25 HP | 생존 (DPS 아님) | 생존력 |
 | Bit 획득 +15%/Lv | 676 Bit | x1.75 Bit | 경제 성장 가속 | **경제 투자** |
@@ -298,7 +298,7 @@ Bit 획득량 스킬에 투입한 Bit가 몇 회 런 만에 회수되는지 계�
 | Lv1 (100 Bit) | 100 | +15 Bit/런 | 7회 |
 | Lv2 (135 Bit) | 235 (누적) | +30 Bit/런 | 8회 |
 | Lv3 (182 Bit) | 417 (누적) | +45 Bit/런 | 9회 |
-| Lv5 (332 Bit) | 1,081 (누적) | +75 Bit/런 | 14회 |
+| Lv5 (332 Bit) | 995 (누적) | +75 Bit/런 | 13회 |
 
 **결론**: St.1에서 평균 런당 100 Bit 획득 시, Bit 획득 Lv3는 누적 417 Bit 투자 후 9회 런(약 10~15분)이면 회수. 이후로는 순이익. **중반 이후 투자 가치 높음**.
 
@@ -344,20 +344,21 @@ Bit 획득량 스킬에 투입한 Bit가 몇 회 런 만에 회수되는지 계�
 
 ### 5.4 SO 에셋 vs GDD 수치 괴리 (현황)
 
-**Sprint 3 기준: 모든 SO 수치가 GDD와 일치하는 것을 확인 (2026-02-15).**
+Sprint 2까지의 SO 에셋과 GDD 수치 간 괴리가 존재한다. 아래는 GDD 기준으로 정정이 필요한 항목.
 
-이전 Sprint에서 존재했던 괴리 항목들이 모두 수정 완료됨:
-
-| SO 에셋 | 필드 | 이전값 | 수정값 (GDD) | 상태 |
-|---------|------|-------|-------------|------|
-| Node_Bit | hp, speed, bitDrop | 30, 2.5, 8 | **20, 1.5, 3** | 수정 완료 |
-| Tower_Arrow | damage, attackSpeed, placeCost | 이전 수치 | **GDD 일치** | 수정 완료 |
-| Stage_01 | baseHp | 5 | **20** | 수정 완료 |
-| Skill_AttackSpeed | baseCost, growthRate | 40, 1.25 | **80, 1.3** | 수정 완료 |
-| Skill_BaseHp | baseCost, growthRate | 30, 1.2 | **40, 1.25** | 수정 완료 |
-| Wave_03 | spawnGroups | Bit x9 | **Bit x6 + Quick x3** | 수정 완료 |
-| Wave_04 | spawnGroups | Bit x15 | **Bit x10 + Quick x5** | 수정 완료 |
-| Wave_05 | spawnGroups | Bit x14 | **Bit x8 + Quick x4 + Heavy x2** | 수정 완료 |
+| SO 에셋 | 필드 | 현재값 | GDD 권장값 | 긴급도 |
+|---------|------|-------|-----------|--------|
+| Node_Bit | hp | 30 | **20** | P0 |
+| Node_Bit | speed | 2.5 | **1.5** | P0 |
+| Node_Bit | bitDrop | 8 | **3** | P0 |
+| Tower_Arrow | damage[0~3] | 10,15,22,33 | **8,12,18,26** | P0 |
+| Tower_Arrow | attackSpeed[0~3] | 1.0,1.1,1.2,1.35 | **1.25,1.43,1.67,2.0** | P0 |
+| Tower_Arrow | placeCost | 50 | **30** | P0 |
+| Stage_01 | baseHp | 5 | **20** | P0 |
+| Skill_AttackSpeed | baseCost | 80 | **80** | - (일치) |
+| Skill_AttackSpeed | growthRate | 1.3 | **1.3** | - (일치) |
+| Skill_BaseHp | baseCost | 40 | **40** | - (일치) |
+| Skill_BaseHp | growthRate | 1.25 | **1.25** | - (일치) |
 
 ---
 
@@ -371,9 +372,9 @@ Bit 획득량 스킬에 투입한 Bit가 몇 회 런 만에 회수되는지 계�
 | 2 | Bit Node | 8 | 1.0 | 3 | 24 | 수량 증가 |
 | 3 | Bit x6 + Quick x3 | 9 | 0.8 | 3 | 30 | 빠른 적 등장 |
 | 4 | Bit x10 + Quick x5 | 15 | 0.7 | 3 | 50 | 물량 압박 |
-| 5 | Bit x8 + Quick x4 + Heavy x2 | 14 | 0.6 | 3 | 56 | 최종 웨이브 |
+| 5 (보스) | Bit x8 + Quick x4 + Heavy x2 + **Boss: Bit Lord x1** | 15 | 0.6 | 3 | 106 | 보스 웨이브. Bit Lord 처치 시 클리어 |
 
-**총 Bit (전 웨이브 클리어)**: 175 + 웨이브 보너스 ~100 = **~275 Bit**
+**총 Bit (전 웨이브 클리어)**: 225 + 웨이브 보너스 ~100 = **~325 Bit**
 
 ### 6.2 Stage 2: Memory Block (7 웨이브)
 
@@ -387,7 +388,7 @@ Bit 획득량 스킬에 투입한 Bit가 몇 회 런 만에 회수되는지 계�
 | 4 | Bit x12 + Quick x6 | 18 | 0.7 | 3 |
 | 5 | Bit x8 + Heavy x4 | 12 | 0.8 | 3 |
 | 6 | Bit x15 + Quick x8 | 23 | 0.5 | 3 |
-| 7 | Bit x10 + Quick x5 + Heavy x3 | 18 | 0.5 | 3 |
+| 7 (보스) | Bit x10 + Quick x5 + Heavy x3 + **Boss: Rush King x1** | 19 | 0.5 | 3 |
 
 ### 6.3 Stage 3: Cache Layer (8 웨이브)
 
@@ -402,19 +403,19 @@ Bit 획득량 스킬에 투입한 Bit가 몇 회 런 만에 회수되는지 계�
 | 5 | Bit x15 + Shield x5 | 20 | 0.6 | 3 |
 | 6 | Heavy x5 + Shield x3 | 8 | 1.0 | 3 |
 | 7 | Bit x12 + Quick x8 + Shield x4 | 24 | 0.5 | 3 |
-| 8 | Bit x10 + Quick x6 + Heavy x3 + Shield x4 | 23 | 0.5 | 3 |
+| 8 (보스) | Bit x10 + Quick x6 + Heavy x3 + Shield x4 + **Boss: Iron Wall x1** | 24 | 0.5 | 3 |
 
 ### 6.4 Stage 4~10 설계 원칙
 
-| 스테이지 | 웨이브 수 | 신규 Node | 핵심 챌린지 | 필수 타워 |
-|---------|---------|----------|-----------|----------|
-| 4 | 10 | Swarm | 대량 물량 + 다경로 | Cannon |
-| 5 | 10 | Regen | 빠른 처치 vs 회복 | 고DPS 집중 |
-| 6 | 12 | Phase | 타이밍 + 무적 대응 | 지속 데미지(Laser) |
-| 7 | 12 | Split | 분열 관리 | AoE 조합 |
-| 8 | 15 | (복합) | 모든 특수 Node 혼합 | 전략 최적화 |
-| 9 | 15 | (복합+강화) | 극한 스케일링 | Void |
-| 10 | 20 | Boss(강화) | 최종 도전 | 풀빌드 |
+| 스테이지 | 웨이브 수 | 신규 Node | 보스 | 핵심 챌린지 | 필수 타워 |
+|---------|---------|----------|------|-----------|----------|
+| 4 | 10 | Swarm | Swarm Mother | 대량 물량 + 다경로 | Cannon |
+| 5 | 10 | Regen | Regen Core | 빠른 처치 vs 회복 | 고DPS 집중 |
+| 6 | 12 | Phase | Phase Phantom | 타이밍 + 무적 대응 | 지속 데미지(Laser) |
+| 7 | 12 | Split | Split Hydra | 분열 관리 | AoE 조합 |
+| 8 | 15 | (복합) | Overflow Titan | 모든 특수 Node 혼합 | 전략 최적화 |
+| 9 | 15 | (복합+강화) | Root Warden | 극한 스케일링 | Void |
+| 10 | 20 | (전체) | Kernel Zero | 최종 도전 (3페이즈) | 풀빌드 |
 
 ---
 

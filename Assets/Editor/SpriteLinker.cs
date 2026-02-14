@@ -43,11 +43,19 @@ namespace Nodebreaker.Editor
 
             // --- Tower ScriptableObjects ---
             linked += LinkTowerSprite("Assets/Project/ScriptableObjects/Towers/Tower_Arrow.asset",
-                "Assets/Art/Towers/NB_Tower_Arrow.png");
+                "Assets/Art/Sprites/Towers/ArrowTower/Final/ArrowTower_Level1_Minimal.png");
+            linked += LinkTowerSprite("Assets/Project/ScriptableObjects/Towers/Tower_Cannon.asset",
+                "Assets/Art/Sprites/Towers/CannonTower/Final/CannonTower_Level1.png");
+            linked += LinkTowerSprite("Assets/Project/ScriptableObjects/Towers/Tower_Ice.asset",
+                "Assets/Art/Sprites/Towers/IceTower/Final/IceTower_Level1.png");
 
             // --- Node ScriptableObjects ---
             linked += LinkNodeSprite("Assets/Project/ScriptableObjects/Nodes/Node_Bit.asset",
-                "Assets/Art/Nodes/NB_Node_Bit.png");
+                "Assets/Art/Sprites/Monsters/Soul/Soul_Concept_A.png");
+            linked += LinkNodeSprite("Assets/Project/ScriptableObjects/Nodes/Node_Quick.asset",
+                "Assets/Art/Sprites/Monsters/Quick/Final/QuickNode.png");
+            linked += LinkNodeSprite("Assets/Project/ScriptableObjects/Nodes/Node_Heavy.asset",
+                "Assets/Art/Sprites/Monsters/Heavy/Final/HeavyNode.png");
 
             // --- Skill ScriptableObjects ---
             linked += LinkSkillSprite("Assets/Project/ScriptableObjects/Skills/Skill_AttackDamage.asset",
@@ -59,9 +67,17 @@ namespace Nodebreaker.Editor
 
             // --- Prefab SpriteRenderers ---
             linked += LinkPrefabSprite("Assets/Project/Prefabs/Towers/Tower_Arrow.prefab",
-                "Assets/Art/Towers/NB_Tower_Arrow.png");
+                "Assets/Art/Sprites/Towers/ArrowTower/Final/ArrowTower_Level1_Minimal.png");
+            linked += LinkPrefabSprite("Assets/Project/Prefabs/Towers/Tower_Cannon.prefab",
+                "Assets/Art/Sprites/Towers/CannonTower/Final/CannonTower_Level1.png");
+            linked += LinkPrefabSprite("Assets/Project/Prefabs/Towers/Tower_Ice.prefab",
+                "Assets/Art/Sprites/Towers/IceTower/Final/IceTower_Level1.png");
             linked += LinkPrefabSprite("Assets/Project/Prefabs/Monsters/Monster_Bit.prefab",
-                "Assets/Art/Nodes/NB_Node_Bit.png");
+                "Assets/Art/Sprites/Monsters/Soul/Soul_Concept_A.png");
+            linked += LinkPrefabSprite("Assets/Project/Prefabs/Monsters/Monster_Quick.prefab",
+                "Assets/Art/Sprites/Monsters/Quick/Final/QuickNode.png");
+            linked += LinkPrefabSprite("Assets/Project/Prefabs/Monsters/Monster_Heavy.prefab",
+                "Assets/Art/Sprites/Monsters/Heavy/Final/HeavyNode.png");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
