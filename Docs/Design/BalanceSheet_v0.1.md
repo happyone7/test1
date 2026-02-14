@@ -246,7 +246,7 @@ GDD 기준 수치. 공격속도는 "공격 간격(초)" 기반.
 | 스킬 | 누적 비용 (Lv5) | 효과 (Lv5) | DPS 환산 기여 | 비용 대비 효율 |
 |------|---------------|-----------|-------------|--------------|
 | 공격력 +10%/Lv | 453 Bit | x1.5 데미지 | +50% DPS | **1.10 DPS%/Bit** |
-| 공격속도 +5%/Lv | 519 Bit | x1.25 공속 | +25% DPS | **0.48 DPS%/Bit** |
+| 공격속도 +5%/Lv | 723 Bit | x1.25 공속 | +25% DPS | **0.35 DPS%/Bit** |
 | 사거리 +0.2/Lv | 416 Bit | +1.0 사거리 | 간접 (더 빨리 공격 시작) | 유틸리티 |
 | 기지 HP +5/Lv | 328 Bit | +25 HP | 생존 (DPS 아님) | 생존력 |
 | Bit 획득 +15%/Lv | 676 Bit | x1.75 Bit | 경제 성장 가속 | **경제 투자** |
@@ -298,7 +298,7 @@ Bit 획득량 스킬에 투입한 Bit가 몇 회 런 만에 회수되는지 계�
 | Lv1 (100 Bit) | 100 | +15 Bit/런 | 7회 |
 | Lv2 (135 Bit) | 235 (누적) | +30 Bit/런 | 8회 |
 | Lv3 (182 Bit) | 417 (누적) | +45 Bit/런 | 9회 |
-| Lv5 (332 Bit) | 1,081 (누적) | +75 Bit/런 | 14회 |
+| Lv5 (332 Bit) | 995 (누적) | +75 Bit/런 | 13회 |
 
 **결론**: St.1에서 평균 런당 100 Bit 획득 시, Bit 획득 Lv3는 누적 417 Bit 투자 후 9회 런(약 10~15분)이면 회수. 이후로는 순이익. **중반 이후 투자 가치 높음**.
 
@@ -355,10 +355,10 @@ Sprint 2까지의 SO 에셋과 GDD 수치 간 괴리가 존재한다. 아래는 
 | Tower_Arrow | attackSpeed[0~3] | 1.0,1.1,1.2,1.35 | **1.25,1.43,1.67,2.0** | P0 |
 | Tower_Arrow | placeCost | 50 | **30** | P0 |
 | Stage_01 | baseHp | 5 | **20** | P0 |
-| Skill_AttackSpeed | baseCost | 40 | **80** | P1 |
-| Skill_AttackSpeed | growthRate | 1.25 | **1.3** | P1 |
-| Skill_BaseHp | baseCost | 30 | **40** | P1 |
-| Skill_BaseHp | growthRate | 1.2 | **1.25** | P1 |
+| Skill_AttackSpeed | baseCost | 80 | **80** | - (일치) |
+| Skill_AttackSpeed | growthRate | 1.3 | **1.3** | - (일치) |
+| Skill_BaseHp | baseCost | 40 | **40** | - (일치) |
+| Skill_BaseHp | growthRate | 1.25 | **1.25** | - (일치) |
 
 ---
 
