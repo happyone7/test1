@@ -1,5 +1,6 @@
 using Tesseract.ObjectPool;
 using UnityEngine;
+using Nodebreaker.Audio;
 
 namespace Nodebreaker.Projectile
 {
@@ -48,6 +49,7 @@ namespace Nodebreaker.Projectile
 
         void Hit()
         {
+            SoundManager.Instance.PlaySfx(SoundKeys.ProjectileHit, 0.8f);
             _target.TakeDamage(_damage);
             Poolable.TryPool(gameObject);
         }

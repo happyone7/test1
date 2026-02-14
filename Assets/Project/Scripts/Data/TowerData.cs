@@ -22,7 +22,7 @@ namespace Nodebreaker.Data
         public GameObject prefab;
         public GameObject projectilePrefab;
 
-        [Header("레벨별 스탯 (Lv1~5)")]
+        [Header("레벨별 스탯 (Lv1~4, 5번째는 미사용)")]
         public float[] damage = { 10f, 15f, 22f, 33f, 50f };
         public float[] attackSpeed = { 1f, 1.1f, 1.2f, 1.35f, 1.5f };
         public float[] range = { 3f, 3f, 3.5f, 3.5f, 4f };

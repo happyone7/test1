@@ -21,6 +21,7 @@ namespace Nodebreaker.Data
         public string nodeId;
         public string nodeName;
         public NodeType type;
+        public Sprite icon;
         public GameObject prefab;
 
         [Header("기본 스탯")]
