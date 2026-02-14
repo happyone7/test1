@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d69d45e2b8e1a5498c2295defda8cb3, type: 3}
+  m_Name: Stage_02
+  m_EditorClassIdentifier:
+  stageId: stage_02
+  stageName: Memory Block
+  stageIndex: 1
+  waves:
+  - {fileID: 11400000, guid: 7b53fb957c924709a0fd6fd1c9fae3fe, type: 2}
+  - {fileID: 11400000, guid: 192dec6afd464fb5ba6369827b1983ba, type: 2}
+  - {fileID: 11400000, guid: 548f3f5164d24e4f87c6ec22067bfb0f, type: 2}
+  - {fileID: 11400000, guid: 26777463f59848f98053cfe551918a6c, type: 2}
+  - {fileID: 11400000, guid: b5f5fd8579b94f0db0540f827101316b, type: 2}
+  - {fileID: 11400000, guid: 96df52cee63e47fca101bab2b84ad1a9, type: 2}
+  - {fileID: 11400000, guid: 2f5fbdbe22994c57b1c67b9abae0696e, type: 2}
+  hpMultiplier: 1.8
+  speedMultiplier: 1
+  bitDropMultiplier: 1.5
+  coreReward: 3
+  baseHp: 20

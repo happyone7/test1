@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d69d45e2b8e1a5498c2295defda8cb3, type: 3}
+  m_Name: Stage_03
+  m_EditorClassIdentifier:
+  stageId: stage_03
+  stageName: Cache Layer
+  stageIndex: 2
+  waves:
+  - {fileID: 11400000, guid: 659e23b75a0e4b31851a28050e3c5e2a, type: 2}
+  - {fileID: 11400000, guid: e327a95f3e954b77806f5f6133113eae, type: 2}
+  - {fileID: 11400000, guid: 2efe5dde82a8410ab15f0fe2c4bd47c5, type: 2}
+  - {fileID: 11400000, guid: e1a188064c0d4530a910e6a2b5a29d9c, type: 2}
+  - {fileID: 11400000, guid: dc339b5b9a6047caa49dc8e4e4c25b75, type: 2}
+  - {fileID: 11400000, guid: c49bf3570049452e8e2e1a208bae0a02, type: 2}
+  - {fileID: 11400000, guid: be82cc77efa648358f436cb1aa8b9890, type: 2}
+  - {fileID: 11400000, guid: bcd86ae87f4d4a5188946c0465afa146, type: 2}
+  hpMultiplier: 3
+  speedMultiplier: 1.1
+  bitDropMultiplier: 2.2
+  coreReward: 4
+  baseHp: 20
