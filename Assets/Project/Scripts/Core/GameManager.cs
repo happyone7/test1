@@ -1,5 +1,6 @@
 using Tesseract.Core;
 using UnityEngine;
+using Nodebreaker.Audio;
 
 namespace Nodebreaker.Core
 {
@@ -31,21 +32,90 @@ namespace Nodebreaker.Core
         void Start()
         {
             State = GameState.Hub;
-            var hubUI = Object.FindFirstObjectByType<UI.HubUI>();
+
+            // InGame UI 요소 숨기기 (Hub 상태이므로)
+            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+            if (inGameUI != null)
+                inGameUI.HideAll();
+
+            // DEBUG: 타이틀 스킵 - 바로 허브로 진입
+            var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
+            if (titleUI != null)
+                titleUI.Hide();
+
+            var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
                 hubUI.Show();
+
+            SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0f);
         }
 
-        public void StartRun()
+        // DEBUG: 타이틀 스킵용 임시 코드 (나중에 제거)
+        void Update()
         {
-            int stageIdx = MetaManager.Instance.CurrentStageIndex;
-            if (stageIdx >= stages.Length) return;
+            if (UnityEngine.Input.GetKeyDown(KeyCode.F1))
+            {
+                var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
+                if (titleUI != null) titleUI.Hide();
+                GoToHub();
+            }
+        }
+
+        public void StartRun(int stageIndex = -1)
+        {
+            int stageIdx = stageIndex >= 0 ? stageIndex : MetaManager.Instance.CurrentStageIndex;
+            if (stageIdx >= stages.Length)
+            {
+                Debug.LogWarning($"[GameManager] StartRun: stageIdx={stageIdx} >= stages.Length={stages.Length}, fallback to {stages.Length - 1}");
+                stageIdx = Mathf.Max(0, stages.Length - 1);
+            }
 
             State = GameState.InGame;
+            SoundManager.Instance.PlayBgm(SoundKeys.BgmCombat, 0.5f);
 
-            var hubUI = Object.FindFirstObjectByType<UI.HubUI>();
+            var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
                 hubUI.Hide();
+
+            // 인벤토리 초기화 및 FTUE 타워 지급
+            if (Singleton<Tower.TowerInventory>.HasInstance)
+            {
+                var inventory = Tower.TowerInventory.Instance;
+                inventory.Clear();
+
+                // 첫 런: Arrow 타워 1개 자동 지급
+                if (Singleton<Tower.TowerManager>.HasInstance)
+                {
+                    var available = Tower.TowerManager.Instance.availableTowers;
+                    if (available != null && available.Length > 0)
+                    {
+                        // Arrow 타워 우선, 없으면 첫 번째 타워
+                        Data.TowerData starterTower = available[0];
+                        foreach (var td in available)
+                        {
+                            if (td.type == Data.TowerType.Arrow)
+                            {
+                                starterTower = td;
+                                break;
+                            }
+                        }
+                        inventory.TryAddTower(starterTower, 1);
+                    }
+                }
+            }
+
+            // 배치된 타워 정리 (이전 런에서 남은 것)
+            if (Singleton<Tower.TowerManager>.HasInstance)
+                Tower.TowerManager.Instance.ClearAllTowers();
+
+            // 배치 그리드 점유 초기화
+            if (Singleton<Tower.PlacementGrid>.HasInstance)
+                Tower.PlacementGrid.Instance.ClearOccupied();
+
+            // InGameUI 활성화 (Hub에서 비활성화되었을 수 있음)
+            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+            if (inGameUI != null)
+                inGameUI.ShowAll();
 
             RunModifiers mods = MetaManager.Instance.CalculateModifiers();
             RunManager.Instance.StartRun(stages[stageIdx], mods);
@@ -63,6 +133,7 @@ namespace Nodebreaker.Core
         public void GoToHub()
         {
             State = GameState.Hub;
+            SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0.5f);
 
             // 런 상태 정리
             if (Singleton<RunManager>.HasInstance)
@@ -72,15 +143,23 @@ namespace Nodebreaker.Core
             if (Singleton<Node.WaveSpawner>.HasInstance)
                 Node.WaveSpawner.Instance.StopSpawning();
 
+            // 배치된 타워 정리
+            if (Singleton<Tower.TowerManager>.HasInstance)
+                Tower.TowerManager.Instance.ClearAllTowers();
+
+            // 배치 그리드 점유 초기화
+            if (Singleton<Tower.PlacementGrid>.HasInstance)
+                Tower.PlacementGrid.Instance.ClearOccupied();
+
             // 살아있는 노드 정리
             CleanupNodes();
 
             // InGameUI 숨기기 (런엔드 패널 포함)
-            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>();
+            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
             if (inGameUI != null)
                 inGameUI.HideAll();
 
-            var hubUI = Object.FindFirstObjectByType<UI.HubUI>();
+            var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
                 hubUI.Show();
         }
