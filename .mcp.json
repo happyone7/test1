@@ -2,9 +2,9 @@
   "mcpServers": {
     "mcp-unity": {
       "command": "/home/happy/.nvm/versions/node/v20.20.0/bin/node",
-      "args": ["Library/PackageCache/com.gamelovers.mcp-unity@64324a54490e/Server~/build/index.js"],
+      "args": ["/home/happy/mcp-http-proxy.mjs"],
       "env": {
-        "UNITY_PORT": "8095"
+        "MCP_HTTP_URL": "http://127.0.0.1:8080/mcp"
       }
     },
     "playwright": {

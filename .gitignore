@@ -44,3 +44,8 @@ SteamBuild/output/
 Assets/Plugins/Steamworks.NET/*.dll
 Assets/Plugins/Steamworks.NET/*.bundle
 Assets/Plugins/Steamworks.NET/*.so
+
+# MCP/Debug logs
+.playwright-mcp/
+mcp-debug.log
+mcp-server-wrapper.js

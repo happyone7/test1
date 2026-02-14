@@ -1,8 +1,11 @@
 {
   "dependencies": {
-    "com.gamelovers.mcp-unity": "https://github.com/CoderGamester/mcp-unity.git",
+    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.tesseract.core": "https://github.com/happyone7/com.tesseract.core.git#v1.1.0",
+    "com.tesseract.audio": "https://github.com/happyone7/com.tesseract.audio.git#v1.1.0",
     "com.tesseract.objectpool": "https://github.com/happyone7/com.tesseract.objectpool.git#v1.1.0",
+    "com.tesseract.save": "https://github.com/happyone7/com.tesseract.save.git#v1.1.0",
+    "com.tesseract.ui": "https://github.com/happyone7/com.tesseract.ui.git#v1.1.0",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.ads": "4.16.4",
