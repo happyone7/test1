@@ -8,14 +8,14 @@ namespace Nodebreaker.Editor
         [MenuItem("Tools/Nodebreaker/Setup Game Scene")]
         static void SetupGameScene()
         {
-            // 카메라 설정
+            // 카메라 설정 (표준 2D: XY 평면, -Z 방향)
             var cam = Camera.main;
             if (cam != null)
             {
                 cam.orthographic = true;
                 cam.orthographicSize = 8f;
-                cam.transform.position = new Vector3(0, 10, 0);
-                cam.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+                cam.transform.position = new Vector3(0, 0, -10);
+                cam.transform.rotation = Quaternion.identity;
                 cam.backgroundColor = new Color(0.1f, 0.1f, 0.15f);
 
                 if (cam.GetComponent<Core.GameCamera>() == null)
@@ -37,12 +37,12 @@ namespace Nodebreaker.Editor
             spawnPoint.transform.position = new Vector3(-8, 0, 0);
             spawner.spawnPoint = spawnPoint.transform;
 
-            // 웨이포인트 경로 (좌→우 S자 형태)
+            // 웨이포인트 경로 (좌→우 S자 형태, XY 평면)
             var waypointParent = CreateOrFind("Waypoints");
             Vector3[] positions = {
                 new Vector3(-6, 0, 0),
-                new Vector3(-2, 0, 3),
-                new Vector3(2, 0, -3),
+                new Vector3(-2, 3, 0),
+                new Vector3(2, -3, 0),
                 new Vector3(6, 0, 0),
                 new Vector3(8, 0, 0)
             };
@@ -60,10 +60,11 @@ namespace Nodebreaker.Editor
             var baseObj = CreateOrFind("Base");
             baseObj.transform.position = new Vector3(9, 0, 0);
 
-            // 바닥
+            // 바닥 (XY 평면에서 보이도록 Z=0.1 뒤쪽 배치, X축 90도 회전)
             var ground = CreateOrFind("Ground");
-            ground.transform.position = Vector3.zero;
-            ground.transform.localScale = new Vector3(20, 0.1f, 12);
+            ground.transform.position = new Vector3(0, 0, 0.1f);
+            ground.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            ground.transform.localScale = new Vector3(20, 12, 0.1f);
             if (ground.GetComponent<MeshRenderer>() == null)
             {
                 var filter = ground.AddComponent<MeshFilter>();

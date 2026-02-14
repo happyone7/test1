@@ -35,9 +35,9 @@ namespace Nodebreaker.Editor
 
             // 경로 근처에 타워 3개 배치
             Vector3[] towerPositions = {
-                new Vector3(-2, 0, 0),   // 경로 중간 (S자 꼭대기 근처)
-                new Vector3(2, 0, 0),    // 경로 중간 (S자 바닥 근처)
-                new Vector3(5, 0, 2),    // 경로 후반
+                new Vector3(-2, 1, 0),   // 경로 중간 위쪽
+                new Vector3(2, -1, 0),   // 경로 중간 아래쪽
+                new Vector3(5, 2, 0),    // 경로 후반
             };
 
             var towerParent = GetOrCreateParent("Towers");

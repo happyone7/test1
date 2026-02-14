@@ -4,8 +4,8 @@ namespace Nodebreaker.Core
 {
     public class GameCamera : MonoBehaviour
     {
-        [Header("2D 탑다운 설정")]
-        public float height = 10f;
+        [Header("2D 설정")]
+        public float depth = -10f;
         public float orthographicSize = 8f;
 
         Camera _cam;
@@ -18,9 +18,9 @@ namespace Nodebreaker.Core
                 _cam.orthographic = true;
                 _cam.orthographicSize = orthographicSize;
             }
-            // 위에서 내려다보는 시점
-            transform.position = new Vector3(0, height, 0);
-            transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            // 표준 2D 카메라: XY 평면을 바라봄 (-Z 방향)
+            transform.position = new Vector3(0, 0, depth);
+            transform.rotation = Quaternion.identity;
         }
     }
 }
