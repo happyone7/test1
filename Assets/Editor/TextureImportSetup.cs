@@ -61,10 +61,10 @@ namespace Nodebreaker.Editor
 
                     bool dirty = false;
 
-                    // 배경/로고는 고해상도 AI 이미지 → Bilinear, PPU=100, 압축 허용
+                    // 배경/로고도 Point 필터 통일 (픽셀아트 스타일 일관성)
                     bool isLargeImage = folder.Contains("Backgrounds") || folder.Contains("Logo");
                     float targetPPU = isLargeImage ? 100f : 16f;
-                    FilterMode targetFilter = isLargeImage ? FilterMode.Bilinear : FilterMode.Point;
+                    FilterMode targetFilter = FilterMode.Point;
                     TextureImporterCompression targetCompression = isLargeImage
                         ? TextureImporterCompression.CompressedHQ
                         : TextureImporterCompression.Uncompressed;
@@ -124,10 +124,13 @@ namespace Nodebreaker.Editor
         {
             string[] folders = new[]
             {
-                "Assets/Art/Towers",
-                "Assets/Art/Nodes",
+                "Assets/Art/Sprites/Towers",
+                "Assets/Art/Sprites/Monsters",
+                "Assets/Art/Sprites/Projectiles",
+                "Assets/Art/Sprites/Tiles",
                 "Assets/Art/UI/Hub",
-                "Assets/Art/UI/Logo"
+                "Assets/Art/UI/Logo",
+                "Assets/Art/UI/Backgrounds"
             };
 
             int count = 0;
@@ -191,7 +194,7 @@ namespace Nodebreaker.Editor
 
                     bool isLargeImage = folder.Contains("Backgrounds") || folder.Contains("Logo");
                     float expectedPPU = isLargeImage ? 100f : 16f;
-                    FilterMode expectedFilter = isLargeImage ? FilterMode.Bilinear : FilterMode.Point;
+                    FilterMode expectedFilter = FilterMode.Point;
                     TextureImporterCompression expectedCompression = isLargeImage
                         ? TextureImporterCompression.CompressedHQ
                         : TextureImporterCompression.Uncompressed;
