@@ -101,6 +101,7 @@ namespace Nodebreaker.Core
 
             foreach (var skill in allSkills)
             {
+                if (skill == null || string.IsNullOrEmpty(skill.skillId)) continue;
                 int level = GetSkillLevel(skill.skillId);
                 if (level <= 0) continue;
 
@@ -152,6 +153,7 @@ namespace Nodebreaker.Core
             if (allSkills == null) return null;
             foreach (var skill in allSkills)
             {
+                if (skill == null) continue;
                 if (skill.skillId == skillId)
                     return skill;
             }
