@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b79a78a43c5b531438e92c30f674f04a, type: 3}
-  m_Name: Wave_01
-  m_EditorClassIdentifier: 
+  m_Name: Wave_03
+  m_EditorClassIdentifier:
   spawnGroups:
   - nodeData: {fileID: 11400000, guid: 5d84841be54ffef45bc293bd0775dfc6, type: 2}
-    count: 5
-    spawnInterval: 1.2
-  delayBeforeWave: 2
+    count: 9
+    spawnInterval: 0.8
+  delayBeforeWave: 3
