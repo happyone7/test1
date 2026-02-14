@@ -15,8 +15,9 @@ MonoBehaviour:
   nodeId: bit
   nodeName: Bit
   type: 0
+  icon: {fileID: 21300000, guid: 241c27b6c9cab5c4aa50911711dfe64a, type: 3}
   prefab: {fileID: 39702951755536305, guid: b96c78b306e0cc448ac5290dd2e34a52, type: 3}
-  hp: 30
-  speed: 2.5
-  bitDrop: 8
+  hp: 20
+  speed: 1.5
+  bitDrop: 3
   damage: 1

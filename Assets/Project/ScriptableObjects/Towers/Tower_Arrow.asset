@@ -15,25 +15,25 @@ MonoBehaviour:
   towerId: arrow
   towerName: Arrow
   type: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c9e41723f7c349b47a990a73814ea8bf, type: 3}
   prefab: {fileID: 4759207171140746229, guid: 51d35c15e240d6d4bbbf11f07ed1ce1f, type: 3}
   projectilePrefab: {fileID: 4000669846679220856, guid: 027f0af8429894846854a73dfa584032, type: 3}
   damage:
-  - 10
-  - 15
-  - 22
-  - 33
-  - 50
+  - 8
+  - 12
+  - 18
+  - 26
+  - 38
   attackSpeed:
-  - 1
-  - 1.1
-  - 1.2
-  - 1.35
-  - 1.5
+  - 1.25
+  - 1.43
+  - 1.67
+  - 2
+  - 2.5
   range:
   - 3
   - 3
   - 3.5
   - 3.5
   - 4
-  placeCost: 50
+  placeCost: 30
