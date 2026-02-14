@@ -10,10 +10,6 @@ namespace Nodebreaker.Core
         [Header("스킬 데이터")]
         public Data.SkillNodeData[] allSkills;
 
-        [Header("신규 세이브 초기값")]
-        [Tooltip("새 세이브 파일 생성 시 지급할 초기 Bit (테스트/튜토리얼용)")]
-        public int initialBit = 500;
-
         // TODO: Unity 재시작 후 Tesseract.Save.SaveManager로 교체
         PlayerSaveData _data;
         Dictionary<string, int> _skillLevelCache = new Dictionary<string, int>();
@@ -36,13 +32,10 @@ namespace Nodebreaker.Core
             {
                 string json = File.ReadAllText(SavePath);
                 _data = JsonUtility.FromJson<PlayerSaveData>(json) ?? new PlayerSaveData();
-                Debug.Log($"[MetaManager] 세이브 로드 완료 — Bit: {_data.totalBit}, Core: {_data.totalCore}, Skills: {_data.skillLevels.Count}");
             }
             else
             {
                 _data = new PlayerSaveData();
-                _data.totalBit = initialBit;
-                Debug.Log($"[MetaManager] 신규 세이브 생성 — 초기 Bit: {initialBit}");
             }
             RebuildCache();
         }
@@ -63,33 +56,18 @@ namespace Nodebreaker.Core
         public bool CanPurchaseSkill(string skillId)
         {
             var skillData = FindSkillData(skillId);
-            if (skillData == null)
-            {
-                Debug.LogWarning($"[MetaManager] CanPurchaseSkill: skillData not found for '{skillId}'");
-                return false;
-            }
+            if (skillData == null) return false;
 
             int currentLevel = GetSkillLevel(skillId);
-            if (currentLevel >= skillData.maxLevel)
-            {
-                Debug.Log($"[MetaManager] CanPurchaseSkill: '{skillId}' already max level ({currentLevel}/{skillData.maxLevel})");
-                return false;
-            }
+            if (currentLevel >= skillData.maxLevel) return false;
 
             int cost = skillData.GetCost(currentLevel);
-            bool canAfford = _data.totalBit >= cost;
-            if (!canAfford)
-                Debug.Log($"[MetaManager] CanPurchaseSkill: '{skillId}' 자금 부족 (보유: {_data.totalBit}, 필요: {cost})");
-            return canAfford;
+            return _data.totalBit >= cost;
         }
 
         public bool TryPurchaseSkill(string skillId)
         {
-            if (!CanPurchaseSkill(skillId))
-            {
-                Debug.LogWarning($"[MetaManager] TryPurchaseSkill: '{skillId}' 구매 실패");
-                return false;
-            }
+            if (!CanPurchaseSkill(skillId)) return false;
 
             var skillData = FindSkillData(skillId);
             int currentLevel = GetSkillLevel(skillId);
@@ -97,7 +75,6 @@ namespace Nodebreaker.Core
 
             _data.totalBit -= cost;
             _skillLevelCache[skillId] = currentLevel + 1;
-            Debug.Log($"[MetaManager] TryPurchaseSkill: '{skillId}' Lv{currentLevel}->Lv{currentLevel + 1}, 비용={cost}, 잔액={_data.totalBit}");
             Save();
             return true;
         }
