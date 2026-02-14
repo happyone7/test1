@@ -1,0 +1,79 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AI: Setup ComfyUI",
+      "type": "shell",
+      "command": "bash Tools/ai-stack/setup_comfyui.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Install ComfyUI-Manager",
+      "type": "shell",
+      "command": "bash Tools/ai-stack/install_comfy_manager.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Run ComfyUI",
+      "type": "shell",
+      "command": "bash Tools/ai-stack/run_comfyui.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Stop ComfyUI",
+      "type": "shell",
+      "command": "bash -lc \"pkill -f '/Tools/.venvs/comfyui/bin/python main.py --listen 127.0.0.1 --port 8188' || true\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Validate MCP Config",
+      "type": "shell",
+      "command": "python3 -c \"import json; json.load(open('.mcp.json', 'r', encoding='utf-8')); print('mcp_json_ok')\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Check Comfy MCP Server",
+      "type": "shell",
+      "command": "bash -lc \"timeout 5s /home/happy/.nvm/versions/node/v20.20.0/bin/node /mnt/c/UnityProjects/test1/Tools/mcp-comfy-ui-builder/dist/mcp-server.js || test $? -eq 124\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Check Stack",
+      "type": "shell",
+      "command": "bash Tools/ai-stack/check_stack.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AI: Quick Verify (MCP + Comfy)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "AI: Validate MCP Config",
+        "AI: Check Comfy MCP Server",
+        "AI: Check Stack"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

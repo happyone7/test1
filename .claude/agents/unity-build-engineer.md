@@ -637,6 +637,59 @@ public class VersionManager
 }
 ```
 
+## Steam 배포 파이프라인 (Nodebreaker TD)
+
+### 프로젝트 정보
+- App ID: 4426340, Depot ID: 4426341
+- Steam 계정: shatterbone7
+- SteamCMD 경로: `/mnt/c/steamworks_sdk/tools/ContentBuilder/builder/steamcmd.exe`
+
+### VDF 파일 (용도별)
+| VDF 파일 | 대상 브랜치 | 용도 |
+|----------|------------|------|
+| `app_build_dev.vdf` | `dev_test` | 개발 중 테스트 빌드 (기본값) |
+| `app_build_qa.vdf` | `live_test` | 라이브 QA 빌드 |
+| `app_build.vdf` | (없음) | default 브랜치 수동 설정용 |
+
+### 배포 단계별 명령어
+
+#### 1단계: 개발 빌드 (평소 개발 과정)
+```bash
+# Unity 빌드 후 Steam 업로드 → dev_test 브랜치에 자동 라이브
+steamcmd.exe +login shatterbone7 +run_app_build "C:\UnityProjects\test1\SteamBuild\scripts\app_build_dev.vdf" +quit
+```
+
+#### 2단계: QA 빌드 (라이브 QA 진행 시)
+```bash
+# Unity 빌드 후 Steam 업로드 → live_test 브랜치에 자동 라이브
+steamcmd.exe +login shatterbone7 +run_app_build "C:\UnityProjects\test1\SteamBuild\scripts\app_build_qa.vdf" +quit
+```
+
+#### 3단계: 출시 (BAT 완료 후)
+default 브랜치는 SteamCMD `SetLive`로 자동 설정 불가 (Steamworks 정책).
+**Steamworks Web API** (`SetAppBuildLive`)를 사용:
+```bash
+curl -X POST "https://partner.steam-api.com/ISteamApps/SetAppBuildLive/v2/" \
+  -d "key=44FB17E1D144F7EDC90C4993A3DE89D2" \
+  -d "appid=4426340" \
+  -d "buildid=<빌드ID>" \
+  -d "betakey=default"
+```
+- 빌드ID는 SteamCMD 업로드 출력에서 추출 (BuildID 줄)
+- 대체 수단: Playwright로 Steamworks 파트너 사이트에서 수동 설정
+
+### 빌드 프로세스 (전체 흐름)
+1. `manage_scene(action="save")` — 씬 저장
+2. `refresh_unity` — 리컴파일
+3. `execute_menu_item` → `Tools/Build Windows` — 빌드
+4. `sleep 20` — 빌드 완료 대기
+5. SteamCMD 업로드 (VDF 파일 선택은 총괄PD 지시에 따름, 지시 없으면 `app_build_dev.vdf` 사용)
+
+### 주의사항
+- **프로토타입 기간: 빌드 전 반드시 총괄PD 승인 필요** (에디터에서 먼저 확인)
+- Steamworks에 `dev_test`, `live_test` 브랜치가 미리 생성되어 있어야 함
+- 브랜치가 없으면 배포 실패 → 총괄PD에게 Steamworks에서 브랜치 생성 요청
+
 ## 모범 사례
 
 1. **증분 빌드**: 빌드 간 Library 폴더 캐싱

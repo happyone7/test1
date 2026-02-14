@@ -1,0 +1,12 @@
+"AppBuild"
+{
+	"AppID" "4426340"
+	"Desc" "Nodebreaker TD QA build"
+	"BuildOutput" "../output"
+	"ContentRoot" ""
+	"SetLive" "live_test"
+	"Depots"
+	{
+		"4426341" "depot_build.vdf"
+	}
+}

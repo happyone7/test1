@@ -10,6 +10,15 @@
     "playwright": {
       "command": "/home/happy/.nvm/versions/node/v20.20.0/bin/npx",
       "args": ["-y", "@playwright/mcp@latest", "--browser", "chromium", "--executable-path", "/home/happy/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome"]
+    },
+    "comfy-ui-builder": {
+      "command": "/home/happy/.nvm/versions/node/v20.20.0/bin/node",
+      "args": ["/mnt/c/UnityProjects/test1/Tools/mcp-comfy-ui-builder/dist/mcp-server.js"],
+      "env": {
+        "COMFYUI_HOST": "http://127.0.0.1:8188",
+        "COMFYUI_PATH": "/mnt/c/UnityProjects/test1/Tools/ComfyUI",
+        "COMFYUI_KNOWLEDGE_DIR": "/mnt/c/UnityProjects/test1/Tools/mcp-comfy-ui-builder/data"
+      }
     }
   }
 }
