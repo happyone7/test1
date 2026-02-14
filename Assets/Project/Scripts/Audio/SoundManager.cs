@@ -44,8 +44,8 @@ namespace Nodebreaker.Audio
 
         private void LoadVolumes()
         {
-            _bgmVolume = PlayerPrefs.GetFloat(BgmVolumeKey, 1f);
-            _sfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, 1f);
+            _bgmVolume = Mathf.Clamp(PlayerPrefs.GetFloat(BgmVolumeKey, 1f), 0f, 1f);
+            _sfxVolume = Mathf.Clamp(PlayerPrefs.GetFloat(SfxVolumeKey, 1f), 0f, 1f);
             ApplyVolumes();
         }
 
