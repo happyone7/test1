@@ -249,7 +249,7 @@ namespace Nodebreaker.UI
             nameRect.offsetMax = Vector2.zero;
 
             var nameText = nameObj.AddComponent<Text>();
-            nameText.text = data != null ? data.choiceName : "???";
+            nameText.text = data != null ? data.displayName : "???";
             nameText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             nameText.fontSize = 16;
             nameText.fontStyle = FontStyle.Bold;

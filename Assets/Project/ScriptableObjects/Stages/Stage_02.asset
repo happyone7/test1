@@ -28,3 +28,5 @@ MonoBehaviour:
   bitDropMultiplier: 1.5
   coreReward: 3
   baseHp: 20
+  unlockBitRequired: 500
+  unlockKillRequired: 100

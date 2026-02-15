@@ -1,32 +1,7 @@
-using System;
 using UnityEngine;
 
 namespace Nodebreaker.Data
 {
-    public enum UnlockConditionType
-    {
-        /// <summary>이전 스테이지 보스 처치 (기본)</summary>
-        BossKill,
-        /// <summary>누적 Bit 달성</summary>
-        TotalBit,
-        /// <summary>누적 킬 수 달성</summary>
-        TotalKills,
-        /// <summary>조건 없음 (항상 해금)</summary>
-        None
-    }
-
-    [Serializable]
-    public class StageUnlockCondition
-    {
-        public UnlockConditionType type = UnlockConditionType.BossKill;
-
-        [Tooltip("BossKill: 이전 스테이지 인덱스 (기본 -1 = 자동), TotalBit/TotalKills: 필요 수치")]
-        public int requiredValue;
-
-        [Tooltip("해금 조건 설명 (UI 표시용)")]
-        public string description;
-    }
-
     [CreateAssetMenu(fileName = "Stage_", menuName = "Nodebreaker/Stage Data")]
     public class StageData : ScriptableObject
     {
@@ -48,7 +23,16 @@ namespace Nodebreaker.Data
         [Header("기지")]
         public int baseHp = 10;
 
-        [Header("해금 조건 (Stage 1은 비어있으면 항상 해금)")]
-        public StageUnlockCondition[] unlockConditions;
+        [Header("해금 조건")]
+        public long unlockBitRequired;
+        public int unlockKillRequired;
+
+        /// <summary>
+        /// 누적 Bit와 처치 수를 기준으로 해금 가능 여부를 판정한다.
+        /// </summary>
+        public bool IsUnlockable(long totalBitEarned, int totalKills)
+        {
+            return totalBitEarned >= unlockBitRequired && totalKills >= unlockKillRequired;
+        }
     }
 }

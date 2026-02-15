@@ -10,7 +10,7 @@ namespace Nodebreaker.Data
     public class TreasureChoiceData : ScriptableObject
     {
         public string choiceId;
-        public string choiceName;
+        public string displayName;
 
         [TextArea(2, 4)]
         public string description;
@@ -20,6 +20,8 @@ namespace Nodebreaker.Data
         [Header("효과")]
         public TreasureEffectType effectType;
         public float effectValue;
+        [Tooltip("0이면 영구 지속")]
+        public float duration;
 
         [Header("희귀도")]
         public TreasureRarity rarity = TreasureRarity.Common;
@@ -27,20 +29,20 @@ namespace Nodebreaker.Data
 
     public enum TreasureEffectType
     {
-        AttackDamage,       // 전체 타워 공격력 +%
-        AttackSpeed,        // 전체 타워 공속 +%
-        Range,              // 전체 타워 사거리 +%
-        AoERange,           // Cannon AoE 범위 +%
-        CooldownReduction,  // 쿨타임 감소
-        BaseHp,             // 기지 HP 즉시 회복
-        Critical,           // 치명타 확률 추가
-        ChainExplosion,     // 연쇄 폭발 확률
-        BitMagnet,          // Bit 획득량 +%
-        Berserk,            // HP 낮을수록 공격력 증가
-        GiantSlayer,        // 대형 몬스터 추가 데미지
-        Overcharge,         // 일정 확률로 2배 공격
-        TimeWarp,           // 일시적 슬로우 필드
-        TreasureHunter      // 추가 보물상자 확률
+        AddTower,           // 무료 타워 1기 추가
+        UpgradeRandomTower, // 랜덤 타워 1기 업그레이드
+        HealBase,           // 기지 HP 회복
+        GainBit,            // 즉시 Bit 획득
+        AttackSpeedBoost,   // 전체 타워 공속 증가
+        DamageBoost,        // 전체 타워 공격력 증가
+        RangeBoost,         // 전체 타워 사거리 증가
+        SlowAll,            // 모든 적 이동속도 감소
+        ExtraProjectile,    // 추가 투사체 발사
+        ChainLightning,     // 연쇄 번개 공격
+        LifeSteal,          // 공격 시 HP 회복
+        CritChance,         // 치명타 확률 증가
+        ShieldBuff,         // 기지 보호막
+        SpeedBuff           // 타워 공격/이동 전체 버프
     }
 
     public enum TreasureRarity

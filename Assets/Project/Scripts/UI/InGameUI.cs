@@ -48,6 +48,11 @@ namespace Nodebreaker.UI
         public Text pauseButtonText;
         public Image pauseButtonImage;
 
+        [Header("배속 토글 버튼 (단일 버튼 방식)")]
+        public Button speedToggleButton;
+        public Text speedToggleText;
+        public Image speedToggleImage;
+
         [Header("런 종료 패널")]
         public GameObject runEndPanel;
         public Text runEndTitleText;
@@ -102,17 +107,18 @@ namespace Nodebreaker.UI
         public GameObject corePopupContainer;   // Core 팝업 컨테이너
         public Text corePopupText;              // "+N Core" 텍스트
 
-        [Header("배속 토글 버튼 (단일 순환)")]
-        public Button speedToggleButton;        // 단일 배속 토글 버튼
-        public Text speedToggleText;            // 배속 텍스트 (x1, x2, x3)
-        public Image speedToggleImage;          // 배속 버튼 배경
-
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
 
+        private static readonly float[] SpeedValues = { 1f, 2f, 3f };
         private static readonly string[] SpeedLabels = { "x1", "x2", "x3" };
+        private int _currentSpeedIndex;
+        private float _savedTimeScale = 1f;
+        private bool _isPaused;
         private Coroutine _slideUpCoroutine;
+        private Coroutine _overlayFadeCoroutine;
+        private Coroutine _bitCountUpCoroutine;
         private Coroutine _guideTextCoroutine;
         private Coroutine _corePopupCoroutine;
         private float _bossMaxHp;
@@ -127,6 +133,7 @@ namespace Nodebreaker.UI
                 retryButton.onClick.AddListener(OnRetry);
 
             InitSpeedButtons();
+            InitSpeedToggleButton();
 
             if (runEndPanel != null)
                 runEndPanel.SetActive(false);
@@ -244,10 +251,22 @@ public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEar
             if (Singleton<Core.SpeedController>.HasInstance)
                 Core.SpeedController.Instance.ResetToDefault();
             UpdateSpeedButtonVisuals();
+            UpdateSpeedToggleVisual();
 
-            // 오버레이 활성화
+            // 오버레이 활성화 + 페이드인 (알파 0→80%, 0.2초)
             if (runEndOverlay != null)
+            {
                 runEndOverlay.SetActive(true);
+                var overlayImage = runEndOverlay.GetComponent<Image>();
+                if (overlayImage != null)
+                {
+                    Color c = overlayImage.color;
+                    c.a = 0f;
+                    overlayImage.color = c;
+                    if (_overlayFadeCoroutine != null) StopCoroutine(_overlayFadeCoroutine);
+                    _overlayFadeCoroutine = StartCoroutine(FadeOverlay(overlayImage, 0f, 0.8f, 0.2f));
+                }
+            }
 
             // 패널 활성화
             if (runEndPanel != null)
@@ -288,11 +307,12 @@ public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEar
                 }
             }
 
-            // Bit 획득 정보
+            // Bit 획득 정보 (카운트업 애니메이션, 0→목표값 0.5초)
             if (runEndBitText != null)
             {
-                runEndBitText.text = $"획득 Bit:  +{bitEarned}";
                 runEndBitText.color = ColorTextMain;
+                if (_bitCountUpCoroutine != null) StopCoroutine(_bitCountUpCoroutine);
+                _bitCountUpCoroutine = StartCoroutine(CountUpBit(runEndBitText, bitEarned, 0.5f));
             }
 
             // 웨이브 도달 정보 (패배 시만)
@@ -456,15 +476,7 @@ private IEnumerator SlideUpAnimation()
                 }
             }
 
-            // 단일 순환 토글 버튼
-            if (speedToggleButton != null)
-            {
-                speedToggleButton.onClick.AddListener(() =>
-                {
-                    if (Singleton<Core.SpeedController>.HasInstance)
-                        Core.SpeedController.Instance.ToggleSpeed();
-                });
-            }
+            // 단일 순환 토글 버튼은 InitSpeedToggleButton()에서 초기화
 
             if (pauseButton != null)
                 pauseButton.onClick.AddListener(() =>
@@ -540,6 +552,116 @@ private IEnumerator SlideUpAnimation()
                 pauseColors.pressedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
                 pauseColors.selectedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
                 pauseButton.colors = pauseColors;
+            }
+        }
+
+        /// <summary>오버레이 Image 알파 페이드 (unscaledDeltaTime 사용)</summary>
+        private IEnumerator FadeOverlay(Image img, float from, float to, float duration)
+        {
+            float elapsed = 0f;
+            Color c = img.color;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                c.a = Mathf.Lerp(from, to, t);
+                img.color = c;
+                yield return null;
+            }
+            c.a = to;
+            img.color = c;
+            _overlayFadeCoroutine = null;
+        }
+
+        /// <summary>Bit 숫자 카운트업 애니메이션 (unscaledDeltaTime 사용)</summary>
+        private IEnumerator CountUpBit(Text text, int targetValue, float duration)
+        {
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                int current = Mathf.RoundToInt(Mathf.Lerp(0f, targetValue, t));
+                text.text = $"획득 Bit:  +{current}";
+                yield return null;
+            }
+            text.text = $"획득 Bit:  +{targetValue}";
+            _bitCountUpCoroutine = null;
+        }
+
+        /// <summary>배속 토글 버튼 초기화 (UI-8)</summary>
+        private void InitSpeedToggleButton()
+        {
+            if (speedToggleButton == null) return;
+            speedToggleButton.onClick.AddListener(OnSpeedToggleClicked);
+            UpdateSpeedToggleVisual();
+        }
+
+        /// <summary>배속 토글 클릭 핸들러. SpeedController가 있으면 위임, 없으면 기존 로직.</summary>
+        private void OnSpeedToggleClicked()
+        {
+            bool handled = TryUseSpeedController();
+
+            if (!handled)
+            {
+                // Fallback: 기존 SpeedValues 순환
+                _currentSpeedIndex = (_currentSpeedIndex + 1) % SpeedValues.Length;
+                _isPaused = false;
+                Time.timeScale = SpeedValues[_currentSpeedIndex];
+            }
+
+            UpdateSpeedToggleVisual();
+            UpdateSpeedButtonVisuals();
+        }
+
+        /// <summary>
+        /// SpeedController가 씬에 존재하면 ToggleSpeed()를 호출하고 상태를 동기화.
+        /// 리플렉션을 사용하여 SpeedController가 없는 브랜치에서도 컴파일 가능.
+        /// </summary>
+        private bool TryUseSpeedController()
+        {
+            var speedType = System.Type.GetType("Nodebreaker.Core.SpeedController, Assembly-CSharp");
+            if (speedType == null) return false;
+
+            var obj = FindObjectOfType(speedType);
+            if (obj == null) return false;
+
+            // ToggleSpeed() 호출
+            var toggleMethod = speedType.GetMethod("ToggleSpeed");
+            if (toggleMethod == null) return false;
+            toggleMethod.Invoke(obj, null);
+
+            // CurrentSpeed 프로퍼티 읽기
+            var speedProp = speedType.GetProperty("CurrentSpeed");
+            if (speedProp != null)
+            {
+                int speed = (int)speedProp.GetValue(obj);
+                _currentSpeedIndex = System.Array.IndexOf(SpeedValues, (float)speed);
+                if (_currentSpeedIndex < 0) _currentSpeedIndex = 0;
+            }
+
+            // IsPaused 프로퍼티 읽기
+            var pausedProp = speedType.GetProperty("IsPaused");
+            if (pausedProp != null)
+                _isPaused = (bool)pausedProp.GetValue(obj);
+
+            return true;
+        }
+
+        /// <summary>토글 버튼 텍스트/테두리 갱신</summary>
+        private void UpdateSpeedToggleVisual()
+        {
+            if (speedToggleText != null)
+                speedToggleText.text = SpeedLabels[_currentSpeedIndex];
+
+            // 활성 배속은 NeonGreen 테두리
+            if (speedToggleImage != null)
+            {
+                var outline = speedToggleButton != null ? speedToggleButton.GetComponent<Outline>() : null;
+                if (outline != null)
+                    outline.effectColor = ColorNeonGreen;
+
+                speedToggleImage.color = ColorSpeedActive;
             }
         }
 
