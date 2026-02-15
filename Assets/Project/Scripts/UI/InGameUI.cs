@@ -482,6 +482,12 @@ private IEnumerator SlideUpAnimation()
 
         public void ShowAll()
         {
+            // 런 종료 패널/오버레이 확실히 숨기기 (재시도/직접 StartRun 호출 시 안전망)
+            if (runEndPanel != null)
+                runEndPanel.SetActive(false);
+            if (runEndOverlay != null)
+                runEndOverlay.SetActive(false);
+
             SetInGameElementsActive(true);
         }
 
