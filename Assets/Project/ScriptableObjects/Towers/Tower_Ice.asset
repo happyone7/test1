@@ -37,6 +37,11 @@ MonoBehaviour:
   - 3.8
   - 4.2
   placeCost: 45
+  upgradeCost:
+  - 35
+  - 50
+  - 70
+  - 100
   explosionRadius:
   - 0
   - 0

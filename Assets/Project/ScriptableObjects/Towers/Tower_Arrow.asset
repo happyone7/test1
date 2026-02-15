@@ -37,3 +37,8 @@ MonoBehaviour:
   - 3.6
   - 4
   placeCost: 30
+  upgradeCost:
+  - 25
+  - 35
+  - 50
+  - 70

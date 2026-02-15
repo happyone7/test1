@@ -10,19 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b79a78a43c5b531438e92c30f674f04a, type: 3}
-  m_Name: Wave_05
+  m_Name: Wave_S3_08
   m_EditorClassIdentifier:
   spawnGroups:
   - nodeData: {fileID: 11400000, guid: 5d84841be54ffef45bc293bd0775dfc6, type: 2}
-    count: 8
-    spawnInterval: 0.6
+    count: 12
+    spawnInterval: 0.4
   - nodeData: {fileID: 11400000, guid: 7ed4db1bf5a15374898fa5a6f645cdf5, type: 2}
-    count: 4
-    spawnInterval: 0.6
+    count: 8
+    spawnInterval: 0.4
   - nodeData: {fileID: 11400000, guid: 5db5c4185a80138449cbaed758a02530, type: 2}
-    count: 2
-    spawnInterval: 0.6
-  - nodeData: {fileID: 11400000, guid: 510450b2ccd745afb7cb070d0ccb57da, type: 2}
+    count: 5
+    spawnInterval: 0.4
+  - nodeData: {fileID: 11400000, guid: 4983b5502135461aaaea73610ab6699c, type: 2}
+    count: 4
+    spawnInterval: 0.4
+  - nodeData: {fileID: 11400000, guid: b6219b99d0bc430cb8d17b31224528eb, type: 2}
     count: 1
-    spawnInterval: 0.6
+    spawnInterval: 0.4
   delayBeforeWave: 3
