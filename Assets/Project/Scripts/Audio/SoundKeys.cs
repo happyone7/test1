@@ -30,5 +30,10 @@ namespace Nodebreaker.Audio
         public const string SkillMaxLevel = "SFX_Skill_MaxLevel_01";
         public const string UiHubClick = "UI_Hub_Click_01";
         public const string RunStart = "SFX_Run_Start_01";
+
+        // === Phase 3: Tower Upgrade / FTUE / Stage Unlock ===
+        public const string TowerUpgrade = "SFX_Tower_Upgrade_01";
+        public const string UiGuideAppear = "UI_Guide_Appear_01";
+        public const string StageUnlock = "SFX_Stage_Unlock_01";
     }
 }

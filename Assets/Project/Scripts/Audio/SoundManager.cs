@@ -98,6 +98,11 @@ namespace Nodebreaker.Audio
             Register(SoundKeys.SkillMaxLevel, "Audio/SFX/Hub/SFX_Skill_MaxLevel_01");
             Register(SoundKeys.UiHubClick, "Audio/SFX/Hub/UI_Hub_Click_01");
             Register(SoundKeys.RunStart, "Audio/SFX/Hub/SFX_Run_Start_01");
+
+            // Phase 3: Tower Upgrade / FTUE / Stage Unlock
+            Register(SoundKeys.TowerUpgrade, "Audio/SFX/Combat/SFX_Tower_Upgrade_01");
+            Register(SoundKeys.UiGuideAppear, "Audio/SFX/UI/UI_Guide_Appear_01");
+            Register(SoundKeys.StageUnlock, "Audio/SFX/Alert/SFX_Stage_Unlock_01");
         }
 
         /// <summary>
@@ -140,6 +145,11 @@ namespace Nodebreaker.Audio
             _balanceMap[SoundKeys.SkillMaxLevel] = 0.95f;
             _balanceMap[SoundKeys.UiHubClick] = 0.85f;
             _balanceMap[SoundKeys.RunStart] = 1.0f;
+
+            // === Phase 3: Tower Upgrade / FTUE / Stage Unlock ===
+            _balanceMap[SoundKeys.TowerUpgrade] = 0.9f;
+            _balanceMap[SoundKeys.UiGuideAppear] = 0.8f;
+            _balanceMap[SoundKeys.StageUnlock] = 0.95f;
         }
 
         private float GetBalance(string key)
