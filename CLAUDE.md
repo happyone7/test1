@@ -133,6 +133,14 @@
 
 ---
 
+## CLAUDE.md / MEMORY.md 관리 원칙
+- **CLAUDE.md** (git 커밋): 프로젝트 규칙, 팀 정책, 컨벤션 등 **모든 개발PD가 공유해야 할 내용**
+- **MEMORY.md** (로컬 `~/.claude/`): 환경 설정, 민감 정보, 디버깅 경험 등 **해당 머신/인스턴스 고유 내용**
+- 새 규칙 추가 시 판단 기준: "다른 개발PD도 알아야 하나?" → YES면 CLAUDE.md, NO면 MEMORY.md
+- **수정 권한**: CLAUDE.md와 MEMORY.md 모두 **총괄PD 승인 후에만 수정** (에이전트/스킬 거버넌스와 동일 기준)
+
+---
+
 ## 중요 교훈
 - **UPM 패키지에는 반드시 .meta 파일 필요**: Unity는 .meta 없이 asmdef, .cs 인식 불가
 - 새 패키지 생성 시 모든 파일/폴더에 .meta 파일 생성 필수 (GUID 32자 hex)
