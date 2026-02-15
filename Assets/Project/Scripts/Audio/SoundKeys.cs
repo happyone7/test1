@@ -35,5 +35,10 @@ namespace Nodebreaker.Audio
         public const string TowerUpgrade = "SFX_Tower_Upgrade_01";
         public const string UiGuideAppear = "UI_Guide_Appear_01";
         public const string StageUnlock = "SFX_Stage_Unlock_01";
+
+        // Phase 3: 보스 & 보물상자
+        public const string ChestDrop = "SFX_Chest_Drop_01";
+        public const string ChestOpen = "SFX_Chest_Open_01";
+        public const string ChestSelect = "SFX_Chest_Select_01";
     }
 }

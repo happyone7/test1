@@ -103,6 +103,11 @@ namespace Nodebreaker.Audio
             Register(SoundKeys.TowerUpgrade, "Audio/SFX/Combat/SFX_Tower_Upgrade_01");
             Register(SoundKeys.UiGuideAppear, "Audio/SFX/UI/UI_Guide_Appear_01");
             Register(SoundKeys.StageUnlock, "Audio/SFX/Alert/SFX_Stage_Unlock_01");
+
+            // Phase 3: Chest Feedback
+            Register(SoundKeys.ChestDrop, "Audio/SFX/Feedback/SFX_Chest_Drop_01");
+            Register(SoundKeys.ChestOpen, "Audio/SFX/Feedback/SFX_Chest_Open_01");
+            Register(SoundKeys.ChestSelect, "Audio/SFX/Feedback/SFX_Chest_Select_01");
         }
 
         /// <summary>
@@ -133,6 +138,11 @@ namespace Nodebreaker.Audio
 
             // === UI ===
             _balanceMap[SoundKeys.UiClick] = 0.85f;
+
+            // === 보물상자 피드백: 이벤트성이므로 높게 ===
+            _balanceMap[SoundKeys.ChestDrop] = 0.95f;
+            _balanceMap[SoundKeys.ChestOpen] = 1.0f;
+            _balanceMap[SoundKeys.ChestSelect] = 0.9f;
 
             // === BGM: 전투 BGM은 SFX와의 마스킹 방지를 위해 살짝 낮게 ===
             _balanceMap[SoundKeys.BgmHub] = 0.85f;
