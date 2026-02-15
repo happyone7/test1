@@ -85,9 +85,13 @@ namespace Nodebreaker.Node
                 // 마지막 웨이브가 아닌 경우에만 타워 드롭
                 if (_currentWaveIndex < _currentStage.waves.Length)
                     DropRandomTowerToInventory();
+
+                // 웨이브 클리어 시 보물상자 확률 드랍
+                if (Tesseract.Core.Singleton<Core.TreasureChestManager>.HasInstance)
+                    Core.TreasureChestManager.Instance.TryDropOnWaveClear();
             }
 
-            // 모든 웨이브 완료 → RunManager에 알림
+            // 모든 웨이브 완료 -> RunManager에 알림
             if (Singleton<Core.RunManager>.HasInstance)
                 Core.RunManager.Instance.OnAllWavesCompleted();
         }
@@ -107,12 +111,21 @@ namespace Nodebreaker.Node
         IEnumerator SpawnWave(Data.WaveData wave)
         {
             _spawning = true;
+
+            // spawnRateMultiplier > 1 이면 스폰 간격이 줄어듦 (적이 더 빨리 나옴 = 난이도 상향)
+            // spawnRateMultiplier < 1 이면 스폰 간격이 늘어남 (적이 더 느리게 나옴 = 여유)
+            float spawnRateMul = 1f;
+            if (Singleton<Core.RunManager>.HasInstance)
+                spawnRateMul = Core.RunManager.Instance.CurrentModifiers.spawnRateMultiplier;
+            // 역수 적용: 스킬은 "스폰 속도 감소"를 의미하므로 간격은 곱연산
+            float intervalMul = spawnRateMul > 0f ? 1f / spawnRateMul : 1f;
+
             foreach (var group in wave.spawnGroups)
             {
                 for (int i = 0; i < group.count; i++)
                 {
                     SpawnNode(group.nodeData);
-                    yield return new WaitForSeconds(group.spawnInterval);
+                    yield return new WaitForSeconds(group.spawnInterval * intervalMul);
                 }
             }
             _spawning = false;

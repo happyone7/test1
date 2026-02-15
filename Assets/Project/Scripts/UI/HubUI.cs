@@ -276,22 +276,40 @@ namespace Nodebreaker.UI
             if (!Singleton<Core.GameManager>.HasInstance) return;
 
             var meta = Core.MetaManager.Instance;
-            int maxStages = Core.GameManager.Instance.stages.Length;
-            int unlockedCount = Mathf.Min(meta.CurrentStageIndex + 1, maxStages);
+            var stages = Core.GameManager.Instance.stages;
+            int maxStages = stages.Length;
 
             // 드롭다운 재구성 중 onValueChanged 콜백으로 인한 인덱스 오염 방지
             stageDropdown.onValueChanged.RemoveListener(OnStageDropdownChanged);
 
             stageDropdown.ClearOptions();
             var options = new List<Dropdown.OptionData>();
-            for (int i = 0; i < unlockedCount; i++)
+            int lastUnlockedIndex = 0;
+
+            for (int i = 0; i < maxStages; i++)
             {
-                options.Add(new Dropdown.OptionData($"Stage {i + 1}"));
+                bool unlocked = meta.IsStageUnlocked(stages[i]);
+                if (unlocked)
+                {
+                    string name = !string.IsNullOrEmpty(stages[i].stageName)
+                        ? stages[i].stageName
+                        : $"Stage {i + 1}";
+                    options.Add(new Dropdown.OptionData(name));
+                    lastUnlockedIndex = i;
+                }
+                else
+                {
+                    break; // 순차 해금이므로 잠긴 곳에서 중단
+                }
             }
+
+            if (options.Count == 0)
+                options.Add(new Dropdown.OptionData("Stage 1"));
+
             stageDropdown.AddOptions(options);
 
             // 마지막 해금 스테이지를 기본 선택
-            _selectedStageIndex = Mathf.Clamp(unlockedCount - 1, 0, maxStages - 1);
+            _selectedStageIndex = Mathf.Clamp(lastUnlockedIndex, 0, maxStages - 1);
             stageDropdown.SetValueWithoutNotify(_selectedStageIndex);
 
             stageDropdown.onValueChanged.AddListener(OnStageDropdownChanged);

@@ -9,8 +9,10 @@ namespace Nodebreaker.Node
     {
         [Header("런타임 상태")]
         public Data.NodeData Data { get; private set; }
-        public float CurrentHp { get; private set; }
+        public float CurrentHp { get; protected set; }
+        public float MaxHp => _scaledHp;
         public bool IsAlive => CurrentHp > 0f;
+        public bool IsBossNode => Data != null && Data.type == Nodebreaker.Data.NodeType.Boss;
 
         float _scaledHp;
         float _scaledSpeed;
@@ -166,7 +168,7 @@ namespace Nodebreaker.Node
             }
         }
 
-        void Die()
+        protected virtual void Die()
         {
             CurrentHp = 0f;
 
@@ -183,8 +185,19 @@ namespace Nodebreaker.Node
             SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
             {
-                Core.RunManager.Instance.AddBit(_scaledBitDrop);
+                int bitDrop = _scaledBitDrop;
+                float bitMul = Core.RunManager.Instance.CurrentModifiers.bitGainMultiplier;
+                if (bitMul > 0f)
+                    bitDrop = Mathf.RoundToInt(bitDrop * bitMul);
+                Core.RunManager.Instance.AddBit(bitDrop);
                 Core.RunManager.Instance.OnNodeKilled();
+
+                // 보스 처치 이벤트
+                if (IsBossNode)
+                    Core.RunManager.Instance.OnBossKilled();
+                // 일반 몬스터 처치 시 보물상자 확률 드랍
+                else if (Tesseract.Core.Singleton<Core.TreasureChestManager>.HasInstance)
+                    Core.TreasureChestManager.Instance.TryDropOnNormalKill();
             }
             RemoveFromWave();
             Poolable.TryPool(gameObject);
