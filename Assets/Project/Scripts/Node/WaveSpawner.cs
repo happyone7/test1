@@ -67,6 +67,10 @@ namespace Nodebreaker.Node
                 // 마지막 웨이브가 아닌 경우에만 타워 드롭
                 if (_currentWaveIndex < _currentStage.waves.Length)
                     DropRandomTowerToInventory();
+
+                // 웨이브 클리어 시 보물상자 확률 드랍
+                if (Tesseract.Core.Singleton<Core.TreasureChestManager>.HasInstance)
+                    Core.TreasureChestManager.Instance.TryDropOnWaveClear();
             }
 
             // 모든 웨이브 완료 → RunManager에 알림

@@ -158,10 +158,10 @@ namespace Nodebreaker.Tower
         private bool CanMerge(Tower target)
         {
             if (_dragSlot == null || _dragSlot.data == null) return false;
-            // 같은 타입 + 같은 레벨 + 대상 레벨 < 4
+            // 같은 타입 + 같은 레벨 + 대상 레벨 < 5
             return target.data.type == _dragSlot.data.type
                 && target.Level == _dragSlot.level
-                && target.Level < 4;
+                && target.Level < 5;
         }
 
         private Tower GetTowerAt(Vector3 worldPos)

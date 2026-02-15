@@ -527,7 +527,13 @@ private IEnumerator SlideUpAnimation()
             if (runEndPanel != null) runEndPanel.SetActive(false);
             if (runEndOverlay != null) runEndOverlay.SetActive(false);
             if (Singleton<Core.GameManager>.HasInstance)
-                Core.GameManager.Instance.StartRun();
+            {
+                var gm = Core.GameManager.Instance;
+                if (gm.LastRunCleared)
+                    gm.StartNextStage();
+                else
+                    gm.RetryStage();
+            }
         }
     }
 }

@@ -24,6 +24,12 @@ namespace Nodebreaker.Core
         public int TotalCore => MetaManager.Instance.TotalCore;
         public int CurrentStageIndex => MetaManager.Instance.CurrentStageIndex;
 
+        /// <summary>현재 플레이 중인 스테이지 인덱스 (런 시작 시 설정)</summary>
+        public int PlayingStageIndex { get; private set; }
+
+        /// <summary>마지막 런 클리어 여부 (런 종료 UI에서 다음 스테이지/재시도 분기에 사용)</summary>
+        public bool LastRunCleared { get; private set; }
+
         protected override void Awake()
         {
             base.Awake();
@@ -60,6 +66,7 @@ namespace Nodebreaker.Core
                 stageIdx = Mathf.Max(0, stages.Length - 1);
             }
 
+            PlayingStageIndex = stageIdx;
             State = GameState.InGame;
             SoundManager.Instance.PlayBgm(SoundKeys.BgmCombat, 0.5f);
 
@@ -103,11 +110,26 @@ namespace Nodebreaker.Core
 
         public void OnRunEnd(bool cleared, int bitEarned)
         {
-            int stageIdx = MetaManager.Instance.CurrentStageIndex;
+            LastRunCleared = cleared;
+            int stageIdx = PlayingStageIndex;
             int coreEarned = cleared ? stages[Mathf.Min(stageIdx, stages.Length - 1)].coreReward : 0;
+            int nodesKilled = Singleton<RunManager>.HasInstance ? RunManager.Instance.NodesKilled : 0;
 
-            MetaManager.Instance.AddRunRewards(bitEarned, coreEarned, cleared, stageIdx);
+            MetaManager.Instance.AddRunRewards(bitEarned, coreEarned, cleared, stageIdx, nodesKilled);
             State = GameState.RunEnd;
+        }
+
+        /// <summary>클리어 후 다음 스테이지로 진행</summary>
+        public void StartNextStage()
+        {
+            int nextIdx = Mathf.Min(PlayingStageIndex + 1, stages.Length - 1);
+            StartRun(nextIdx);
+        }
+
+        /// <summary>패배 후 같은 스테이지 재시도</summary>
+        public void RetryStage()
+        {
+            StartRun(PlayingStageIndex);
         }
 
         public void GoToHub()

@@ -140,7 +140,7 @@ namespace Nodebreaker.Tower
         {
             if (other.data.type != data.type) return false;
             if (other.Level != Level) return false; // 같은 레벨끼리만 합성
-            if (Level >= 4) return false; // 최대 Lv4
+            if (Level >= 5) return false; // 최대 Lv5
             Level++;
             Destroy(other.gameObject);
             return true;
@@ -151,7 +151,7 @@ namespace Nodebreaker.Tower
         /// </summary>
         public void LevelUp()
         {
-            if (Level < 4)
+            if (Level < 5)
                 Level++;
         }
 

@@ -17,6 +17,8 @@ namespace Nodebreaker.Core
         public int TotalBit => _data.totalBit;
         public int TotalCore => _data.totalCore;
         public int CurrentStageIndex => _data.currentStageIndex;
+        public int TotalKills => _data.totalKills;
+        public int TotalBitEarned => _data.totalBitEarned;
 
         protected override void Awake()
         {
@@ -167,11 +169,72 @@ namespace Nodebreaker.Core
 
         public void AddRunRewards(int bit, int core, bool cleared, int stageIdx)
         {
+            AddRunRewards(bit, core, cleared, stageIdx, 0);
+        }
+
+        public void AddRunRewards(int bit, int core, bool cleared, int stageIdx, int nodesKilled)
+        {
             _data.totalBit += bit;
             _data.totalCore += core;
+            _data.totalBitEarned += bit;
+            _data.totalKills += nodesKilled;
+
             if (cleared)
+            {
                 _data.currentStageIndex = Mathf.Max(_data.currentStageIndex, stageIdx + 1);
+
+                // 클리어한 스테이지 기록
+                if (!_data.clearedStages.Contains(stageIdx))
+                    _data.clearedStages.Add(stageIdx);
+            }
             Save();
+        }
+
+        /// <summary>해당 스테이지를 클리어했는지 확인</summary>
+        public bool IsStageCleared(int stageIndex)
+        {
+            return _data.clearedStages != null && _data.clearedStages.Contains(stageIndex);
+        }
+
+        /// <summary>스테이지 해금 조건 충족 여부 확인</summary>
+        public bool IsStageUnlocked(Data.StageData stage)
+        {
+            if (stage == null) return false;
+
+            // 해금 조건이 없으면 항상 해금 (Stage 1)
+            if (stage.unlockConditions == null || stage.unlockConditions.Length == 0)
+                return true;
+
+            // 모든 조건을 충족해야 해금
+            foreach (var cond in stage.unlockConditions)
+            {
+                if (cond == null) continue;
+
+                switch (cond.type)
+                {
+                    case Data.UnlockConditionType.None:
+                        continue;
+
+                    case Data.UnlockConditionType.BossKill:
+                        // 이전 스테이지 보스 처치 (requiredValue < 0이면 자동으로 stageIndex - 1)
+                        int prevIdx = cond.requiredValue >= 0 ? cond.requiredValue : stage.stageIndex - 1;
+                        if (prevIdx >= 0 && !IsStageCleared(prevIdx))
+                            return false;
+                        break;
+
+                    case Data.UnlockConditionType.TotalBit:
+                        if (_data.totalBitEarned < cond.requiredValue)
+                            return false;
+                        break;
+
+                    case Data.UnlockConditionType.TotalKills:
+                        if (_data.totalKills < cond.requiredValue)
+                            return false;
+                        break;
+                }
+            }
+
+            return true;
         }
 
         public void SetCurrentStageIndex(int index)
