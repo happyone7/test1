@@ -22,5 +22,17 @@ namespace Nodebreaker.Data
 
         [Header("기지")]
         public int baseHp = 10;
+
+        [Header("해금 조건")]
+        public long unlockBitRequired;
+        public int unlockKillRequired;
+
+        /// <summary>
+        /// 누적 Bit와 처치 수를 기준으로 해금 가능 여부를 판정한다.
+        /// </summary>
+        public bool IsUnlockable(long totalBitEarned, int totalKills)
+        {
+            return totalBitEarned >= unlockBitRequired && totalKills >= unlockKillRequired;
+        }
     }
 }
