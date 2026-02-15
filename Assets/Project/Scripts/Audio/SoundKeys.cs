@@ -30,5 +30,10 @@ namespace Nodebreaker.Audio
         public const string SkillMaxLevel = "SFX_Skill_MaxLevel_01";
         public const string UiHubClick = "UI_Hub_Click_01";
         public const string RunStart = "SFX_Run_Start_01";
+
+        // Phase 3: 보스 & 보물상자
+        public const string ChestDrop = "SFX_Chest_Drop_01";
+        public const string ChestOpen = "SFX_Chest_Open_01";
+        public const string ChestSelect = "SFX_Chest_Select_01";
     }
 }
