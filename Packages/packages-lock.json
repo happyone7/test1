@@ -35,11 +35,11 @@
       "hash": "c0b5c7309806ef4fcbf4ba3dd64c597b7370a6c0"
     },
     "com.tesseract.save": {
-      "version": "https://github.com/happyone7/com.tesseract.save.git#v1.1.1",
+      "version": "https://github.com/happyone7/com.tesseract.save.git#v1.1.2",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0b303499068f3868152e75403ec61d8931c7e9f9"
+      "hash": "f904f6704b98dac3458084b93dc044fae55c65f6"
     },
     "com.tesseract.ui": {
       "version": "https://github.com/happyone7/com.tesseract.ui.git#v1.1.0",

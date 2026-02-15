@@ -21,3 +21,5 @@ MonoBehaviour:
   speed: 1.2
   bitDrop: 6
   damage: 1
+  defense: 5
+  bossAbilityType: 0

@@ -264,11 +264,6 @@ namespace Nodebreaker.UI
             // 하이라이트 갱신
             SetHighlight(index);
 
-            // 드래그 고스트 UI에 아이콘 전달
-            var ghostUI = FindAnyObjectByType<TowerDragGhostUI>();
-            if (ghostUI != null && slot.data.icon != null)
-                ghostUI.SetGhostSprite(slot.data.icon);
-
             // 드래그 시작
             if (dragController != null)
                 dragController.StartDrag(index);

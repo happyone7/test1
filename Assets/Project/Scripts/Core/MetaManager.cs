@@ -18,8 +18,6 @@ namespace Nodebreaker.Core
         public int TotalCore => _data.totalCore;
         public int CurrentStageIndex => _data.currentStageIndex;
         public int TotalNodesKilled => _data.totalNodesKilled;
-        public int TotalKills => _data.totalKills;
-        public int TotalBitEarned => _data.totalBitEarned;
 
         protected override void Awake()
         {
@@ -32,20 +30,6 @@ namespace Nodebreaker.Core
         {
             _data = _saveManager.Load();
             RebuildCache();
-            EnsureCoreNodeActive();
-        }
-
-        /// <summary>
-        /// Core Node(N00)가 항상 활성 상태인지 확인하고, 미활성이면 자동 활성화
-        /// </summary>
-        void EnsureCoreNodeActive()
-        {
-            if (GetSkillLevel("N00") <= 0)
-            {
-                _skillLevelCache["N00"] = 1;
-                Save();
-                Debug.Log("[MetaManager] Core Node(N00) 자동 활성화");
-            }
         }
 
         public void Save()
@@ -60,79 +44,6 @@ namespace Nodebreaker.Core
             return level;
         }
 
-        /// <summary>
-        /// 전제 조건 충족 여부 확인 (OR/AND 모드 지원)
-        /// </summary>
-        public bool ArePrerequisitesMet(string skillId)
-        {
-            var skillData = FindSkillData(skillId);
-            if (skillData == null) return false;
-
-            // 전제 조건 없는 노드(Core Node 등)는 항상 충족
-            if (skillData.prerequisiteIds == null || skillData.prerequisiteIds.Length == 0)
-                return true;
-
-            if (skillData.prerequisiteMode == Data.PrerequisiteMode.And)
-            {
-                // AND: 모든 선행 노드가 1레벨 이상
-                foreach (var prereqId in skillData.prerequisiteIds)
-                {
-                    if (string.IsNullOrEmpty(prereqId)) continue;
-                    if (GetSkillLevel(prereqId) <= 0) return false;
-                }
-                return true;
-            }
-            else
-            {
-                // OR: 선행 노드 중 하나라도 1레벨 이상
-                foreach (var prereqId in skillData.prerequisiteIds)
-                {
-                    if (string.IsNullOrEmpty(prereqId)) continue;
-                    if (GetSkillLevel(prereqId) > 0) return true;
-                }
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 노드가 보이는지 여부 (선행 노드 중 최소 1개가 구매됨)
-        /// </summary>
-        public bool IsNodeVisible(string skillId)
-        {
-            var skillData = FindSkillData(skillId);
-            if (skillData == null) return false;
-
-            // 전제 조건 없는 노드(Core Node)는 항상 보임
-            if (skillData.prerequisiteIds == null || skillData.prerequisiteIds.Length == 0)
-                return true;
-
-            // 선행 노드 중 최소 1개가 구매되어 있으면 보임
-            foreach (var prereqId in skillData.prerequisiteIds)
-            {
-                if (string.IsNullOrEmpty(prereqId)) continue;
-                if (GetSkillLevel(prereqId) > 0) return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 자원 충분 여부 확인 (Bit 또는 Core)
-        /// </summary>
-        public bool CanAfford(string skillId)
-        {
-            var skillData = FindSkillData(skillId);
-            if (skillData == null) return false;
-
-            int currentLevel = GetSkillLevel(skillId);
-            if (currentLevel >= skillData.maxLevel) return false;
-
-            int cost = skillData.GetCost(currentLevel);
-            if (skillData.resourceType == Data.SkillResourceType.Core)
-                return _data.totalCore >= cost;
-            else
-                return _data.totalBit >= cost;
-        }
-
         public bool CanPurchaseSkill(string skillId)
         {
             var skillData = FindSkillData(skillId);
@@ -141,11 +52,8 @@ namespace Nodebreaker.Core
             int currentLevel = GetSkillLevel(skillId);
             if (currentLevel >= skillData.maxLevel) return false;
 
-            // 전제 조건 확인
-            if (!ArePrerequisitesMet(skillId)) return false;
-
-            // 자원 확인
-            return CanAfford(skillId);
+            int cost = skillData.GetCost(currentLevel);
+            return _data.totalBit >= cost;
         }
 
         public bool TryPurchaseSkill(string skillId)
@@ -156,14 +64,8 @@ namespace Nodebreaker.Core
             int currentLevel = GetSkillLevel(skillId);
             int cost = skillData.GetCost(currentLevel);
 
-            // 자원 타입에 따라 차감
-            if (skillData.resourceType == Data.SkillResourceType.Core)
-                _data.totalCore -= cost;
-            else
-                _data.totalBit -= cost;
-
+            _data.totalBit -= cost;
             _skillLevelCache[skillId] = currentLevel + 1;
-            Debug.Log($"[MetaManager] TryPurchaseSkill: '{skillId}' Lv{currentLevel}->Lv{currentLevel + 1}, 비용={cost} {skillData.resourceType}");
             Save();
             return true;
         }
@@ -173,41 +75,30 @@ namespace Nodebreaker.Core
             _data.totalBit += bit;
             _data.totalCore += core;
             _data.totalNodesKilled += nodesKilled;
-            _data.totalBitEarned += bit;
-            _data.totalKills += nodesKilled;
-
             if (cleared)
-            {
                 _data.currentStageIndex = Mathf.Max(_data.currentStageIndex, stageIdx + 1);
-
-                // 클리어한 스테이지 기록
-                if (!_data.clearedStages.Contains(stageIdx))
-                    _data.clearedStages.Add(stageIdx);
-            }
             Save();
         }
 
-        /// <summary>해당 스테이지를 클리어했는지 확인</summary>
-        public bool IsStageCleared(int stageIndex)
+        /// <summary>
+        /// 스테이지 해금 조건을 확인합니다.
+        /// Stage 1: 항상 해금
+        /// Stage 2: totalBit >= 500 AND totalNodesKilled >= 100
+        /// Stage 3: totalBit >= 3000 AND totalNodesKilled >= 500
+        /// </summary>
+        public bool IsStageUnlocked(int stageIndex)
         {
-            return _data.clearedStages != null && _data.clearedStages.Contains(stageIndex);
-        }
-
-        /// <summary>스테이지 해금 조건 충족 여부 확인 (StageData 기반)</summary>
-        public bool IsStageUnlocked(Data.StageData stage)
-        {
-            if (stage == null) return false;
-
-            // 해금 조건이 없으면 항상 해금 (Stage 1)
-            if (stage.unlockBitRequired <= 0 && stage.unlockKillRequired <= 0)
-                return true;
-
-            // 이전 스테이지 클리어 체크 (stageIndex > 0이면 이전 스테이지 클리어 필수)
-            if (stage.stageIndex > 0 && !IsStageCleared(stage.stageIndex - 1))
-                return false;
-
-            // Bit & Kill 조건
-            return stage.IsUnlockable(_data.totalBitEarned, _data.totalKills);
+            switch (stageIndex)
+            {
+                case 0: // Stage 1: 항상 해금
+                    return true;
+                case 1: // Stage 2
+                    return _data.totalBit >= 500 && _data.totalNodesKilled >= 100;
+                case 2: // Stage 3
+                    return _data.totalBit >= 3000 && _data.totalNodesKilled >= 500;
+                default: // 이후 스테이지: currentStageIndex 기반 진행도 체크
+                    return _data.currentStageIndex >= stageIndex;
+            }
         }
 
         public void SetCurrentStageIndex(int index)
@@ -232,49 +123,16 @@ namespace Nodebreaker.Core
                 switch (skill.effectType)
                 {
                     case Data.SkillEffectType.AttackDamage:
-                        mods.attackDamageMultiplier += value * 0.01f;
+                        mods.attackDamageMultiplier += value;
                         break;
                     case Data.SkillEffectType.AttackSpeed:
-                        mods.attackSpeedMultiplier += value * 0.01f;
+                        mods.attackSpeedMultiplier += value;
                         break;
                     case Data.SkillEffectType.BaseHp:
                         mods.bonusBaseHp += Mathf.RoundToInt(value);
                         break;
-                    case Data.SkillEffectType.Range:
-                        mods.rangeBonus += value;
-                        break;
-                    case Data.SkillEffectType.BitGain:
-                        mods.bitGainMultiplier += value * 0.01f;
-                        break;
-                    case Data.SkillEffectType.StartBit:
-                        mods.startBitBonus += Mathf.RoundToInt(value);
-                        break;
-                    case Data.SkillEffectType.SpawnRate:
-                        mods.spawnRateMultiplier += value * 0.01f;
-                        break;
-                    case Data.SkillEffectType.HpRegen:
-                        mods.hpRegenPerSec += value;
-                        break;
-                    case Data.SkillEffectType.Critical:
-                        mods.hasCritical = true;
-                        break;
-                    case Data.SkillEffectType.Idle:
-                        mods.hasIdleCollector = true;
-                        break;
-                    case Data.SkillEffectType.SpeedControl:
-                        mods.hasSpeedControl = true;
-                        break;
-                    case Data.SkillEffectType.TowerUnlock:
-                    case Data.SkillEffectType.None:
-                        break;
                 }
             }
-
-            Debug.Log($"[MetaManager] CalculateModifiers: atkDmg={mods.attackDamageMultiplier:F2}, " +
-                      $"atkSpd={mods.attackSpeedMultiplier:F2}, bonusHp={mods.bonusBaseHp}, " +
-                      $"range={mods.rangeBonus:F2}, bitGain={mods.bitGainMultiplier:F2}, " +
-                      $"startBit={mods.startBitBonus}, spawnRate={mods.spawnRateMultiplier:F2}, " +
-                      $"hpRegen={mods.hpRegenPerSec:F2}");
 
             return mods;
         }
@@ -303,7 +161,7 @@ namespace Nodebreaker.Core
             }
         }
 
-        // -- FTUE 시스템 --
+        // ── FTUE 시스템 ──
 
         /// <summary>
         /// FTUE 플래그 인덱스를 가져옵니다.

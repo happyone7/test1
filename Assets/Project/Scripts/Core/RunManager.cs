@@ -1,4 +1,3 @@
-using System;
 using Tesseract.Core;
 using UnityEngine;
 using Nodebreaker.Audio;
@@ -14,10 +13,6 @@ namespace Nodebreaker.Core
         public int NodesKilled { get; private set; }
         public bool IsRunning { get; private set; }
         public RunModifiers CurrentModifiers { get; private set; }
-        public bool BossDefeated { get; private set; }
-
-        /// <summary>보스 처치 시 발생하는 이벤트</summary>
-        public event Action OnBossDefeated;
 
         int _baseHp;
         int _baseMaxHp;
@@ -31,45 +26,17 @@ namespace Nodebreaker.Core
         {
             CurrentStage = stage;
             CurrentWaveIndex = 0;
-            BitEarned = modifiers.startBitBonus;
+            BitEarned = 0;
             NodesKilled = 0;
             CurrentModifiers = modifiers;
             _baseMaxHp = stage.baseHp + modifiers.bonusBaseHp;
             _baseHp = _baseMaxHp;
             IsRunning = true;
-            BossDefeated = false;
             _playedHp30Warning = false;
             _playedHp10Warning = false;
-            _regenAccumulator = 0f;
-
-            // 보물상자 매니저 초기화
-            if (Singleton<TreasureChestManager>.HasInstance)
-                TreasureChestManager.Instance.ResetForNewRun();
-
-            if (BitEarned > 0)
-                Debug.Log($"[RunManager] 시작 Bit 보너스 적용: +{BitEarned}");
 
             if (Singleton<Node.WaveSpawner>.HasInstance)
                 Node.WaveSpawner.Instance.StartWaves(stage);
-        }
-
-        float _regenAccumulator;
-
-        void Update()
-        {
-            if (!IsRunning) return;
-
-            // HP 자동 회복
-            if (CurrentModifiers.hpRegenPerSec > 0f && _baseHp > 0 && _baseHp < _baseMaxHp)
-            {
-                _regenAccumulator += CurrentModifiers.hpRegenPerSec * Time.deltaTime;
-                if (_regenAccumulator >= 1f)
-                {
-                    int regenAmount = Mathf.FloorToInt(_regenAccumulator);
-                    _regenAccumulator -= regenAmount;
-                    _baseHp = Mathf.Min(_baseMaxHp, _baseHp + regenAmount);
-                }
-            }
         }
 
         public void AddBit(int amount)
@@ -128,41 +95,6 @@ namespace Nodebreaker.Core
             IsRunning = false;
             CurrentStage = null;
             NodesKilled = 0;
-            BossDefeated = false;
-
-            // 배속을 x1로 복귀 (TimeScale 안전 보장)
-            if (Singleton<SpeedController>.HasInstance)
-                SpeedController.Instance.ResetToDefault();
-        }
-
-        /// <summary>보스 처치 시 호출</summary>
-        public void OnBossKilled()
-        {
-            BossDefeated = true;
-            OnBossDefeated?.Invoke();
-
-            // 보스 처치 시 보물상자 100% 드랍
-            if (Singleton<TreasureChestManager>.HasInstance)
-                TreasureChestManager.Instance.TryDropOnBossKill();
-        }
-
-        /// <summary>런 모디파이어 갱신 (보물상자 보상 적용 시 사용)</summary>
-        public void SetModifiers(RunModifiers mods)
-        {
-            CurrentModifiers = mods;
-        }
-
-        /// <summary>기지 HP 회복 (최대 HP 초과 불가)</summary>
-        public void HealBase(int amount)
-        {
-            _baseHp = Mathf.Min(_baseMaxHp, _baseHp + amount);
-        }
-
-        /// <summary>기지 최대 HP 증가 (현재 HP도 동일량 증가)</summary>
-        public void IncreaseMaxHp(int amount)
-        {
-            _baseMaxHp += amount;
-            _baseHp += amount;
         }
 
         void EndRun(bool cleared)

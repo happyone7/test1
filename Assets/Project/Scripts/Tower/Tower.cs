@@ -76,8 +76,6 @@ namespace Nodebreaker.Tower
         Node.Node FindTarget()
         {
             float range = data.GetRange(Level);
-            if (Singleton<Core.RunManager>.HasInstance)
-                range += Core.RunManager.Instance.CurrentModifiers.rangeBonus;
             var colliders = Physics2D.OverlapCircleAll(transform.position, range);
 
             Node.Node closest = null;
@@ -140,7 +138,7 @@ namespace Nodebreaker.Tower
         {
             if (other.data.type != data.type) return false;
             if (other.Level != Level) return false; // 같은 레벨끼리만 합성
-            if (Level >= 5) return false; // 최대 Lv5
+            if (Level >= 4) return false; // 최대 Lv4
             Level++;
             Destroy(other.gameObject);
             return true;
@@ -151,7 +149,7 @@ namespace Nodebreaker.Tower
         /// </summary>
         public void LevelUp()
         {
-            if (Level < 5)
+            if (Level < 4)
                 Level++;
         }
 
@@ -177,11 +175,8 @@ namespace Nodebreaker.Tower
         void OnDrawGizmosSelected()
         {
             if (data == null) return;
-            float range = data.GetRange(Level);
-            if (Application.isPlaying && Singleton<Core.RunManager>.HasInstance)
-                range += Core.RunManager.Instance.CurrentModifiers.rangeBonus;
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, range);
+            Gizmos.DrawWireSphere(transform.position, data.GetRange(Level));
         }
     }
 }

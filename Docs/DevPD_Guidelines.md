@@ -162,50 +162,22 @@ git commit --author="DevPD <dev-pd@soulspire.dev>"
 
 ## 5. QA 프로세스 (QA 게이트 방식)
 
-### 5.1 QA 2계층 체계
-
-| 계층 | 담당 | 플랫폼 | 역할 |
-|------|------|--------|------|
-| **QA 실행** | Codex CLI | OpenAI Codex (gpt-5.3-codex) | QA 시트 기반 전체 항목 검증 (MCP Unity 활용) |
-| **QA 관리/감독** | QA팀장 (Claude) | Claude Code 에이전트 | QA 룰 정리, 크리티컬 버그 직접 처리, 팀간 의사소통 |
-
-**역할 분담 원칙:**
-- **Codex CLI**: 모든 QA 항목을 보고 직접 검증 수행 (비용 절감). MCP Unity 연동으로 에디터 상태/스크린샷/컴파일 에러 확인 가능
-- **QA팀장 (Claude)**: QA 룰/시트 관리, 크리티컬 버그(전 팀 중단 필요 수준)만 직접 처리, **팀간 의사소통 담당** (Codex CLI는 에이전트 간 메시지 불가)
-
-**Codex CLI QA 실행 방법:**
-```bash
-# 프로젝트 루트에서 실행
-codex -q "Docs/QA_Sheet.md를 읽고 모든 PENDING 항목을 순서대로 검증해줘. MCP Unity 도구를 사용하여 에디터 상태, 스크린샷, 컴파일 에러를 확인하고, 각 항목의 상태를 PASS/FAIL/BLOCKED로 업데이트해. 결과를 Docs/QA_Sheet.md에 직접 반영해줘."
-```
-
-### 5.2 단위 QA + 머지 게이트 (Sprint 중)
+### 5.1 단위 QA + 머지 게이트 (Sprint 중)
 - 각 팀장이 `dev/*` 브랜치에서 작업 완료 + 자체 QA 후 커밋
-- **Codex CLI가 해당 `dev/*` 브랜치를 검증** (QA팀장이 Codex 실행)
+- QA팀장이 해당 `dev/*` 브랜치를 체크아웃하여 동작 검증
 - **검증 통과 → QA팀장이 sprint 브랜치로 머지**
-- **검증 실패 → QA팀장이 해당 팀장에게 수정 요청 (의사소통 담당)**
+- **검증 실패 → 해당 팀장에게 수정 요청, 수정 후 재검증**
 
-### 5.3 통합 QA (빌드 직전)
+### 5.2 통합 QA (빌드 직전)
 - 모든 dev/* 브랜치가 sprint 브랜치에 머지 완료 후
-- **Codex CLI가 sprint 브랜치에서 전체 플로우 통합 테스트** 수행
+- sprint 브랜치에서 전체 플로우 통합 테스트
 - QA 통과 → 총괄PD 승인 → 빌더가 빌드
 
-### 5.4 QA팀장 권한과 역할
+### 5.3 QA팀장 권한과 역할
 - **sprint 브랜치 머지 권한**: QA팀장만 보유 (다른 팀장 직접 머지 금지)
-- **Codex CLI QA 실행 관리**: 언제/어떤 항목을 Codex에 돌릴지 판단
-- **크리티컬 버그 직접 처리**: 전 팀 중단 필요 수준의 이슈만 직접 개입
-- **팀간 의사소통 브릿지**: Codex가 발견한 이슈를 해당 팀장에게 전달
+- 각 팀장의 진척도를 모니터링
+- 먼저 QA할 수 있는 부분을 찾아 선제적으로 진행
 - 병목 구간 식별하여 PM/개발PD에게 보고
-
-### 5.5 Codex CLI 설정 (참고)
-```toml
-# ~/.codex/config.toml
-model = "gpt-5.3-codex"
-model_reasoning_effort = "high"
-
-[mcp_servers.unity-mcp]
-url = "http://127.0.0.1:8080/mcp"
-```
 
 ---
 

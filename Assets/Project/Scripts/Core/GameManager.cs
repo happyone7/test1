@@ -24,12 +24,6 @@ namespace Nodebreaker.Core
         public int TotalCore => MetaManager.Instance.TotalCore;
         public int CurrentStageIndex => MetaManager.Instance.CurrentStageIndex;
 
-        /// <summary>현재 플레이 중인 스테이지 인덱스 (런 시작 시 설정)</summary>
-        public int PlayingStageIndex { get; private set; }
-
-        /// <summary>마지막 런 클리어 여부 (런 종료 UI에서 다음 스테이지/재시도 분기에 사용)</summary>
-        public bool LastRunCleared { get; private set; }
-
         protected override void Awake()
         {
             base.Awake();
@@ -86,27 +80,12 @@ namespace Nodebreaker.Core
                 stageIdx = Mathf.Max(0, stages.Length - 1);
             }
 
-            PlayingStageIndex = stageIdx;
             State = GameState.InGame;
             SoundManager.Instance.PlayBgm(SoundKeys.BgmCombat, 0.5f);
-
-            // 배속 x1로 초기화
-            if (Singleton<SpeedController>.HasInstance)
-                SpeedController.Instance.ResetToDefault();
 
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
                 hubUI.Hide();
-
-            // 런 상태 정리 (직접 재시도 시 RunEnd 상태에서 바로 오는 경우)
-            if (Singleton<RunManager>.HasInstance && RunManager.Instance.IsRunning)
-                RunManager.Instance.ResetRun();
-
-            // 날아가는 투사체 정리
-            CleanupProjectiles();
-
-            // 살아있는 노드 정리
-            CleanupNodes();
 
             // 인벤토리 초기화
             if (Singleton<Tower.TowerInventory>.HasInstance)
@@ -134,10 +113,13 @@ namespace Nodebreaker.Core
 
         public void OnRunEnd(bool cleared, int bitEarned)
         {
-            LastRunCleared = cleared;
-            int stageIdx = PlayingStageIndex;
+            int stageIdx = MetaManager.Instance.CurrentStageIndex;
             int coreEarned = cleared ? stages[Mathf.Min(stageIdx, stages.Length - 1)].coreReward : 0;
-            int nodesKilled = Singleton<RunManager>.HasInstance ? RunManager.Instance.NodesKilled : 0;
+
+            // RunManager에서 노드 처치 수를 가져옴
+            int nodesKilled = 0;
+            if (Singleton<RunManager>.HasInstance)
+                nodesKilled = RunManager.Instance.NodesKilled;
 
             MetaManager.Instance.AddRunRewards(bitEarned, coreEarned, cleared, stageIdx, nodesKilled);
 
@@ -150,19 +132,6 @@ namespace Nodebreaker.Core
             }
 
             State = GameState.RunEnd;
-        }
-
-        /// <summary>클리어 후 다음 스테이지로 진행</summary>
-        public void StartNextStage()
-        {
-            int nextIdx = Mathf.Min(PlayingStageIndex + 1, stages.Length - 1);
-            StartRun(nextIdx);
-        }
-
-        /// <summary>패배 후 같은 스테이지 재시도</summary>
-        public void RetryStage()
-        {
-            StartRun(PlayingStageIndex);
         }
 
         public void GoToHub()
@@ -188,9 +157,6 @@ namespace Nodebreaker.Core
 
             // 살아있는 노드 정리
             CleanupNodes();
-
-            // 날아가는 투사체 정리
-            CleanupProjectiles();
 
             // InGameUI 숨기기 (런엔드 패널 포함)
             var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
@@ -297,15 +263,6 @@ namespace Nodebreaker.Core
             {
                 if (node.IsAlive)
                     Tesseract.ObjectPool.Poolable.TryPool(node.gameObject);
-            }
-        }
-
-        private void CleanupProjectiles()
-        {
-            var projectiles = Object.FindObjectsByType<Projectile.Projectile>(FindObjectsSortMode.None);
-            foreach (var proj in projectiles)
-            {
-                Tesseract.ObjectPool.Poolable.TryPool(proj.gameObject);
             }
         }
     }
