@@ -165,7 +165,13 @@ namespace Nodebreaker.Core
 
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
+            {
                 hubUI.Show();
+
+                // FTUE: Hub 첫 진입 가이드
+                if (Singleton<UI.FTUEManager>.HasInstance)
+                    UI.FTUEManager.Instance.TriggerHub("HubFirstEntry", UI.FTUEManager.GuideHubFirstEntry);
+            }
         }
 
         /// <summary>

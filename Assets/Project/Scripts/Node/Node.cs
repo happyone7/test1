@@ -118,6 +118,15 @@ namespace Nodebreaker.Node
             // defense 차감: 최소 데미지 1 보장
             float actualDamage = Mathf.Max(1f, damage - _defense);
             CurrentHp -= actualDamage;
+
+            // 보스 HP 바 실시간 업데이트
+            if (Data != null && Data.type == Nodebreaker.Data.NodeType.Boss)
+            {
+                var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+                if (inGameUI != null)
+                    inGameUI.UpdateBossHp(CurrentHp);
+            }
+
             if (CurrentHp <= 0f)
                 Die();
         }

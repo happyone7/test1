@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Tesseract.Core;
 using UnityEngine;
@@ -78,15 +79,23 @@ namespace Nodebreaker.UI
         public Image topBarImage;      // 상단 바 배경
         public Image bottomBarImage;   // 하단 바 배경
 
+        [Header("가이드 텍스트 오버레이")]
+        public GameObject guideTextContainer;
+        public Text guideText;
+        public Image guideTextBackground;
+
         [Header("상세 패널 - 추가 (PPT 명세)")]
         public Text detailChangeBeforeText;  // 변경 전 값
         public Text detailChangeAfterText;   // 변경 후 값
         public Text purchaseButtonText;      // 구매 버튼 텍스트
         public Button detailCloseButton;     // 닫기 X 버튼
 
+        private static readonly Color ColorOverlay = new Color32(0x05, 0x08, 0x12, 0xCC);
+
         private Data.SkillNodeData _selectedSkill;
         private int _selectedStageIndex;
         private int _pendingIdleBit;
+        private Coroutine _guideTextCoroutine;
 
         /// <summary>
         /// prerequisite 스킬들이 모두 1레벨 이상인지 확인
@@ -149,6 +158,9 @@ namespace Nodebreaker.UI
 
             if (idleBitPanel != null)
                 idleBitPanel.SetActive(false);
+
+            if (guideTextContainer != null)
+                guideTextContainer.SetActive(false);
 
             // UI 스프라이트 적용
             ApplyUISprites();
@@ -530,6 +542,56 @@ namespace Nodebreaker.UI
 #else
             Application.Quit();
 #endif
+        }
+
+        // =====================================================================
+        // FTUE 가이드 텍스트 오버레이
+        // =====================================================================
+
+        /// <summary>
+        /// 화면 하단 중앙에 가이드 텍스트를 2초 표시 후 페이드아웃합니다.
+        /// </summary>
+        public void ShowGuideText(string text)
+        {
+            if (guideTextContainer == null || guideText == null) return;
+
+            if (_guideTextCoroutine != null)
+                StopCoroutine(_guideTextCoroutine);
+
+            _guideTextCoroutine = StartCoroutine(GuideTextRoutine(text));
+        }
+
+        private IEnumerator GuideTextRoutine(string text)
+        {
+            guideTextContainer.SetActive(true);
+            guideText.text = text;
+            guideText.color = ColorTextPrimary;
+
+            if (guideTextBackground != null)
+                guideTextBackground.color = ColorOverlay;
+
+            var canvasGroup = guideTextContainer.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = guideTextContainer.AddComponent<CanvasGroup>();
+
+            canvasGroup.alpha = 1f;
+
+            // 2초 표시
+            yield return new WaitForSecondsRealtime(2f);
+
+            // 0.5초 페이드아웃
+            float fadeTime = 0.5f;
+            float elapsed = 0f;
+            while (elapsed < fadeTime)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                canvasGroup.alpha = 1f - (elapsed / fadeTime);
+                yield return null;
+            }
+
+            canvasGroup.alpha = 0f;
+            guideTextContainer.SetActive(false);
+            _guideTextCoroutine = null;
         }
     }
 }

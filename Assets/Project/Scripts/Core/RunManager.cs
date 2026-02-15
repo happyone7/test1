@@ -113,7 +113,17 @@ namespace Nodebreaker.Core
             // UI에 런 종료 알림
             var ui = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
             if (ui != null)
+            {
                 ui.ShowRunEnd(cleared, BitEarned, NodesKilled, coreEarned);
+
+                // 보스 처치 Core 보상 팝업
+                if (cleared && coreEarned > 0)
+                    ui.ShowCorePopup(coreEarned);
+            }
+
+            // FTUE: 첫 사망 가이드
+            if (!cleared && Singleton<UI.FTUEManager>.HasInstance)
+                UI.FTUEManager.Instance.TriggerInGame("FirstDeath", UI.FTUEManager.GuideFirstDeath);
         }
     }
 }

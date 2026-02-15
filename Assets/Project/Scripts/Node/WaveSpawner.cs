@@ -40,11 +40,22 @@ namespace Nodebreaker.Node
                 {
                     SoundManager.Instance.PlaySfx(SoundKeys.BossAppear, 1f);
                     SoundManager.Instance.PlayBgm(SoundKeys.BgmBoss, 0.6f);
+
+                    // FTUE: 보스 웨이브 가이드
+                    if (Singleton<UI.FTUEManager>.HasInstance)
+                        UI.FTUEManager.Instance.TriggerInGame("BossWave", UI.FTUEManager.GuideBossWave);
+
+                    // 보스 HP 바 표시
+                    ShowBossHpBar(wave);
                 }
                 else
                 {
                     SoundManager.Instance.PlaySfx(SoundKeys.WaveStart, 0.9f);
                 }
+
+                // FTUE: 첫 웨이브 가이드
+                if (_currentWaveIndex == 0 && Singleton<UI.FTUEManager>.HasInstance)
+                    UI.FTUEManager.Instance.TriggerInGame("FirstWave", UI.FTUEManager.GuideFirstWave);
 
                 yield return new WaitForSeconds(wave.delayBeforeWave);
                 yield return StartCoroutine(SpawnWave(wave));
@@ -54,7 +65,14 @@ namespace Nodebreaker.Node
                     yield return null;
 
                 if (isBossWave)
+                {
                     SoundManager.Instance.PlaySfx(SoundKeys.BossDefeat, 1f);
+
+                    // 보스 HP 바 숨김
+                    var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+                    if (inGameUI != null)
+                        inGameUI.HideBossHpBar();
+                }
                 else
                     SoundManager.Instance.PlaySfx(SoundKeys.WaveClear, 0.9f);
 
@@ -129,6 +147,33 @@ namespace Nodebreaker.Node
             _aliveCount = Mathf.Max(0, _aliveCount - 1);
         }
 
+        /// <summary>
+        /// 보스 웨이브의 첫 보스 데이터를 기반으로 InGameUI에 보스 HP 바를 표시합니다.
+        /// </summary>
+        private void ShowBossHpBar(Data.WaveData wave)
+        {
+            if (wave == null || wave.spawnGroups == null) return;
+
+            foreach (var group in wave.spawnGroups)
+            {
+                if (group == null || group.nodeData == null) continue;
+                if (group.nodeData.type == Data.NodeType.Boss)
+                {
+                    float scaledHp = group.nodeData.hp;
+                    if (_currentStage != null)
+                        scaledHp *= _currentStage.hpMultiplier;
+
+                    string bossName = group.nodeData.nodeName;
+
+                    var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+                    if (inGameUI != null)
+                        inGameUI.ShowBossHpBar(bossName, scaledHp);
+
+                    break;
+                }
+            }
+        }
+
         private void DropRandomTowerToInventory()
         {
             if (!Singleton<Tower.TowerManager>.HasInstance) return;
@@ -148,6 +193,10 @@ namespace Nodebreaker.Node
             var randomTower = available[Random.Range(0, available.Length)];
             inventory.TryAddTower(randomTower, 1);
             Debug.Log($"[WaveSpawner] 웨이브 클리어 보상: {randomTower.towerName} Lv1 획득");
+
+            // FTUE: 첫 타워 드롭 가이드
+            if (Singleton<UI.FTUEManager>.HasInstance)
+                UI.FTUEManager.Instance.TriggerInGame("FirstTowerDrop", UI.FTUEManager.GuideFirstTowerDrop);
         }
     }
 }

@@ -87,6 +87,21 @@ namespace Nodebreaker.UI
         [Header("런 종료 패널 - 보유 Bit 총액")]
         public Text runEndTotalBitText;         // "보유 Bit: 1,234" 텍스트
 
+        [Header("보스 HP 바")]
+        public GameObject bossHpBarContainer;   // 보스 HP 바 전체 컨테이너
+        public Text bossNameText;               // 보스 이름 텍스트
+        public Image bossHpBarFill;             // 보스 HP 게이지 (fillAmount)
+        public Text bossHpValueText;            // 보스 HP 수치 텍스트
+
+        [Header("가이드 텍스트 오버레이")]
+        public GameObject guideTextContainer;   // 하단 중앙 가이드 텍스트 컨테이너
+        public Text guideText;                  // 가이드 텍스트
+        public Image guideTextBackground;       // 반투명 배경
+
+        [Header("보스 처치 Core 보상 팝업")]
+        public GameObject corePopupContainer;   // Core 팝업 컨테이너
+        public Text corePopupText;              // "+N Core" 텍스트
+
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
@@ -96,6 +111,10 @@ namespace Nodebreaker.UI
         private float _savedTimeScale = 1f;
         private bool _isPaused;
         private Coroutine _slideUpCoroutine;
+        private Coroutine _guideTextCoroutine;
+        private Coroutine _corePopupCoroutine;
+        private float _bossMaxHp;
+        private bool _bossHpBarVisible;
 
 
         void Start()
@@ -119,6 +138,19 @@ namespace Nodebreaker.UI
                 towerPurchasePanel.gameObject.SetActive(false);
             if (towerPurchaseButton != null)
                 towerPurchaseButton.gameObject.SetActive(false);
+
+            // 보스 HP 바 초기 숨김
+            if (bossHpBarContainer != null)
+                bossHpBarContainer.SetActive(false);
+            _bossHpBarVisible = false;
+
+            // 가이드 텍스트 초기 숨김
+            if (guideTextContainer != null)
+                guideTextContainer.SetActive(false);
+
+            // Core 팝업 초기 숨김
+            if (corePopupContainer != null)
+                corePopupContainer.SetActive(false);
 
             // UI 스프라이트 적용
             ApplyUISprites();
@@ -328,9 +360,26 @@ public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEar
                 }
             }
 
-            // 새 스테이지 해금 알림 (향후 연동)
+            // 새 스테이지 해금 알림
             if (runEndUnlockNotice != null)
-                runEndUnlockNotice.SetActive(false);
+            {
+                bool showUnlock = false;
+                if (cleared && Singleton<Core.MetaManager>.HasInstance && Singleton<Core.GameManager>.HasInstance)
+                {
+                    int stageCount = Core.GameManager.Instance.stages.Length;
+                    int unlockedIndex = Core.MetaManager.Instance.CurrentStageIndex;
+                    // 클리어로 새 스테이지가 해금되었고, 아직 갈 수 있는 다음 스테이지가 있으면
+                    showUnlock = unlockedIndex < stageCount && unlockedIndex > 0;
+                }
+
+                runEndUnlockNotice.SetActive(showUnlock);
+                if (showUnlock && runEndUnlockText != null)
+                {
+                    runEndUnlockText.text = "새 스테이지 해금!";
+                    runEndUnlockText.color = ColorYellow;
+                    runEndUnlockText.fontStyle = FontStyle.Bold;
+                }
+            }
 
             // 버튼 텍스트 및 스타일
             if (hubButtonText != null)
@@ -497,6 +546,27 @@ private IEnumerator SlideUpAnimation()
                 towerPurchasePanel.Hide();
             if (towerInfoTooltip != null)
                 towerInfoTooltip.Hide();
+
+            // 보스 HP 바 숨김
+            HideBossHpBar();
+
+            // 가이드 텍스트 숨김
+            if (_guideTextCoroutine != null)
+            {
+                StopCoroutine(_guideTextCoroutine);
+                _guideTextCoroutine = null;
+            }
+            if (guideTextContainer != null)
+                guideTextContainer.SetActive(false);
+
+            // Core 팝업 숨김
+            if (_corePopupCoroutine != null)
+            {
+                StopCoroutine(_corePopupCoroutine);
+                _corePopupCoroutine = null;
+            }
+            if (corePopupContainer != null)
+                corePopupContainer.SetActive(false);
         }
 
         public void ShowAll()
@@ -539,6 +609,162 @@ private IEnumerator SlideUpAnimation()
             if (runEndPanel != null) runEndPanel.SetActive(false);
             if (Singleton<Core.GameManager>.HasInstance)
                 Core.GameManager.Instance.StartRun();
+        }
+
+        // =====================================================================
+        // 보스 HP 바
+        // =====================================================================
+
+        /// <summary>
+        /// 보스 HP 바를 표시합니다. 보스 웨이브 시작 시 호출.
+        /// </summary>
+        public void ShowBossHpBar(string bossName, float maxHp)
+        {
+            _bossMaxHp = maxHp;
+            _bossHpBarVisible = true;
+
+            if (bossHpBarContainer != null)
+                bossHpBarContainer.SetActive(true);
+
+            if (bossNameText != null)
+            {
+                bossNameText.text = bossName;
+                bossNameText.color = ColorRed;
+                bossNameText.fontStyle = FontStyle.Bold;
+            }
+
+            if (bossHpBarFill != null)
+                bossHpBarFill.fillAmount = 1f;
+
+            if (bossHpValueText != null)
+                bossHpValueText.text = $"{maxHp:F0}/{maxHp:F0}";
+        }
+
+        /// <summary>
+        /// 보스 HP 갱신.
+        /// </summary>
+        public void UpdateBossHp(float currentHp)
+        {
+            if (!_bossHpBarVisible) return;
+
+            float ratio = _bossMaxHp > 0 ? Mathf.Clamp01(currentHp / _bossMaxHp) : 0f;
+
+            if (bossHpBarFill != null)
+                bossHpBarFill.fillAmount = ratio;
+
+            if (bossHpValueText != null)
+                bossHpValueText.text = $"{Mathf.Max(0f, currentHp):F0}/{_bossMaxHp:F0}";
+        }
+
+        /// <summary>
+        /// 보스 HP 바를 숨깁니다. 보스 처치 시 호출.
+        /// </summary>
+        public void HideBossHpBar()
+        {
+            _bossHpBarVisible = false;
+
+            if (bossHpBarContainer != null)
+                bossHpBarContainer.SetActive(false);
+        }
+
+        // =====================================================================
+        // FTUE 가이드 텍스트 오버레이
+        // =====================================================================
+
+        /// <summary>
+        /// 화면 하단 중앙에 가이드 텍스트를 2초 표시 후 페이드아웃합니다.
+        /// </summary>
+        public void ShowGuideText(string text)
+        {
+            if (guideTextContainer == null || guideText == null) return;
+
+            if (_guideTextCoroutine != null)
+                StopCoroutine(_guideTextCoroutine);
+
+            _guideTextCoroutine = StartCoroutine(GuideTextRoutine(text));
+        }
+
+        private IEnumerator GuideTextRoutine(string text)
+        {
+            guideTextContainer.SetActive(true);
+            guideText.text = text;
+            guideText.color = ColorTextMain;
+
+            // 배경 반투명 리셋
+            if (guideTextBackground != null)
+                guideTextBackground.color = ColorOverlay;
+
+            var canvasGroup = guideTextContainer.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = guideTextContainer.AddComponent<CanvasGroup>();
+
+            canvasGroup.alpha = 1f;
+
+            // 2초 표시
+            yield return new WaitForSecondsRealtime(2f);
+
+            // 0.5초 페이드아웃
+            float fadeTime = 0.5f;
+            float elapsed = 0f;
+            while (elapsed < fadeTime)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                canvasGroup.alpha = 1f - (elapsed / fadeTime);
+                yield return null;
+            }
+
+            canvasGroup.alpha = 0f;
+            guideTextContainer.SetActive(false);
+            _guideTextCoroutine = null;
+        }
+
+        // =====================================================================
+        // 보스 처치 Core 보상 팝업
+        // =====================================================================
+
+        /// <summary>
+        /// "+N Core" 팝업을 1초 표시 후 페이드아웃합니다.
+        /// </summary>
+        public void ShowCorePopup(int coreAmount)
+        {
+            if (corePopupContainer == null || corePopupText == null) return;
+
+            if (_corePopupCoroutine != null)
+                StopCoroutine(_corePopupCoroutine);
+
+            _corePopupCoroutine = StartCoroutine(CorePopupRoutine(coreAmount));
+        }
+
+        private IEnumerator CorePopupRoutine(int coreAmount)
+        {
+            corePopupContainer.SetActive(true);
+            corePopupText.text = $"+{coreAmount} Core";
+            corePopupText.color = ColorNeonPurple;
+            corePopupText.fontSize = 32;
+            corePopupText.fontStyle = FontStyle.Bold;
+
+            var canvasGroup = corePopupContainer.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = corePopupContainer.AddComponent<CanvasGroup>();
+
+            canvasGroup.alpha = 1f;
+
+            // 1초 표시
+            yield return new WaitForSecondsRealtime(1f);
+
+            // 0.5초 페이드아웃
+            float fadeTime = 0.5f;
+            float elapsed = 0f;
+            while (elapsed < fadeTime)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                canvasGroup.alpha = 1f - (elapsed / fadeTime);
+                yield return null;
+            }
+
+            canvasGroup.alpha = 0f;
+            corePopupContainer.SetActive(false);
+            _corePopupCoroutine = null;
         }
     }
 }
