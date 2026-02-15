@@ -76,6 +76,8 @@ namespace Nodebreaker.Tower
         Node.Node FindTarget()
         {
             float range = data.GetRange(Level);
+            if (Singleton<Core.RunManager>.HasInstance)
+                range += Core.RunManager.Instance.CurrentModifiers.rangeBonus;
             var colliders = Physics2D.OverlapCircleAll(transform.position, range);
 
             Node.Node closest = null;
@@ -156,8 +158,11 @@ namespace Nodebreaker.Tower
         void OnDrawGizmosSelected()
         {
             if (data == null) return;
+            float range = data.GetRange(Level);
+            if (Application.isPlaying && Singleton<Core.RunManager>.HasInstance)
+                range += Core.RunManager.Instance.CurrentModifiers.rangeBonus;
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, data.GetRange(Level));
+            Gizmos.DrawWireSphere(transform.position, range);
         }
     }
 }

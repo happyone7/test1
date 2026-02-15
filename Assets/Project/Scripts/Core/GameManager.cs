@@ -67,6 +67,16 @@ namespace Nodebreaker.Core
             if (hubUI != null)
                 hubUI.Hide();
 
+            // 런 상태 정리 (직접 재시도 시 RunEnd 상태에서 바로 오는 경우)
+            if (Singleton<RunManager>.HasInstance && RunManager.Instance.IsRunning)
+                RunManager.Instance.ResetRun();
+
+            // 날아가는 투사체 정리
+            CleanupProjectiles();
+
+            // 살아있는 노드 정리
+            CleanupNodes();
+
             // 인벤토리 초기화
             if (Singleton<Tower.TowerInventory>.HasInstance)
                 Tower.TowerInventory.Instance.Clear();
@@ -123,6 +133,9 @@ namespace Nodebreaker.Core
 
             // 살아있는 노드 정리
             CleanupNodes();
+
+            // 날아가는 투사체 정리
+            CleanupProjectiles();
 
             // InGameUI 숨기기 (런엔드 패널 포함)
             var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
@@ -223,6 +236,15 @@ namespace Nodebreaker.Core
             {
                 if (node.IsAlive)
                     Tesseract.ObjectPool.Poolable.TryPool(node.gameObject);
+            }
+        }
+
+        private void CleanupProjectiles()
+        {
+            var projectiles = Object.FindObjectsByType<Projectile.Projectile>(FindObjectsSortMode.None);
+            foreach (var proj in projectiles)
+            {
+                Tesseract.ObjectPool.Poolable.TryPool(proj.gameObject);
             }
         }
     }

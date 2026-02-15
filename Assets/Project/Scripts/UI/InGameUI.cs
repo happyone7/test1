@@ -511,6 +511,7 @@ private IEnumerator SlideUpAnimation()
         void OnGoToHub()
         {
             if (runEndPanel != null) runEndPanel.SetActive(false);
+            if (runEndOverlay != null) runEndOverlay.SetActive(false);
             if (Singleton<Core.GameManager>.HasInstance)
                 Core.GameManager.Instance.GoToHub();
         }
@@ -518,6 +519,7 @@ private IEnumerator SlideUpAnimation()
         void OnRetry()
         {
             if (runEndPanel != null) runEndPanel.SetActive(false);
+            if (runEndOverlay != null) runEndOverlay.SetActive(false);
             if (Singleton<Core.GameManager>.HasInstance)
                 Core.GameManager.Instance.StartRun();
         }
