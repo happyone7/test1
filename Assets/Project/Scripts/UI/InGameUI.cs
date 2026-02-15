@@ -84,14 +84,16 @@ namespace Nodebreaker.UI
         public Outline hubButtonOutline;        // Hub 버튼 Outline
         public Outline retryButtonOutline;      // 재도전 버튼 Outline
 
+        [Header("배속 토글 버튼 (단일 순환)")]
+        public Button speedToggleButton;        // 단일 배속 토글 버튼
+        public Text speedToggleText;            // 배속 텍스트 (x1, x2, x3)
+        public Image speedToggleImage;          // 배속 버튼 배경
+
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
 
-        private static readonly float[] SpeedValues = { 1f, 2f, 3f };
-        private int _currentSpeedIndex;
-        private float _savedTimeScale = 1f;
-        private bool _isPaused;
+        private static readonly string[] SpeedLabels = { "x1", "x2", "x3" };
         private Coroutine _slideUpCoroutine;
 
 
@@ -203,10 +205,9 @@ namespace Nodebreaker.UI
 
 public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEarned)
         {
-            // 런 종료 시 배속을 x1로 리셋
-            Time.timeScale = 1f;
-            _currentSpeedIndex = 0;
-            _isPaused = false;
+            // 런 종료 시 배속을 x1로 리셋 (SpeedController 경유)
+            if (Singleton<Core.SpeedController>.HasInstance)
+                Core.SpeedController.Instance.ResetToDefault();
             UpdateSpeedButtonVisuals();
 
             // 오버레이 활성화
@@ -364,75 +365,81 @@ private IEnumerator SlideUpAnimation()
 
         private void InitSpeedButtons()
         {
+            // SpeedController 이벤트 구독
+            if (Singleton<Core.SpeedController>.HasInstance)
+            {
+                Core.SpeedController.Instance.OnSpeedChanged += OnSpeedChanged;
+                Core.SpeedController.Instance.OnPauseChanged += OnPauseChanged;
+            }
+
+            // 개별 배속 버튼 (x1, x2, x3)
             if (speedButtons != null)
             {
-                for (int i = 0; i < speedButtons.Length && i < SpeedValues.Length; i++)
+                int[] speeds = { 1, 2, 3 };
+                for (int i = 0; i < speedButtons.Length && i < speeds.Length; i++)
                 {
-                    int index = i;
-                    float speed = SpeedValues[i];
+                    int speed = speeds[i];
                     if (speedButtons[i] != null)
-                        speedButtons[i].onClick.AddListener(() => SetSpeed(index, speed));
+                        speedButtons[i].onClick.AddListener(() =>
+                        {
+                            if (Singleton<Core.SpeedController>.HasInstance)
+                                Core.SpeedController.Instance.SetSpeed(speed);
+                        });
                 }
             }
 
+            // 단일 순환 토글 버튼
+            if (speedToggleButton != null)
+            {
+                speedToggleButton.onClick.AddListener(() =>
+                {
+                    if (Singleton<Core.SpeedController>.HasInstance)
+                        Core.SpeedController.Instance.ToggleSpeed();
+                });
+            }
+
             if (pauseButton != null)
-                pauseButton.onClick.AddListener(TogglePause);
+                pauseButton.onClick.AddListener(() =>
+                {
+                    if (Singleton<Core.SpeedController>.HasInstance)
+                        Core.SpeedController.Instance.TogglePause();
+                });
 
-            _currentSpeedIndex = 0;
-            _isPaused = false;
             UpdateSpeedButtonVisuals();
         }
 
-        private void SetSpeed(int index, float speed)
+        private void OnSpeedChanged(int newSpeed)
         {
-            _currentSpeedIndex = index;
-            _isPaused = false;
-            Time.timeScale = speed;
             UpdateSpeedButtonVisuals();
         }
 
-        private void TogglePause()
+        private void OnPauseChanged(bool isPaused)
         {
-            if (_isPaused)
-            {
-                // 일시정지 해제 - 이전 배속으로 복원
-                _isPaused = false;
-                Time.timeScale = SpeedValues[_currentSpeedIndex];
-            }
-            else
-            {
-                // 일시정지
-                _isPaused = true;
-                Time.timeScale = 0f;
-            }
             UpdateSpeedButtonVisuals();
         }
 
         private void UpdateSpeedButtonVisuals()
         {
-            // 속도 버튼 스타일: 활성=#153020+#2BFF88 테두리, 비활성=#1A243A+#5B6B8A 테두리
+            int currentSpeed = Singleton<Core.SpeedController>.HasInstance ? Core.SpeedController.Instance.CurrentSpeed : 1;
+            bool isPaused = Singleton<Core.SpeedController>.HasInstance && Core.SpeedController.Instance.IsPaused;
+            int speedIndex = currentSpeed - 1; // 0=x1, 1=x2, 2=x3
+
+            // 개별 배속 버튼 (x1, x2, x3)
             if (speedButtons != null)
             {
                 for (int i = 0; i < speedButtons.Length; i++)
                 {
                     if (speedButtons[i] == null) continue;
 
-                    bool isActive = (i == _currentSpeedIndex) && !_isPaused;
+                    bool isActive = (i == speedIndex) && !isPaused;
 
-                    // 배경 이미지 색상
                     if (speedButtonImages != null && i < speedButtonImages.Length && speedButtonImages[i] != null)
-                    {
                         speedButtonImages[i].color = isActive ? ColorSpeedActive : ColorSpeedInactive;
-                    }
 
-                    // Outline 색상은 코드로 직접 변경 (Outline 컴포넌트가 있다면)
                     var outline = speedButtons[i].GetComponent<Outline>();
                     if (outline != null)
-                    {
                         outline.effectColor = isActive ? ColorNeonGreen : ColorBorder;
-                    }
 
-                    // ColorBlock 방식 대체 (Outline 없을 경우)
                     var colors = speedButtons[i].colors;
                     colors.normalColor = isActive ? ColorSpeedActive : ColorSpeedInactive;
                     colors.highlightedColor = isActive ? ColorSpeedActive : ColorSpeedInactive;
@@ -442,25 +449,28 @@ private IEnumerator SlideUpAnimation()
                 }
             }
 
+            // 단일 순환 토글 버튼 텍스트
+            if (speedToggleText != null && speedIndex >= 0 && speedIndex < SpeedLabels.Length)
+                speedToggleText.text = SpeedLabels[speedIndex];
+
+            if (speedToggleImage != null)
+                speedToggleImage.color = isPaused ? ColorSpeedInactive : ColorSpeedActive;
+
             // 일시정지 버튼
             if (pauseButton != null)
             {
                 if (pauseButtonImage != null)
-                {
-                    pauseButtonImage.color = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                }
+                    pauseButtonImage.color = isPaused ? ColorSpeedActive : ColorSpeedInactive;
 
                 var outline = pauseButton.GetComponent<Outline>();
                 if (outline != null)
-                {
-                    outline.effectColor = _isPaused ? ColorOrange : ColorBorder;
-                }
+                    outline.effectColor = isPaused ? ColorOrange : ColorBorder;
 
                 var pauseColors = pauseButton.colors;
-                pauseColors.normalColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                pauseColors.highlightedColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                pauseColors.pressedColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                pauseColors.selectedColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.normalColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.highlightedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.pressedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.selectedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
                 pauseButton.colors = pauseColors;
             }
         }

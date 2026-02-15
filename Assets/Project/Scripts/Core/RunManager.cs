@@ -122,6 +122,10 @@ namespace Nodebreaker.Core
             CurrentStage = null;
             NodesKilled = 0;
             BossDefeated = false;
+
+            // 배속을 x1로 복귀 (TimeScale 안전 보장)
+            if (Singleton<SpeedController>.HasInstance)
+                SpeedController.Instance.ResetToDefault();
         }
 
         /// <summary>보스 처치 시 호출</summary>

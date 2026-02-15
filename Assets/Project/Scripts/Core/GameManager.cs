@@ -70,6 +70,10 @@ namespace Nodebreaker.Core
             State = GameState.InGame;
             SoundManager.Instance.PlayBgm(SoundKeys.BgmCombat, 0.5f);
 
+            // 배속 x1로 초기화
+            if (Singleton<SpeedController>.HasInstance)
+                SpeedController.Instance.ResetToDefault();
+
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
                 hubUI.Hide();
