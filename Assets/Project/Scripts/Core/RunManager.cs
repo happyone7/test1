@@ -44,6 +44,13 @@ namespace Nodebreaker.Core
             BitEarned += amount;
         }
 
+        public bool SpendBit(int amount)
+        {
+            if (BitEarned < amount) return false;
+            BitEarned -= amount;
+            return true;
+        }
+
         public void OnNodeKilled()
         {
             NodesKilled++;

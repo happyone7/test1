@@ -38,6 +38,26 @@ namespace Nodebreaker.Core
             if (inGameUI != null)
                 inGameUI.HideAll();
 
+            // FTUE: 첫 플레이 감지 시 Hub 스킵하고 바로 Stage 1 진입
+            if (MetaManager.Instance.IsFirstPlay)
+            {
+                Debug.Log("[GameManager] FTUE: 첫 플레이 감지 - Hub 스킵, Stage 1 바로 진입");
+                MetaManager.Instance.SetFtueFlag(0, true); // 첫 플레이 완료 플래그
+
+                // Hub, 타이틀 숨기기
+                var hubUIFtue = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
+                if (hubUIFtue != null)
+                    hubUIFtue.Hide();
+
+                var titleUIFtue = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
+                if (titleUIFtue != null)
+                    titleUIFtue.Hide();
+
+                SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0f);
+                StartRun(0); // Stage 1 바로 시작
+                return;
+            }
+
             // Hub 숨기기 (타이틀 화면부터 시작)
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
@@ -96,7 +116,21 @@ namespace Nodebreaker.Core
             int stageIdx = MetaManager.Instance.CurrentStageIndex;
             int coreEarned = cleared ? stages[Mathf.Min(stageIdx, stages.Length - 1)].coreReward : 0;
 
-            MetaManager.Instance.AddRunRewards(bitEarned, coreEarned, cleared, stageIdx);
+            // RunManager에서 노드 처치 수를 가져옴
+            int nodesKilled = 0;
+            if (Singleton<RunManager>.HasInstance)
+                nodesKilled = RunManager.Instance.NodesKilled;
+
+            MetaManager.Instance.AddRunRewards(bitEarned, coreEarned, cleared, stageIdx, nodesKilled);
+
+            // FTUE: 첫 스테이지 클리어 시 보너스 Bit 100 지급
+            if (cleared && !MetaManager.Instance.GetFtueFlag(3))
+            {
+                MetaManager.Instance.SetFtueFlag(3, true); // 첫 스테이지 클리어 플래그
+                MetaManager.Instance.AddRunRewards(100, 0, false, stageIdx, 0); // 보너스 Bit 100
+                Debug.Log("[GameManager] FTUE: 첫 클리어 보너스 Bit 100 지급!");
+            }
+
             State = GameState.RunEnd;
         }
 

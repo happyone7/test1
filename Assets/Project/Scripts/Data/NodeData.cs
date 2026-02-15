@@ -15,6 +15,13 @@ namespace Nodebreaker.Data
         Boss
     }
 
+    public enum BossAbilityType
+    {
+        None,
+        Enrage,     // HP 50% 이하 시 속도 2배
+        ArmorRegen  // 10초마다 defense +5 (최대 25), AoE 피격 시 리셋
+    }
+
     [CreateAssetMenu(fileName = "Node_", menuName = "Nodebreaker/Node Data")]
     public class NodeData : ScriptableObject
     {
@@ -30,5 +37,8 @@ namespace Nodebreaker.Data
         public int bitDrop = 5;
         public int damage = 1; // 기지에 주는 데미지
         public int defense = 0; // 방어력 (받는 데미지 차감, 최소 1)
+
+        [Header("보스 능력")]
+        public BossAbilityType bossAbilityType = BossAbilityType.None;
     }
 }

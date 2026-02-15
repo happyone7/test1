@@ -153,6 +153,25 @@ namespace Nodebreaker.Tower
                 Level++;
         }
 
+        /// <summary>
+        /// Bit를 소모하여 타워를 업그레이드합니다.
+        /// 성공 시 true 반환, Bit 부족 또는 최대 레벨이면 false 반환.
+        /// </summary>
+        public bool UpgradeWithBit()
+        {
+            if (data == null) return false;
+            int cost = data.GetUpgradeCost(Level);
+            if (cost < 0) return false; // 최대 레벨
+
+            if (!Singleton<Core.RunManager>.HasInstance) return false;
+            if (Core.RunManager.Instance.BitEarned < cost) return false;
+
+            Core.RunManager.Instance.SpendBit(cost);
+            Level++;
+            Debug.Log($"[Tower] 업그레이드 완료: {data.towerName} Lv{Level}, 비용 {cost} Bit");
+            return true;
+        }
+
         void OnDrawGizmosSelected()
         {
             if (data == null) return;

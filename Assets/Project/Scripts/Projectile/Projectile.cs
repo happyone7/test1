@@ -80,13 +80,13 @@ namespace Nodebreaker.Projectile
 
             if (_explosionRadius > 0f)
             {
-                // AoE: 폭발 범위 내 모든 Node에 데미지
+                // AoE: 폭발 범위 내 모든 Node에 데미지 (ArmorRegen 보스 방어력 리셋 포함)
                 var hits = Physics2D.OverlapCircleAll(transform.position, _explosionRadius);
                 foreach (var col in hits)
                 {
                     var node = col.GetComponent<Node.Node>();
                     if (node != null && node.IsAlive)
-                        node.TakeDamage(_damage);
+                        node.TakeDamageAoE(_damage);
                 }
             }
             else

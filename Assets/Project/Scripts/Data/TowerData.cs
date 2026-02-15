@@ -43,5 +43,23 @@ namespace Nodebreaker.Data
         public float GetExplosionRadius(int level) => explosionRadius[Mathf.Clamp(level - 1, 0, explosionRadius.Length - 1)];
         public float GetSlowRate(int level) => slowRate[Mathf.Clamp(level - 1, 0, slowRate.Length - 1)];
         public float GetSlowDuration(int level) => slowDuration[Mathf.Clamp(level - 1, 0, slowDuration.Length - 1)];
+
+        [Header("업그레이드 비용 (Bit, 레벨별: Lv1->2, Lv2->3, Lv3->4)")]
+        public int[] upgradeCost = { 30, 60, 120 };
+
+        /// <summary>
+        /// 현재 레벨에서 다음 레벨로 업그레이드하는 비용. 최대 레벨이면 -1 반환.
+        /// </summary>
+        public int GetUpgradeCost(int currentLevel)
+        {
+            int idx = currentLevel - 1; // Lv1->idx0, Lv2->idx1, Lv3->idx2
+            if (idx < 0 || idx >= upgradeCost.Length) return -1;
+            return upgradeCost[idx];
+        }
+
+        /// <summary>
+        /// 최대 업그레이드 가능 레벨 (upgradeCost 배열 길이 + 1).
+        /// </summary>
+        public int MaxLevel => upgradeCost.Length + 1;
     }
 }

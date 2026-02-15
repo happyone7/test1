@@ -17,6 +17,7 @@ namespace Nodebreaker.Core
         public int TotalBit => _data.totalBit;
         public int TotalCore => _data.totalCore;
         public int CurrentStageIndex => _data.currentStageIndex;
+        public int TotalNodesKilled => _data.totalNodesKilled;
 
         protected override void Awake()
         {
@@ -69,13 +70,35 @@ namespace Nodebreaker.Core
             return true;
         }
 
-        public void AddRunRewards(int bit, int core, bool cleared, int stageIdx)
+        public void AddRunRewards(int bit, int core, bool cleared, int stageIdx, int nodesKilled = 0)
         {
             _data.totalBit += bit;
             _data.totalCore += core;
+            _data.totalNodesKilled += nodesKilled;
             if (cleared)
                 _data.currentStageIndex = Mathf.Max(_data.currentStageIndex, stageIdx + 1);
             Save();
+        }
+
+        /// <summary>
+        /// 스테이지 해금 조건을 확인합니다.
+        /// Stage 1: 항상 해금
+        /// Stage 2: totalBit >= 500 AND totalNodesKilled >= 100
+        /// Stage 3: totalBit >= 3000 AND totalNodesKilled >= 500
+        /// </summary>
+        public bool IsStageUnlocked(int stageIndex)
+        {
+            switch (stageIndex)
+            {
+                case 0: // Stage 1: 항상 해금
+                    return true;
+                case 1: // Stage 2
+                    return _data.totalBit >= 500 && _data.totalNodesKilled >= 100;
+                case 2: // Stage 3
+                    return _data.totalBit >= 3000 && _data.totalNodesKilled >= 500;
+                default: // 이후 스테이지: currentStageIndex 기반 진행도 체크
+                    return _data.currentStageIndex >= stageIndex;
+            }
         }
 
         public void SetCurrentStageIndex(int index)
@@ -137,6 +160,35 @@ namespace Nodebreaker.Core
                 });
             }
         }
+
+        // ── FTUE 시스템 ──
+
+        /// <summary>
+        /// FTUE 플래그 인덱스를 가져옵니다.
+        /// </summary>
+        public bool GetFtueFlag(int index)
+        {
+            if (_data.ftueFlags == null || index < 0 || index >= _data.ftueFlags.Length)
+                return false;
+            return _data.ftueFlags[index];
+        }
+
+        /// <summary>
+        /// FTUE 플래그를 설정하고 저장합니다.
+        /// </summary>
+        public void SetFtueFlag(int index, bool value = true)
+        {
+            if (_data.ftueFlags == null)
+                _data.ftueFlags = new bool[5];
+            if (index < 0 || index >= _data.ftueFlags.Length) return;
+            _data.ftueFlags[index] = value;
+            Save();
+        }
+
+        /// <summary>
+        /// 첫 플레이 여부 (ftueFlags[0]이 false이면 첫 플레이).
+        /// </summary>
+        public bool IsFirstPlay => !GetFtueFlag(0);
 
         Data.SkillNodeData FindSkillData(string skillId)
         {

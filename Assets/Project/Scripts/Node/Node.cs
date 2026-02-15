@@ -1,3 +1,4 @@
+using System.Collections;
 using Tesseract.ObjectPool;
 using UnityEngine;
 using Nodebreaker.Audio;
@@ -20,6 +21,16 @@ namespace Nodebreaker.Node
         float _slowRate;       // 0~1 (0.25 = 25% 감속)
         float _slowTimer;      // 남은 감속 시간
 
+        // 보스 능력: Enrage
+        bool _enraged;
+
+        // 보스 능력: ArmorRegen
+        const float ARMOR_REGEN_INTERVAL = 10f;
+        const int ARMOR_REGEN_AMOUNT = 5;
+        const int ARMOR_REGEN_MAX = 25;
+        float _armorRegenTimer;
+        int _baseDefense; // 원래 방어력 (리젠 기준)
+
         Transform[] _waypoints;
         int _waypointIndex;
 
@@ -33,10 +44,13 @@ namespace Nodebreaker.Node
             _scaledSpeed = data.speed * speedMul;
             _scaledBitDrop = Mathf.RoundToInt(data.bitDrop * bitMul);
             _defense = data.defense;
+            _baseDefense = data.defense;
 
             CurrentHp = _scaledHp;
             _slowRate = 0f;
             _slowTimer = 0f;
+            _enraged = false;
+            _armorRegenTimer = 0f;
             IsUsing = true;
             transform.position = _waypoints[0].position;
         }
@@ -48,6 +62,21 @@ namespace Nodebreaker.Node
             // 감속 타이머 갱신
             if (_slowTimer > 0f)
                 _slowTimer -= Time.deltaTime;
+
+            // 보스 능력: ArmorRegen - 10초마다 defense +5 (최대 25)
+            if (Data != null && Data.bossAbilityType == Nodebreaker.Data.BossAbilityType.ArmorRegen)
+            {
+                _armorRegenTimer += Time.deltaTime;
+                if (_armorRegenTimer >= ARMOR_REGEN_INTERVAL)
+                {
+                    _armorRegenTimer = 0f;
+                    if (_defense < ARMOR_REGEN_MAX)
+                    {
+                        _defense = Mathf.Min(_defense + ARMOR_REGEN_AMOUNT, ARMOR_REGEN_MAX);
+                        Debug.Log($"[Node] ArmorRegen: defense={_defense}");
+                    }
+                }
+            }
 
             Move();
         }
@@ -62,6 +91,19 @@ namespace Nodebreaker.Node
 
             var target = _waypoints[_waypointIndex].position;
             float speed = _scaledSpeed;
+
+            // 보스 능력: Enrage - HP 50% 이하 시 속도 2배
+            if (!_enraged && Data != null && Data.bossAbilityType == Nodebreaker.Data.BossAbilityType.Enrage)
+            {
+                if (CurrentHp <= _scaledHp * 0.5f)
+                {
+                    _enraged = true;
+                    Debug.Log($"[Node] Enrage 발동! 속도 2배");
+                }
+            }
+            if (_enraged)
+                speed *= 2f;
+
             if (_slowTimer > 0f)
                 speed *= (1f - _slowRate);
             transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
@@ -78,6 +120,24 @@ namespace Nodebreaker.Node
             CurrentHp -= actualDamage;
             if (CurrentHp <= 0f)
                 Die();
+        }
+
+        /// <summary>
+        /// AoE 피격 시 호출. ArmorRegen 보스의 방어력 리젠 타이머를 리셋합니다.
+        /// </summary>
+        public void TakeDamageAoE(float damage)
+        {
+            if (!IsAlive) return;
+
+            // ArmorRegen 보스: AoE 피격 시 방어력 리젠 리셋
+            if (Data != null && Data.bossAbilityType == Nodebreaker.Data.BossAbilityType.ArmorRegen)
+            {
+                _defense = _baseDefense;
+                _armorRegenTimer = 0f;
+                Debug.Log($"[Node] ArmorRegen 리셋: defense={_defense}");
+            }
+
+            TakeDamage(damage);
         }
 
         /// <summary>
@@ -100,6 +160,17 @@ namespace Nodebreaker.Node
         void Die()
         {
             CurrentHp = 0f;
+
+            // 보스 처치 슬로우모션 연출
+            bool isBoss = Data != null && Data.type == Nodebreaker.Data.NodeType.Boss;
+            if (isBoss)
+            {
+                Time.timeScale = 0.2f;
+                // 코루틴 대신 정적 헬퍼 사용 (풀링 후에도 동작하도록)
+                var helper = new GameObject("[BossSlowMo]").AddComponent<BossSlowMotionHelper>();
+                helper.StartRestore(1f); // 실시간 1초 후 복귀
+            }
+
             SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
             {
@@ -129,6 +200,25 @@ namespace Nodebreaker.Node
         {
             base.OnPop();
             _waypointIndex = 0;
+        }
+    }
+
+    /// <summary>
+    /// 보스 처치 슬로우모션 복귀를 위한 일회용 헬퍼.
+    /// Node가 풀에 반환된 후에도 timeScale 복귀가 보장됩니다.
+    /// </summary>
+    public class BossSlowMotionHelper : MonoBehaviour
+    {
+        public void StartRestore(float realTimeDelay)
+        {
+            StartCoroutine(RestoreTimeScale(realTimeDelay));
+        }
+
+        IEnumerator RestoreTimeScale(float realTimeDelay)
+        {
+            yield return new WaitForSecondsRealtime(realTimeDelay);
+            Time.timeScale = 1f;
+            Destroy(gameObject);
         }
     }
 }
