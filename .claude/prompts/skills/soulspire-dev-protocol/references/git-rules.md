@@ -1,16 +1,11 @@
----
-name: unity-git-workflow
-description: "Unity 프로젝트 Git 워크플로우, 충돌 방지, 커밋 규칙, 파일 소유권 관리"
----
-
-# Unity Git 워크플로우
+# Git 협업 규칙
 
 ## 1. 핵심 원칙
 
-- **작업 완료 즉시 커밋** (다른 에이전트 작업과 섞이지 않도록)
-- **씬/프리팹 동시 수정 금지** (한 시점에 한 사람만 수정)
-- **하나의 논리적 변경 = 하나의 커밋**
-- **커밋 메시지는 한글로 작성**
+- 작업 완료 즉시 커밋 (다른 에이전트 작업과 섞이지 않도록)
+- 씬/프리팹 동시 수정 금지 (한 시점에 한 사람만)
+- 하나의 논리적 변경 = 하나의 커밋
+- 커밋 메시지는 한글로 작성
 
 ## 2. 커밋 컨벤션
 
@@ -29,16 +24,21 @@ description: "Unity 프로젝트 Git 워크플로우, 충돌 방지, 커밋 규�
 - docs: 문서
 ```
 
-팀장별 author 필수 사용:
+## 3. 팀장별 Git Author (필수)
+
 ```bash
 git commit --author="GameDesigner <game-designer@soulspire.dev>"
 git commit --author="GameplayProgrammer <gameplay-programmer@soulspire.dev>"
+git commit --author="QAEngineer <qa-engineer@soulspire.dev>"
 git commit --author="UIDeveloper <ui-developer@soulspire.dev>"
 git commit --author="TechnicalArtist <technical-artist@soulspire.dev>"
 git commit --author="SoundDirector <sound-director@soulspire.dev>"
+git commit --author="BuildEngineer <build-engineer@soulspire.dev>"
+git commit --author="ProjectManager <project-manager@soulspire.dev>"
+git commit --author="DevPD <dev-pd@soulspire.dev>"
 ```
 
-## 3. 작업 전 체크리스트
+## 4. 작업 전 체크리스트
 
 ```
 □ git status 로 미커밋 변경사항 확인
@@ -48,17 +48,17 @@ git commit --author="SoundDirector <sound-director@soulspire.dev>"
 □ 씬 파일 수정이 필요하면 개발PD에게 먼저 보고
 ```
 
-## 4. 작업 후 체크리스트
+## 5. 작업 후 체크리스트
 
 ```
 □ 씬에 불필요한 오브젝트 남아있지 않은지 확인
-□ 프리팹화 되지 않은 새 오브젝트가 씬에 있으면 프리팹으로 전환
+□ 새 오브젝트가 프리팹화 되어있는지 확인
 □ 즉시 커밋 (다른 에이전트 작업과 섞이지 않도록)
 □ 커밋 메시지에 수정한 씬/프리팹 파일 명시
 □ PM 에이전트 호출하여 Progress 문서 갱신
 ```
 
-## 5. 파일 소유권 매트릭스
+## 6. 파일 소유권 매트릭스
 
 | 파일/폴더 | 주 담당 | 부 담당 (합의 필요) |
 |-----------|---------|-------------------|
@@ -73,7 +73,7 @@ git commit --author="SoundDirector <sound-director@soulspire.dev>"
 | `Assets/Editor/` | 프로그래밍팀장 | - |
 | `ProjectSettings/` | 프로그래밍팀장 | 개발PD 승인 |
 
-## 6. 씬 파일 충돌 방지 전략
+## 7. 씬 파일 충돌 방지 전략
 
 ### 전략 A: 프리팹 최대화 (현재 권장)
 - 씬에는 빈 루트 오브젝트와 매니저만 배치
@@ -87,46 +87,4 @@ GameScene.unity → 분할:
   ├── GameScene_Logic.unity        (프로그래밍 담당)
   ├── GameScene_UI.unity           (UI 담당)
   └── GameScene_Audio.unity        (사운드 담당)
-```
-
-### 전략 C: UnityYAMLMerge (Smart Merge)
-- Unity 내장 도구로 씬/프리팹 YAML 충돌 자동 해결
-- 설정: `.gitattributes`에 `*.unity merge=unityyamlmerge` 추가
-
-## 7. .gitattributes (프로젝트 루트에 필수)
-
-```gitattributes
-# Unity YAML - Smart Merge + LF 강제
-*.unity text merge=unityyamlmerge eol=lf
-*.prefab text merge=unityyamlmerge eol=lf
-*.asset text merge=unityyamlmerge eol=lf
-*.meta text eol=lf
-*.mat text merge=unityyamlmerge eol=lf
-*.anim text merge=unityyamlmerge eol=lf
-*.controller text merge=unityyamlmerge eol=lf
-
-# 바이너리 (LFS 대상)
-*.png filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.wav filter=lfs diff=lfs merge=lfs -text
-*.mp3 filter=lfs diff=lfs merge=lfs -text
-*.ogg filter=lfs diff=lfs merge=lfs -text
-*.psd filter=lfs diff=lfs merge=lfs -text
-*.fbx filter=lfs diff=lfs merge=lfs -text
-*.ttf filter=lfs diff=lfs merge=lfs -text
-*.otf filter=lfs diff=lfs merge=lfs -text
-*.dll filter=lfs diff=lfs merge=lfs -text
-*.pptx filter=lfs diff=lfs merge=lfs -text
-```
-
-## 8. 충돌 해결 절차
-
-```
-1. git pull 시 충돌 감지
-2. 파일 유형별 대응:
-   - .cs (스크립트): 일반 Git merge로 해결
-   - .unity / .prefab: git mergetool (UnityYAMLMerge)
-   - .png 등 바이너리: 한쪽 선택 (git checkout --ours/--theirs)
-3. 충돌 해결 후 Unity 에디터에서 열어 확인
-4. 문제 없으면 커밋
 ```
