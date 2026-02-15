@@ -199,39 +199,15 @@ namespace Nodebreaker.Core
             if (stage == null) return false;
 
             // 해금 조건이 없으면 항상 해금 (Stage 1)
-            if (stage.unlockConditions == null || stage.unlockConditions.Length == 0)
+            if (stage.unlockBitRequired <= 0 && stage.unlockKillRequired <= 0)
                 return true;
 
-            // 모든 조건을 충족해야 해금
-            foreach (var cond in stage.unlockConditions)
-            {
-                if (cond == null) continue;
+            // 이전 스테이지 클리어 체크 (stageIndex > 0이면 이전 스테이지 클리어 필수)
+            if (stage.stageIndex > 0 && !IsStageCleared(stage.stageIndex - 1))
+                return false;
 
-                switch (cond.type)
-                {
-                    case Data.UnlockConditionType.None:
-                        continue;
-
-                    case Data.UnlockConditionType.BossKill:
-                        // 이전 스테이지 보스 처치 (requiredValue < 0이면 자동으로 stageIndex - 1)
-                        int prevIdx = cond.requiredValue >= 0 ? cond.requiredValue : stage.stageIndex - 1;
-                        if (prevIdx >= 0 && !IsStageCleared(prevIdx))
-                            return false;
-                        break;
-
-                    case Data.UnlockConditionType.TotalBit:
-                        if (_data.totalBitEarned < cond.requiredValue)
-                            return false;
-                        break;
-
-                    case Data.UnlockConditionType.TotalKills:
-                        if (_data.totalKills < cond.requiredValue)
-                            return false;
-                        break;
-                }
-            }
-
-            return true;
+            // Bit & Kill 조건
+            return stage.IsUnlockable(_data.totalBitEarned, _data.totalKills);
         }
 
         public void SetCurrentStageIndex(int index)

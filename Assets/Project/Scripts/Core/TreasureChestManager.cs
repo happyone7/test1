@@ -103,7 +103,7 @@ namespace Nodebreaker.Core
             // 게임 일시정지 (선택 대기)
             Time.timeScale = 0f;
 
-            SoundManager.Instance.PlaySfx(SoundKeys.TreasureChestDrop, 1f);
+            SoundManager.Instance.PlaySfx(SoundKeys.ChestDrop, 1f);
 
             Debug.Log($"[TreasureChestManager] 보물상자 드랍! 선택지: {choices.Length}개");
             OnChestDropped?.Invoke(choices);
@@ -120,7 +120,7 @@ namespace Nodebreaker.Core
             _activeRewards.Add(reward);
             ApplyReward(reward);
 
-            SoundManager.Instance.PlaySfx(SoundKeys.TreasureRewardSelect, 1f);
+            SoundManager.Instance.PlaySfx(SoundKeys.ChestSelect, 1f);
 
             Debug.Log($"[TreasureChestManager] 보상 선택: {reward.rewardName} ({reward.rewardType} +{reward.value})");
             OnRewardSelected?.Invoke(reward);

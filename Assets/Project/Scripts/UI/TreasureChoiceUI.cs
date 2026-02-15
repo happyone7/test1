@@ -47,7 +47,7 @@ namespace Nodebreaker.UI
         private Text[] _descTexts;
         private Image[] _iconImages;
 
-        private Data.TreasureChoiceData[] _choices;
+        private Data.TreasureRewardData[] _choices;
         private Action<int> _onSelected;
         private bool _isAnimating;
         private Coroutine _animCoroutine;
@@ -55,7 +55,7 @@ namespace Nodebreaker.UI
         /// <summary>
         /// 3택 UI를 표시한다.
         /// </summary>
-        public void Show(Data.TreasureChoiceData[] choices, Action<int> onSelected)
+        public void Show(Data.TreasureRewardData[] choices, Action<int> onSelected)
         {
             if (choices == null || choices.Length == 0) return;
 
@@ -85,7 +85,7 @@ namespace Nodebreaker.UI
             gameObject.SetActive(false);
         }
 
-        private void BuildUI(Data.TreasureChoiceData[] choices)
+        private void BuildUI(Data.TreasureRewardData[] choices)
         {
             ClearUI();
 
@@ -163,7 +163,7 @@ namespace Nodebreaker.UI
             }
         }
 
-        private void CreateCard(Transform parent, int index, Data.TreasureChoiceData data)
+        private void CreateCard(Transform parent, int index, Data.TreasureRewardData data)
         {
             // --- 카드 루트 ---
             var cardObj = new GameObject($"Card_{index}", typeof(RectTransform));
@@ -180,7 +180,7 @@ namespace Nodebreaker.UI
 
             // 테두리 (희귀도별 색상)
             var outline = cardObj.AddComponent<Outline>();
-            outline.effectColor = GetRarityColor(data != null ? data.rarity : Data.TreasureRarity.Common);
+            outline.effectColor = GetRarityColor(data != null ? data.rarity : 0);
             outline.effectDistance = new Vector2(2, 2);
 
             // 버튼
@@ -215,11 +215,11 @@ namespace Nodebreaker.UI
             else
             {
                 // 플레이스홀더: 골드 사각형
-                iconImage.color = GetRarityColor(data != null ? data.rarity : Data.TreasureRarity.Common) * 0.6f;
+                iconImage.color = GetRarityColor(data != null ? data.rarity : 0) * 0.6f;
             }
 
             // --- 희귀도 뱃지 ---
-            if (data != null && data.rarity != Data.TreasureRarity.Common)
+            if (data != null && data.rarity > 0)
             {
                 var badgeObj = new GameObject("RarityBadge", typeof(RectTransform));
                 badgeObj.transform.SetParent(cardObj.transform, false);
@@ -230,7 +230,7 @@ namespace Nodebreaker.UI
                 badgeRect.sizeDelta = new Vector2(80, 22);
 
                 var badgeText = badgeObj.AddComponent<Text>();
-                badgeText.text = data.rarity == Data.TreasureRarity.Rare ? "RARE" : "EPIC";
+                badgeText.text = data.rarity == 1 ? "RARE" : "EPIC";
                 badgeText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
                 badgeText.fontSize = 11;
                 badgeText.fontStyle = FontStyle.Bold;
@@ -249,7 +249,7 @@ namespace Nodebreaker.UI
             nameRect.offsetMax = Vector2.zero;
 
             var nameText = nameObj.AddComponent<Text>();
-            nameText.text = data != null ? data.displayName : "???";
+            nameText.text = data != null ? data.rewardName : "???";
             nameText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             nameText.fontSize = 16;
             nameText.fontStyle = FontStyle.Bold;
@@ -436,13 +436,13 @@ namespace Nodebreaker.UI
             _titleObj = null;
         }
 
-        private static Color GetRarityColor(Data.TreasureRarity rarity)
+        private static Color GetRarityColor(int rarity)
         {
             switch (rarity)
             {
-                case Data.TreasureRarity.Rare: return ColorRarityRare;
-                case Data.TreasureRarity.Epic: return ColorRarityEpic;
-                default: return ColorRarityCommon;
+                case 1: return ColorRarityRare;   // Rare
+                case 2: return ColorRarityEpic;   // Epic
+                default: return ColorRarityCommon; // Common
             }
         }
 

@@ -107,6 +107,9 @@ namespace Nodebreaker.UI
         public GameObject corePopupContainer;   // Core 팝업 컨테이너
         public Text corePopupText;              // "+N Core" 텍스트
 
+        [Header("보물상자 3택 UI")]
+        public TreasureChoiceUI treasureChoiceUI;  // TreasureChoiceUI 컴포넌트 참조
+
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
@@ -160,6 +163,11 @@ namespace Nodebreaker.UI
             // Core 팝업 초기 숨김
             if (corePopupContainer != null)
                 corePopupContainer.SetActive(false);
+
+            // 보물상자 3택 UI 초기 숨김 및 이벤트 연결
+            if (treasureChoiceUI != null)
+                treasureChoiceUI.gameObject.SetActive(false);
+            BindTreasureChestEvents();
 
             // UI 스프라이트 적용
             ApplyUISprites();
@@ -811,6 +819,42 @@ private IEnumerator SlideUpAnimation()
 
             if (bossHpBarContainer != null)
                 bossHpBarContainer.SetActive(false);
+        }
+
+        // =====================================================================
+        // 보물상자 3택 이벤트 브릿지
+        // =====================================================================
+
+        /// <summary>
+        /// TreasureChestManager의 이벤트를 TreasureChoiceUI에 연결한다.
+        /// </summary>
+        private void BindTreasureChestEvents()
+        {
+            if (!Singleton<Core.TreasureChestManager>.HasInstance) return;
+            if (treasureChoiceUI == null) return;
+
+            var mgr = Core.TreasureChestManager.Instance;
+            mgr.OnChestDropped += OnTreasureChestDropped;
+        }
+
+        private void OnTreasureChestDropped(Data.TreasureRewardData[] choices)
+        {
+            if (treasureChoiceUI == null) return;
+
+            treasureChoiceUI.Show(choices, selectedIndex =>
+            {
+                if (!Singleton<Core.TreasureChestManager>.HasInstance) return;
+                if (choices == null || selectedIndex < 0 || selectedIndex >= choices.Length) return;
+
+                Core.TreasureChestManager.Instance.SelectReward(choices[selectedIndex]);
+            });
+        }
+
+        private void OnDestroy()
+        {
+            // 이벤트 구독 해제
+            if (Singleton<Core.TreasureChestManager>.HasInstance)
+                Core.TreasureChestManager.Instance.OnChestDropped -= OnTreasureChestDropped;
         }
 
         // =====================================================================
