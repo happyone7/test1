@@ -89,12 +89,21 @@ namespace Nodebreaker.Node
         IEnumerator SpawnWave(Data.WaveData wave)
         {
             _spawning = true;
+
+            // spawnRateMultiplier > 1 이면 스폰 간격이 줄어듦 (적이 더 빨리 나옴 = 난이도 상향)
+            // spawnRateMultiplier < 1 이면 스폰 간격이 늘어남 (적이 더 느리게 나옴 = 여유)
+            float spawnRateMul = 1f;
+            if (Singleton<Core.RunManager>.HasInstance)
+                spawnRateMul = Core.RunManager.Instance.CurrentModifiers.spawnRateMultiplier;
+            // 역수 적용: 스킬은 "스폰 속도 감소"를 의미하므로 간격은 곱연산
+            float intervalMul = spawnRateMul > 0f ? 1f / spawnRateMul : 1f;
+
             foreach (var group in wave.spawnGroups)
             {
                 for (int i = 0; i < group.count; i++)
                 {
                     SpawnNode(group.nodeData);
-                    yield return new WaitForSeconds(group.spawnInterval);
+                    yield return new WaitForSeconds(group.spawnInterval * intervalMul);
                 }
             }
             _spawning = false;

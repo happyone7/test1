@@ -26,7 +26,7 @@ namespace Nodebreaker.Core
         {
             CurrentStage = stage;
             CurrentWaveIndex = 0;
-            BitEarned = 0;
+            BitEarned = modifiers.startBitBonus;
             NodesKilled = 0;
             CurrentModifiers = modifiers;
             _baseMaxHp = stage.baseHp + modifiers.bonusBaseHp;
@@ -34,9 +34,32 @@ namespace Nodebreaker.Core
             IsRunning = true;
             _playedHp30Warning = false;
             _playedHp10Warning = false;
+            _regenAccumulator = 0f;
+
+            if (BitEarned > 0)
+                Debug.Log($"[RunManager] 시작 Bit 보너스 적용: +{BitEarned}");
 
             if (Singleton<Node.WaveSpawner>.HasInstance)
                 Node.WaveSpawner.Instance.StartWaves(stage);
+        }
+
+        float _regenAccumulator;
+
+        void Update()
+        {
+            if (!IsRunning) return;
+
+            // HP 자동 회복
+            if (CurrentModifiers.hpRegenPerSec > 0f && _baseHp > 0 && _baseHp < _baseMaxHp)
+            {
+                _regenAccumulator += CurrentModifiers.hpRegenPerSec * Time.deltaTime;
+                if (_regenAccumulator >= 1f)
+                {
+                    int regenAmount = Mathf.FloorToInt(_regenAccumulator);
+                    _regenAccumulator -= regenAmount;
+                    _baseHp = Mathf.Min(_baseMaxHp, _baseHp + regenAmount);
+                }
+            }
         }
 
         public void AddBit(int amount)

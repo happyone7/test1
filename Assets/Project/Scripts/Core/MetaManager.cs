@@ -234,6 +234,12 @@ namespace Nodebreaker.Core
                 }
             }
 
+            Debug.Log($"[MetaManager] CalculateModifiers: atkDmg={mods.attackDamageMultiplier:F2}, " +
+                      $"atkSpd={mods.attackSpeedMultiplier:F2}, bonusHp={mods.bonusBaseHp}, " +
+                      $"range={mods.rangeBonus:F2}, bitGain={mods.bitGainMultiplier:F2}, " +
+                      $"startBit={mods.startBitBonus}, spawnRate={mods.spawnRateMultiplier:F2}, " +
+                      $"hpRegen={mods.hpRegenPerSec:F2}");
+
             return mods;
         }
 

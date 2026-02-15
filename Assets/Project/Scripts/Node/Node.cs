@@ -103,7 +103,11 @@ namespace Nodebreaker.Node
             SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
             {
-                Core.RunManager.Instance.AddBit(_scaledBitDrop);
+                int bitDrop = _scaledBitDrop;
+                float bitMul = Core.RunManager.Instance.CurrentModifiers.bitGainMultiplier;
+                if (bitMul > 0f)
+                    bitDrop = Mathf.RoundToInt(bitDrop * bitMul);
+                Core.RunManager.Instance.AddBit(bitDrop);
                 Core.RunManager.Instance.OnNodeKilled();
             }
             RemoveFromWave();
