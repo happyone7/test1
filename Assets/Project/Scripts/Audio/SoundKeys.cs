@@ -23,12 +23,5 @@ namespace Nodebreaker.Audio
         public const string Hp10Warning = "ALT_Hp10_Warning_01";
 
         public const string UiClick = "UI_Button_Click_01";
-
-        // Phase 2: Hub
-        public const string BgmHubPhase2 = "BGM_Hub_Phase2_01";
-        public const string SkillPurchase = "SFX_Skill_Purchase_01";
-        public const string SkillMaxLevel = "SFX_Skill_MaxLevel_01";
-        public const string UiHubClick = "UI_Hub_Click_01";
-        public const string RunStart = "SFX_Run_Start_01";
     }
 }
