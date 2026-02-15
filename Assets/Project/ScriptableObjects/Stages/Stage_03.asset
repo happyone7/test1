@@ -16,16 +16,16 @@ MonoBehaviour:
   stageName: Cache Layer
   stageIndex: 2
   waves:
-  - {fileID: 11400000, guid: 87666de5c4d24f5a9abd3f7ad2c3ed1f, type: 2}
-  - {fileID: 11400000, guid: a1ca285dd1754e54a407ea646bfd2aa9, type: 2}
-  - {fileID: 11400000, guid: 73852742bad147258e872d40c6a87084, type: 2}
-  - {fileID: 11400000, guid: 1352928a233b49498b7e40bb4df135d7, type: 2}
-  - {fileID: 11400000, guid: 1772f4cbe82743f59efc920972a56421, type: 2}
-  - {fileID: 11400000, guid: 80dd91eec72e43a7895ba793707d8186, type: 2}
-  - {fileID: 11400000, guid: 5708ba7223b6441a9b48118e7a34d049, type: 2}
-  - {fileID: 11400000, guid: d227e0e421454485824dbf718ac6236e, type: 2}
+  - {fileID: 11400000, guid: 659e23b75a0e4b31851a28050e3c5e2a, type: 2}
+  - {fileID: 11400000, guid: e327a95f3e954b77806f5f6133113eae, type: 2}
+  - {fileID: 11400000, guid: 2efe5dde82a8410ab15f0fe2c4bd47c5, type: 2}
+  - {fileID: 11400000, guid: e1a188064c0d4530a910e6a2b5a29d9c, type: 2}
+  - {fileID: 11400000, guid: dc339b5b9a6047caa49dc8e4e4c25b75, type: 2}
+  - {fileID: 11400000, guid: c49bf3570049452e8e2e1a208bae0a02, type: 2}
+  - {fileID: 11400000, guid: be82cc77efa648358f436cb1aa8b9890, type: 2}
+  - {fileID: 11400000, guid: bcd86ae87f4d4a5188946c0465afa146, type: 2}
   hpMultiplier: 3
   speedMultiplier: 1.1
   bitDropMultiplier: 2.2
   coreReward: 4
-  baseHp: 30
+  baseHp: 20

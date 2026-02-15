@@ -30,6 +30,20 @@ namespace Nodebreaker.Core
         {
             _data = _saveManager.Load();
             RebuildCache();
+            EnsureCoreNodeActive();
+        }
+
+        /// <summary>
+        /// Core Node(N00)가 항상 활성 상태인지 확인하고, 미활성이면 자동 활성화
+        /// </summary>
+        void EnsureCoreNodeActive()
+        {
+            if (GetSkillLevel("N00") <= 0)
+            {
+                _skillLevelCache["N00"] = 1;
+                Save();
+                Debug.Log("[MetaManager] Core Node(N00) 자동 활성화");
+            }
         }
 
         public void Save()
@@ -44,7 +58,65 @@ namespace Nodebreaker.Core
             return level;
         }
 
-        public bool CanPurchaseSkill(string skillId)
+        /// <summary>
+        /// 전제 조건 충족 여부 확인 (OR/AND 모드 지원)
+        /// </summary>
+        public bool ArePrerequisitesMet(string skillId)
+        {
+            var skillData = FindSkillData(skillId);
+            if (skillData == null) return false;
+
+            // 전제 조건 없는 노드(Core Node 등)는 항상 충족
+            if (skillData.prerequisiteIds == null || skillData.prerequisiteIds.Length == 0)
+                return true;
+
+            if (skillData.prerequisiteMode == Data.PrerequisiteMode.And)
+            {
+                // AND: 모든 선행 노드가 1레벨 이상
+                foreach (var prereqId in skillData.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    if (GetSkillLevel(prereqId) <= 0) return false;
+                }
+                return true;
+            }
+            else
+            {
+                // OR: 선행 노드 중 하나라도 1레벨 이상
+                foreach (var prereqId in skillData.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    if (GetSkillLevel(prereqId) > 0) return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 노드가 보이는지 여부 (선행 노드 중 최소 1개가 구매됨)
+        /// </summary>
+        public bool IsNodeVisible(string skillId)
+        {
+            var skillData = FindSkillData(skillId);
+            if (skillData == null) return false;
+
+            // 전제 조건 없는 노드(Core Node)는 항상 보임
+            if (skillData.prerequisiteIds == null || skillData.prerequisiteIds.Length == 0)
+                return true;
+
+            // 선행 노드 중 최소 1개가 구매되어 있으면 보임
+            foreach (var prereqId in skillData.prerequisiteIds)
+            {
+                if (string.IsNullOrEmpty(prereqId)) continue;
+                if (GetSkillLevel(prereqId) > 0) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 자원 충분 여부 확인 (Bit 또는 Core)
+        /// </summary>
+        public bool CanAfford(string skillId)
         {
             var skillData = FindSkillData(skillId);
             if (skillData == null) return false;
@@ -53,7 +125,25 @@ namespace Nodebreaker.Core
             if (currentLevel >= skillData.maxLevel) return false;
 
             int cost = skillData.GetCost(currentLevel);
-            return _data.totalBit >= cost;
+            if (skillData.resourceType == Data.SkillResourceType.Core)
+                return _data.totalCore >= cost;
+            else
+                return _data.totalBit >= cost;
+        }
+
+        public bool CanPurchaseSkill(string skillId)
+        {
+            var skillData = FindSkillData(skillId);
+            if (skillData == null) return false;
+
+            int currentLevel = GetSkillLevel(skillId);
+            if (currentLevel >= skillData.maxLevel) return false;
+
+            // 전제 조건 확인
+            if (!ArePrerequisitesMet(skillId)) return false;
+
+            // 자원 확인
+            return CanAfford(skillId);
         }
 
         public bool TryPurchaseSkill(string skillId)
@@ -64,8 +154,14 @@ namespace Nodebreaker.Core
             int currentLevel = GetSkillLevel(skillId);
             int cost = skillData.GetCost(currentLevel);
 
-            _data.totalBit -= cost;
+            // 자원 타입에 따라 차감
+            if (skillData.resourceType == Data.SkillResourceType.Core)
+                _data.totalCore -= cost;
+            else
+                _data.totalBit -= cost;
+
             _skillLevelCache[skillId] = currentLevel + 1;
+            Debug.Log($"[MetaManager] TryPurchaseSkill: '{skillId}' Lv{currentLevel}->Lv{currentLevel + 1}, 비용={cost} {skillData.resourceType}");
             Save();
             return true;
         }
@@ -123,13 +219,40 @@ namespace Nodebreaker.Core
                 switch (skill.effectType)
                 {
                     case Data.SkillEffectType.AttackDamage:
-                        mods.attackDamageMultiplier += value;
+                        mods.attackDamageMultiplier += value * 0.01f;
                         break;
                     case Data.SkillEffectType.AttackSpeed:
-                        mods.attackSpeedMultiplier += value;
+                        mods.attackSpeedMultiplier += value * 0.01f;
                         break;
                     case Data.SkillEffectType.BaseHp:
                         mods.bonusBaseHp += Mathf.RoundToInt(value);
+                        break;
+                    case Data.SkillEffectType.Range:
+                        mods.rangeBonus += value;
+                        break;
+                    case Data.SkillEffectType.BitGain:
+                        mods.bitGainMultiplier += value * 0.01f;
+                        break;
+                    case Data.SkillEffectType.StartBit:
+                        mods.startBitBonus += Mathf.RoundToInt(value);
+                        break;
+                    case Data.SkillEffectType.SpawnRate:
+                        mods.spawnRateMultiplier += value * 0.01f;
+                        break;
+                    case Data.SkillEffectType.HpRegen:
+                        mods.hpRegenPerSec += value;
+                        break;
+                    case Data.SkillEffectType.Critical:
+                        mods.hasCritical = true;
+                        break;
+                    case Data.SkillEffectType.Idle:
+                        mods.hasIdleCollector = true;
+                        break;
+                    case Data.SkillEffectType.SpeedControl:
+                        mods.hasSpeedControl = true;
+                        break;
+                    case Data.SkillEffectType.TowerUnlock:
+                    case Data.SkillEffectType.None:
                         break;
                 }
             }

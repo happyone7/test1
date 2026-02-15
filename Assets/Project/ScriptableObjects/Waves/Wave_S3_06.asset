@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   spawnGroups:
   - nodeData: {fileID: 11400000, guid: 5db5c4185a80138449cbaed758a02530, type: 2}
-    count: 8
-    spawnInterval: 0.5
-  - nodeData: {fileID: 11400000, guid: 4983b5502135461aaaea73610ab6699c, type: 2}
-    count: 6
-    spawnInterval: 0.5
+    count: 5
+    spawnInterval: 1
+  - nodeData: {fileID: 11400000, guid: 5bff68330af94086898c3afc665af50c, type: 2}
+    count: 3
+    spawnInterval: 1
   delayBeforeWave: 3

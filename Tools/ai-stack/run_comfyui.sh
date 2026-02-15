@@ -16,4 +16,5 @@ if [[ ! -x "${VENV_DIR}/bin/python" ]]; then
 fi
 
 cd "${COMFY_DIR}"
-exec "${VENV_DIR}/bin/python" main.py --listen 127.0.0.1 --port 8188
+LISTEN_ADDR="${COMFYUI_LISTEN:-0.0.0.0}"
+exec "${VENV_DIR}/bin/python" main.py --listen "${LISTEN_ADDR}" --port 8188
