@@ -29,11 +29,20 @@ references/audio-specs.md 참조하여 ComfyUI 워크플로우 구성.
 5. download_output — 파일 다운로드
 ```
 
-### Step 3: Unity 적용
+### Step 3: 품질 검증 (반복 루프, 최대 3회)
+```
+1. 파일 길이 확인: 30초~3분 범위 내인지
+2. 파일 크기 확인: 3~8MB(OGG) 범위 내인지
+3. 기준 미달 시 → 프롬프트 조정(duration, BPM 등) 후 Step 2 재실행
+4. 3회 시도 후에도 미달 → 개발PD에게 보고 (모델/설정 문제 가능성)
+```
+
+### Step 4: Unity 적용
 ```
 1. 생성된 파일을 Assets/Audio/BGM/ 또는 Assets/Audio/SFX/ 에 복사
 2. refresh_unity — 에셋 인식
 3. manage_asset — 임포트 설정 조정 (BGM: Streaming, SFX: Decompress On Load)
+4. read_console — 임포트 에러 확인. 에러 시 포맷/설정 수정 후 재임포트
 ```
 
 ## SFX 제작 절차
@@ -51,6 +60,14 @@ references/audio-specs.md 참조하여 ComfyUI 워크플로우 구성.
 # WAV 파일 직접 생성 (numpy + scipy)
 # 사인파, 노이즈, 엔벨로프 조합
 # Assets/Audio/SFX/ 에 직접 저장
+```
+
+### SFX 품질 검증 (반복 루프, 최대 3회)
+```
+1. 파일 길이 확인: 게임플레이 SFX 0.2~2초, UI SFX 0.1~0.5초
+2. 파일 크기 확인: 10~500KB
+3. 기준 미달 시 → 프롬프트/파라미터 조정 후 재생성
+4. 3회 시도 후에도 미달 → 개발PD에게 보고
 ```
 
 ### 방법 선택 기준

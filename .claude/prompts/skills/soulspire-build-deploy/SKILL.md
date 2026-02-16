@@ -24,11 +24,16 @@ Unity Windows 빌드를 생성하고 SteamCMD로 업로드하는 절차. 개발/
 3. read_console — 컴파일 에러 없는지 확인
 ```
 
-### Step 2: Windows 빌드
+### Step 2: Windows 빌드 (실패 시 최대 2회 재시도)
 ```
 4. execute_menu_item → Tools/Build Windows
 5. sleep 20 (빌드 완료 대기)
 6. 빌드 결과 확인: SteamBuild/content/MyGame.exe 존재 여부
+7. 빌드 실패 시:
+   a. read_console — 컴파일/빌드 에러 확인
+   b. 에러 내용을 프로그래밍팀장에게 전달, 수정 요청
+   c. 수정 완료 후 Step 1부터 재실행
+   d. 2회 실패 → 개발PD에게 에스컬레이션
 ```
 
 ### Step 3: Steam 업로드 (VDF 선택)
@@ -48,10 +53,20 @@ references/steam-config.md 참조하여 VDF 선택 후 SteamCMD 실행.
   +quit
 ```
 
-### Step 4: 출시 빌드 시 추가 (default 브랜치 라이브)
+### Step 4: 업로드 실패 대응 (최대 2회 재시도)
+```
+업로드 실패 시:
+1. 에러 메시지 확인 (인증 만료, 네트워크, VDF 경로 오류 등)
+2. 인증 문제 → SteamCMD 재로그인 후 재시도
+3. VDF/경로 문제 → references/steam-config.md 경로 확인 후 수정
+4. 2회 실패 → 개발PD에게 에스컬레이션
+```
+
+### Step 5: 출시 빌드 시 추가 (default 브랜치 라이브)
 ```bash
 curl -X POST "https://partner.steam-api.com/ISteamApps/SetAppBuildLive/v2/" \
   -d "key=<API_KEY>&appid=4426340&buildid=<BUILDID>&betakey=default"
 ```
+실패 시 buildid 값 재확인 (SteamCMD 출력에서 추출).
 
 API 키와 상세 설정은 references/steam-config.md 참조.
