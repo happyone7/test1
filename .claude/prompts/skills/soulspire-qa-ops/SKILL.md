@@ -15,12 +15,19 @@ description: |
 
 ### 단위 QA (dev/* 브랜치 검증)
 
-각 팀장의 작업 완료 후 해당 dev/* 브랜치에서 수행.
+사전조건 (미충족 시 QA 시작 금지):
+```
+1. 해당 팀장이 작업 완료 + 커밋 완료 상태인지 확인
+2. Notion 업무카드에 "자체 QA 범위" 기재되어 있는지 확인
+→ 미충족 시 해당 팀장에게 완료 요청 후 대기
+```
 
+절차:
 ```
 1. 해당 dev/* 브랜치 체크아웃
 2. refresh_unity — 리컴파일
 3. read_console — 컴파일 에러 확인
+→ Gate: 컴파일 에러 0건이어야 4번 진행. 에러 시 즉시 팀장에게 수정 요청.
 4. manage_editor(action="enter_play_mode") — 플레이 시작
 5. references/checklist.md 기반 항목 확인
 6. manage_editor(action="take_screenshot") — 증거 스크린샷
@@ -43,7 +50,13 @@ git merge --no-ff dev/{팀장} -m "merge: {팀장}팀 작업 머지 (QA 통과)"
 
 ### 통합 QA (빌드 직전)
 
-모든 dev/* 브랜치가 sprint에 머지된 후 수행.
+사전조건:
+```
+1. 모든 단위 QA 통과 완료 (Notion 카드에서 전원 "통과" 확인)
+2. 모든 dev/* → sprint 머지 완료
+3. sprint 브랜치에서 컴파일 에러 0건
+→ 미충족 시 통합 QA 시작하지 않고 잔여 작업 처리
+```
 
 ```
 1. sprint 브랜치에서 전체 플로우 테스트

@@ -13,9 +13,13 @@ ComfyUI MCP 도구와 수학 합성(Python)을 활용하여 BGM과 SFX를 제작
 
 ## BGM 제작 절차
 
-### Step 1: 컨셉 확인
-- GDD (`Docs/Design/GDD.md`)와 아트 디렉션 (`Docs/Design/ArtDirection_v0.1.md`) 참조
-- 게임: 다크 판타지 타워 디펜스 — 어둡고 긴장감 있는 톤
+### Step 1: 컨셉 확인 (Gate: 컨셉 미확정 시 생성 금지)
+```
+1. GDD (Docs/Design/GDD.md) 에서 해당 씬/상황의 사운드 요구사항 확인
+2. 아트 디렉션 (Docs/Design/ArtDirection_v0.1.md) 에서 톤/무드 확인
+3. 기존 에셋 (Assets/Audio/) 에 중복 없는지 manage_asset(action="search")로 확인
+→ Gate: 요구사항 + 톤 확정 + 중복 없음 확인 후 Step 2 진행
+```
 
 ### Step 2: ComfyUI로 BGM 생성
 references/audio-specs.md 참조하여 ComfyUI 워크플로우 구성.
@@ -36,6 +40,8 @@ references/audio-specs.md 참조하여 ComfyUI 워크플로우 구성.
 3. 기준 미달 시 → 프롬프트 조정(duration, BPM 등) 후 Step 2 재실행
 4. 3회 시도 후에도 미달 → 개발PD에게 보고 (모델/설정 문제 가능성)
 ```
+
+→ Gate: Step 3 품질 검증 통과 후에만 Step 4 진행
 
 ### Step 4: Unity 적용 (Multi-MCP: ComfyUI → MCP Unity)
 ```
