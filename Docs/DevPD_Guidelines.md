@@ -48,8 +48,8 @@
 ### 3.1 브랜칭 전략 (QA 게이트 방식)
 
 ```
-feature/phase1-core-loop  ← 기존 (Sprint 1~2, 레거시)
-sprint3                   ← 메인 작업 브랜치 (QA팀장만 머지 가능)
+feature/phase1-core-loop  ← 기존 (Sprint 1~4, 레거시)
+sprint/5                  ← 메인 작업 브랜치 (QA팀장만 머지 가능)
   ├─ dev/programmer       ← 프로그래밍팀장 작업 브랜치
   ├─ dev/ui               ← UI팀장 작업 브랜치
   ├─ dev/ta               ← TA팀장 작업 브랜치
@@ -59,7 +59,7 @@ sprint3                   ← 메인 작업 브랜치 (QA팀장만 머지 가능
 ```
 
 **핵심 규칙:**
-1. **메인 작업 브랜치 이름**: `sprint2`, `sprint3`, `sprint4` 등 스프린트 단위
+1. **메인 작업 브랜치 이름**: `sprint/2`, `sprint/3`, `sprint/4`, `sprint/5` 등 스프린트 단위
 2. **각 팀장**: 자기 이름의 `dev/*` 브랜치에서 작업 → 자체 QA 후 커밋
 3. **sprint 브랜치 머지 권한**: **QA팀장만 가능** (동작 검증 통과 후 머지)
 4. **직접 sprint 브랜치 커밋 금지**: 모든 팀장은 반드시 `dev/*` 브랜치 경유
@@ -77,7 +77,7 @@ QA팀장: 해당 팀장에게 수정 요청 → 팀장 수정 후 재검증
 
 **브랜치 생성 명령 (각 팀장이 작업 시작 전 실행):**
 ```bash
-git checkout sprint3
+git checkout sprint/5
 git pull
 git checkout -b dev/programmer   # 프로그래밍팀장
 git checkout -b dev/ui           # UI팀장
@@ -87,7 +87,7 @@ git checkout -b dev/ta           # TA팀장
 
 **QA팀장 머지 명령:**
 ```bash
-git checkout sprint3
+git checkout sprint/5
 git merge --no-ff dev/programmer -m "merge: 프로그래밍팀장 작업 머지 (QA 통과)"
 ```
 
@@ -279,14 +279,14 @@ PM: 진행 현황 갱신 + 병목 보고
 각 dev/* 브랜치에 독립 워킹 디렉토리를 할당:
 
 ```
-/mnt/c/UnityProjects/
-  test1/                  ← 메인 (Unity 에디터 연결, feature/ 또는 sprint 브랜치)
-  wt-dev-programmer/      ← dev/programmer 전용
-  wt-dev-ui/              ← dev/ui 전용
-  wt-dev-ta/              ← dev/ta 전용
-  wt-dev-game-designer/   ← dev/game-designer 전용
-  wt-dev-sound/           ← dev/sound 전용
-  wt-dev-build/           ← dev/build 전용
+C:\UnityProjects\
+  Soulspire\              ← 메인 (Unity 에디터 연결, feature/ 또는 sprint 브랜치)
+  wt-dev-programmer\      ← dev/programmer 전용
+  wt-dev-ui\              ← dev/ui 전용
+  wt-dev-ta\              ← dev/ta 전용
+  wt-dev-game-designer\   ← dev/game-designer 전용
+  wt-dev-sound\           ← dev/sound 전용
+  wt-dev-build\           ← dev/build 전용
 ```
 
 ### 9.3 Worktree 사용 규칙
@@ -297,8 +297,8 @@ PM: 진행 현황 갱신 + 병목 보고
    - 전환 후 `refresh_unity` 필수
 3. **Worktree 갱신**: sprint 브랜치에서 dev/*로 최신 변경 가져오기
    ```bash
-   cd /mnt/c/UnityProjects/wt-dev-programmer
-   git merge sprint5 --no-edit
+   cd C:\UnityProjects\wt-dev-programmer
+   git merge sprint/5 --no-edit
    ```
 
 ### 9.4 브랜치 전환 프로토콜 (Unity MCP 작업 시)
