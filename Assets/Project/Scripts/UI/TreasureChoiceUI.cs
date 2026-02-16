@@ -476,6 +476,8 @@ namespace Soulspire.UI
                     return $"+{data.value * 100f:F0}% 크리티컬";
                 case TreasureChoiceType.SlowEffect:
                     return $"+{data.value * 100f:F0}% 감속 효과";
+                case TreasureChoiceType.TowerReward:
+                    return data.rewardTower != null ? $"타워 획득: {data.rewardTower.towerName}" : "타워 획득";
                 default:
                     return $"+{data.value}";
             }

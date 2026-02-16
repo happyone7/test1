@@ -17,12 +17,8 @@ MonoBehaviour:
   stageIndex: 0
   waves:
   - {fileID: 11400000, guid: 16764519f83b4034ab746f2b9651dd1a, type: 2}
-  - {fileID: 11400000, guid: a2b3c4d5e6f7081923456789abcdef02, type: 2}
-  - {fileID: 11400000, guid: a2b3c4d5e6f7081923456789abcdef03, type: 2}
-  - {fileID: 11400000, guid: a2b3c4d5e6f7081923456789abcdef04, type: 2}
-  - {fileID: 11400000, guid: a2b3c4d5e6f7081923456789abcdef05, type: 2}
   hpMultiplier: 1
   speedMultiplier: 1
   bitDropMultiplier: 1
   coreReward: 2
-  baseHp: 20
+  baseHp: 15

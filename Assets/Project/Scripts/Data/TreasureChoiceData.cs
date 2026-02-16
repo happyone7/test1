@@ -11,7 +11,8 @@ namespace Soulspire.Data
         MaxHpBoost,
         TowerCostDiscount,
         CritChance,
-        SlowEffect
+        SlowEffect,
+        TowerReward
     }
 
     public enum TreasureRarity
@@ -31,6 +32,9 @@ namespace Soulspire.Data
         [Header("효과")]
         public TreasureChoiceType choiceType;
         public float value;
+
+        [Header("타워 보상 (choiceType == TowerReward 시 사용)")]
+        public TowerData rewardTower;
 
         [Header("희귀도")]
         public TreasureRarity rarity;

@@ -19,7 +19,7 @@ MonoBehaviour:
   effectType: 2
   valuePerLevel: 5
   maxLevel: 20
-  baseCost: 30
-  growthRate: 1.2
+  baseCost: 25
+  growthRate: 1.15
   position: {x: -2, y: 0}
   prerequisiteIds: []
