@@ -73,12 +73,40 @@
 
 ## Git 정책
 
-### 브랜칭 (QA 게이트 방식)
-- **메인 작업 브랜치**: `sprint2`, `sprint3` 등 스프린트 단위
-- **팀장 작업 브랜치**: `dev/programmer`, `dev/ui`, `dev/ta`, `dev/game-designer`, `dev/sound`, `dev/build`
-- **sprint 브랜치 머지 권한**: QA팀장만 가능 (동작 검증 통과 후)
-- **워크플로우**: 팀장 dev/* 작업+커밋 → QA팀장 검증 → 통과 시 sprint 브랜치 머지
-- **스프린트 브랜치 격리**: 이전 스프린트 브랜치에 다음 스프린트 작업 절대 커밋 금지
+### 브랜치 구조
+```
+main                    ← 릴리스/배포 (Steam 빌드 기준)
+ └── sprint/N           ← 스프린트 통합 (QA 통과된 작업만 합류)
+      ├── feature/*     ← 크로스팀 기능 통합 (2개+ 팀 협업 시)
+      └── dev/*         ← 팀장별 작업 (워크트리 연결)
+```
+
+| 브랜치 | 역할 | 머지 권한 | 수명 |
+|--------|------|-----------|------|
+| **main** | Steam 배포용 안정 빌드 | 총괄PD | 영구 |
+| **sprint/N** | 스프린트 통합. QA 통과 작업만 합류 | QA팀장 | 스프린트 종료 시 main 머지 + 태그 |
+| **feature/\*** | 크로스팀 기능 통합용 (예: feature/idle-gold) | 개발PD(생성), 각 팀장(합류) | 기능 완료 후 sprint 머지 → 삭제 |
+| **dev/\*** | 팀장별 단독 작업 (워크트리 고정) | 해당 팀장 | 영구 (sprint 머지 후 rebase) |
+
+### 브랜칭 규칙
+- **sprint 머지 권한**: QA팀장만 (QA 통과 필수)
+- **스프린트 격리**: 이전 스프린트 브랜치에 다음 스프린트 작업 절대 커밋 금지
+- **허용 브랜치만 존재**: main, sprint/N, feature/*, dev/* 외 브랜치 생성 금지
+
+### 작업 흐름
+- **단독 작업**: dev/* → QA 통과 → sprint/N 머지
+- **크로스팀 기능**: 개발PD가 feature/* 생성 → 각 팀장이 feature/*에서 직접 작업 → 통합 QA → sprint/N 머지 → feature/* 삭제
+- **크로스팀 의존성 처리**: 선행 팀 작업 완료 → feature/*에 머지 → 후행 팀이 feature/* 최신 pull 후 이어 작업
+- **스프린트 시작**: main에서 sprint/N 분기 → 각 dev/*를 sprint/N 기반으로 갱신
+- **스프린트 종료**: sprint/N → main 머지 + 버전 태그 (예: v0.5.0)
+
+### 머지 순서 (의존성 기반 권장)
+1. dev/game-designer (SO 데이터 — 다른 팀이 참조)
+2. dev/programmer (코어 로직)
+3. dev/ta (아트 에셋)
+4. dev/sound (오디오 — 독립적)
+5. dev/ui (UI — 위 항목에 의존)
+6. dev/build (빌드 설정 — 최종)
 
 ### 팀장별 Git Author (커밋 시 필수 사용)
 - 기획: `--author="GameDesigner <game-designer@soulspire.dev>"`
@@ -97,20 +125,24 @@
 - 프로젝트 관리 파일(에이전트/스킬/메모리/문서) 수정 후 다른 작업으로 넘어갈 때 즉시 커밋
 - **stash 금지** — 브랜치 전환 전 반드시 커밋 (WIP 접두사 허용)
 
-### Git Worktree (단일 로컬 머신)
-에이전트별 독립 워킹 디렉토리로 브랜치 전환 없이 작업 가능:
+### Git Worktree
+에이전트별 독립 워킹 디렉토리. 각 팀장이 자기 워크트리에서 동시 작업 가능:
 ```
-/mnt/c/UnityProjects/test1/           ← 메인 (Unity 에디터 연결)
-/mnt/c/UnityProjects/wt-dev-programmer/ ← dev/programmer
-/mnt/c/UnityProjects/wt-dev-ui/        ← dev/ui
-/mnt/c/UnityProjects/wt-dev-ta/        ← dev/ta
-/mnt/c/UnityProjects/wt-dev-game-designer/ ← dev/game-designer
-/mnt/c/UnityProjects/wt-dev-sound/     ← dev/sound
-/mnt/c/UnityProjects/wt-dev-build/     ← dev/build
+c:\UnityProjects\Soulspire\              ← 메인 (Unity 에디터 연결, sprint/N)
+c:\UnityProjects\wt-dev-programmer\      ← dev/programmer
+c:\UnityProjects\wt-dev-ui\              ← dev/ui
+c:\UnityProjects\wt-dev-ta\              ← dev/ta
+c:\UnityProjects\wt-dev-game-designer\   ← dev/game-designer
+c:\UnityProjects\wt-dev-sound\           ← dev/sound
+c:\UnityProjects\wt-dev-build\           ← dev/build
 ```
-- **스크립트/SO/문서 편집**: worktree에서 직접 (브랜치 전환 불필요)
-- **Unity MCP 작업** (씬, 컴포넌트, 플레이모드): 메인 프로젝트에서만, 해당 dev/*로 전환 후 수행
-- 전환 프로토콜: 커밋 → checkout → refresh_unity → read_console → 작업 → 커밋
+
+#### 워크트리 작업 원칙
+- **단독 작업**: 자기 워크트리(wt-dev-*)에서 dev/* 브랜치로 직접 편집+커밋. 브랜치 전환 불필요
+- **크로스팀 기능**: 자기 워크트리에서 `git checkout feature/*`로 전환 후 작업 → 끝나면 `git checkout dev/*`로 복귀
+- **Unity MCP 작업** (씬, 컴포넌트, 플레이모드): 메인 프로젝트(Soulspire/)에서만 수행
+- **Unity MCP 전환 프로토콜**: 커밋 → checkout → refresh_unity → read_console → 작업 → 커밋
+- **Unity MCP 우선순위**: QA 검증 > 프로그래밍(씬 수정) > UI(프리팹 확인) > 기타
 
 ---
 
