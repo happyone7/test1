@@ -97,10 +97,12 @@ namespace Nodebreaker.UI
         {
             gameObject.SetActive(false);
 
-            // 부모 Canvas도 비활성화 (자신이 Canvas가 아닌 경우에만)
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null && parentCanvas.transform != transform)
-                parentCanvas.gameObject.SetActive(false);
+            // 부모 Canvas는 비활성화하지 않음.
+            // 이전에는 TitleScreenCanvas를 비활성화했으나, GetComponentInParent가
+            // 씬 구조 변경 시 잘못된 Canvas(메인 Canvas)를 비활성화하여
+            // InGameUI가 영구 숨김되는 버그 유발 가능성이 있었음.
+            // TitleScreenPanel만 비활성화하면 충분함 (자식이 비활성이면 Canvas가
+            // 활성이어도 렌더링/레이캐스트에 영향 없음).
         }
 
         /// <summary>

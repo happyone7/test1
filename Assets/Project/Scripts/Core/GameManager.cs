@@ -25,6 +25,11 @@ namespace Nodebreaker.Core
         public int TotalCore => MetaManager.Instance.TotalCore;
         public int CurrentStageIndex => MetaManager.Instance.CurrentStageIndex;
 
+        // UI 캐시 참조 (FindFirstObjectByType 반복 호출 방지)
+        private UI.InGameUI _cachedInGameUI;
+        private UI.HubUI _cachedHubUI;
+        private UI.TitleScreenUI _cachedTitleUI;
+
         protected override void Awake()
         {
             base.Awake();
@@ -34,20 +39,24 @@ namespace Nodebreaker.Core
         {
             State = GameState.Title;
 
+            // UI 참조 캐싱
+            _cachedInGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+            _cachedHubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
+            _cachedTitleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
+
+            Debug.Log($"[GameManager] Start: inGameUI={_cachedInGameUI != null}, hubUI={_cachedHubUI != null}, titleUI={_cachedTitleUI != null}");
+
             // InGame UI 요소 숨기기
-            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
-            if (inGameUI != null)
-                inGameUI.HideAll();
+            if (_cachedInGameUI != null)
+                _cachedInGameUI.HideAll();
 
             // Hub 숨기기 (타이틀 화면부터 시작)
-            var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
-            if (hubUI != null)
-                hubUI.Hide();
+            if (_cachedHubUI != null)
+                _cachedHubUI.Hide();
 
             // 타이틀 화면은 모든 사용자에게 항상 표시
-            var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
-            if (titleUI != null)
-                titleUI.Show();
+            if (_cachedTitleUI != null)
+                _cachedTitleUI.Show();
 
             SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0f);
         }
@@ -59,7 +68,10 @@ namespace Nodebreaker.Core
         /// </summary>
         public void OnTitlePlayClicked()
         {
-            if (MetaManager.Instance.IsFirstPlay)
+            bool isFirst = MetaManager.Instance.IsFirstPlay;
+            Debug.Log($"[GameManager] OnTitlePlayClicked: IsFirstPlay={isFirst}");
+
+            if (isFirst)
             {
                 Debug.Log("[GameManager] FTUE: 첫 플레이 감지 - Hub 스킵, Stage 1 바로 진입");
                 MetaManager.Instance.SetFtueFlag(0, true); // 첫 플레이 완료 플래그
@@ -81,11 +93,14 @@ namespace Nodebreaker.Core
             }
 
             State = GameState.InGame;
+            Debug.Log($"[GameManager] StartRun: stageIdx={stageIdx}, State=InGame");
             SoundManager.Instance.PlayBgm(SoundKeys.BgmCombat, 0.5f);
 
-            var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
-            if (hubUI != null)
-                hubUI.Hide();
+            // 캐시 참조 유효성 검사 (DontDestroyOnLoad 이후 씬 오브젝트 참조 손실 대비)
+            if (_cachedHubUI == null)
+                _cachedHubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
+            if (_cachedHubUI != null)
+                _cachedHubUI.Hide();
 
             // 인벤토리 초기화
             if (Singleton<Tower.TowerInventory>.HasInstance)
@@ -103,9 +118,18 @@ namespace Nodebreaker.Core
             AutoPlaceStarterTowers(3);
 
             // InGameUI 활성화 (Hub에서 비활성화되었을 수 있음)
-            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
-            if (inGameUI != null)
-                inGameUI.ShowAll();
+            if (_cachedInGameUI == null)
+                _cachedInGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+
+            if (_cachedInGameUI != null)
+            {
+                _cachedInGameUI.ShowAll();
+                Debug.Log("[GameManager] StartRun: InGameUI.ShowAll() 호출 완료");
+            }
+            else
+            {
+                Debug.LogError("[GameManager] StartRun: InGameUI를 찾을 수 없음!");
+            }
 
             RunModifiers mods = MetaManager.Instance.CalculateModifiers();
             RunManager.Instance.StartRun(stages[stageIdx], mods);
@@ -137,6 +161,7 @@ namespace Nodebreaker.Core
         public void GoToHub()
         {
             State = GameState.Hub;
+            Debug.Log("[GameManager] GoToHub: State=Hub");
             SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0.5f);
 
             // 런 상태 정리
@@ -159,14 +184,16 @@ namespace Nodebreaker.Core
             CleanupNodes();
 
             // InGameUI 숨기기 (런엔드 패널 포함)
-            var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
-            if (inGameUI != null)
-                inGameUI.HideAll();
+            if (_cachedInGameUI == null)
+                _cachedInGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
+            if (_cachedInGameUI != null)
+                _cachedInGameUI.HideAll();
 
-            var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
-            if (hubUI != null)
+            if (_cachedHubUI == null)
+                _cachedHubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
+            if (_cachedHubUI != null)
             {
-                hubUI.Show();
+                _cachedHubUI.Show();
 
                 // FTUE: Hub 첫 진입 가이드
                 if (Singleton<UI.FTUEManager>.HasInstance)

@@ -538,6 +538,7 @@ private IEnumerator SlideUpAnimation()
 
         public void HideAll()
         {
+            Debug.Log("[InGameUI] HideAll 호출");
             // Canvas 루트를 비활성화하지 않음! InGame 전용 요소만 숨기기
             SetInGameElementsActive(false);
 
@@ -578,6 +579,15 @@ private IEnumerator SlideUpAnimation()
 
         public void ShowAll()
         {
+            // 안전장치: 부모 Canvas가 비활성이면 활성화
+            var parentCanvas = GetComponentInParent<Canvas>(true);
+            if (parentCanvas != null && !parentCanvas.gameObject.activeSelf)
+            {
+                Debug.LogWarning($"[InGameUI] ShowAll: 부모 Canvas '{parentCanvas.name}'가 비활성 상태 — 강제 활성화");
+                parentCanvas.gameObject.SetActive(true);
+            }
+
+            Debug.Log($"[InGameUI] ShowAll 호출: topHud={topHudContainer != null}, bottomBar={bottomBarContainer != null}, inventoryBar={inventoryBar != null}");
             SetInGameElementsActive(true);
         }
 
