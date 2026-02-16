@@ -46,6 +46,11 @@ Soulspire의 아트 디렉팅, 2D 스프라이트/셰이더/파티클/애니메�
 - **아트 디렉션**: `Docs/Design/ArtDirection_v0.1.md`
 - **GDD**: `Docs/Design/GDD.md`
 
+## 기획서 참조
+- 기획서는 `Docs/Design/` 로컬 md 파일을 참조한다 (Notion 직접 접근 불필요)
+- 주요 참조: `Docs/Design/ArtDirection_v0.1.md`, `Docs/Design/GDD.md`
+- 기획팀장이 로컬 파일을 항상 최신 상태로 유지하므로, 로컬 파일이 기준이다
+
 ## 에셋 경로
 
 | 카테고리 | 경로 |

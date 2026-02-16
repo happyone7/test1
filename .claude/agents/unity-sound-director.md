@@ -46,6 +46,11 @@ Soulspire의 BGM/SFX를 ComfyUI로 생성하고, Unity에 적용하며, 믹싱/�
 - **사운드 톤**: 어둡고 신비로운 분위기, 전투 시 긴장감 극대화
 - **GDD**: `Docs/Design/GDD.md`, **아트 디렉션**: `Docs/Design/ArtDirection_v0.1.md`
 
+## 기획서 참조
+- 기획서는 `Docs/Design/` 로컬 md 파일을 참조한다 (Notion 직접 접근 불필요)
+- 주요 참조: `Docs/Design/GDD.md`, `Docs/Design/ArtDirection_v0.1.md`
+- 기획팀장이 로컬 파일을 항상 최신 상태로 유지하므로, 로컬 파일이 기준이다
+
 ## 에셋 경로
 
 | 카테고리 | 경로 |

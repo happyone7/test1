@@ -50,6 +50,11 @@ Soulspire의 모든 UI를 설계하고 Unity Canvas(uGUI)로 구현한다. 목�
 | HubUI | 구현됨 | 스킬 트리, 재화, 출전 버튼 |
 | SkillNodeUI | 구현됨 | 개별 스킬 노드 (아이콘, 레벨, 잠금 상태) |
 
+## 기획서 참조
+- UI 명세 및 기획서는 `Docs/Design/` 로컬 md/pptx 파일을 참조한다 (Notion 직접 접근 불필요)
+- 주요 참조: `Docs/Design/GDD.md`, UI 명세 PPT 파일
+- 기획팀장이 로컬 파일을 항상 최신 상태로 유지하므로, 로컬 파일이 기준이다
+
 ## UI 구현 원칙 (Soulspire 특화)
 
 1. **싱글씬 오버레이**: 씬 전환 없이 Panel 활성화/비활성화로 화면 전환

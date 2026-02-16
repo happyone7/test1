@@ -60,18 +60,17 @@ QA팀원들이 반복 수행하는 테스트를 분석하여 자동화 코드를
 - **인게임 런타임 로직 코드 수정/구현 금지** (게임플레이, 매니저, UI, 타워, 몬스터 등)
 - QA 자동화 코드는 반드시 `Editor` 폴더 내에만 배치 (빌드에 포함되지 않도록)
 
-## QA 범위 (체크리스트 요약)
+## 기획서 참조 (QA 기준)
+- QA 판정 기준이 되는 기획서는 `Docs/Design/` 로컬 md를 참조한다 (Notion 직접 접근 불필요)
+- 주요 참조: `Docs/Design/GDD.md` (게임 규칙), `Docs/Design/BalanceSheet_v0.1.md` (수치 기준)
+- 기획팀장이 로컬 파일을 항상 최신 상태로 유지하므로, 로컬 파일이 기준이다
 
-soulspire-qa-ops 스킬의 `references/checklist.md`에 전체 항목 있음. 핵심:
+## QA 범위
 
-| 범주 | 확인 사항 |
-|------|----------|
-| 게임 시작 | 씬 로드, GameManager/RunManager 존재, 초기 재화 |
-| 전투 | 타워 배치, 공격, Node 스폰/이동/피격, Bit 드롭 |
-| 런 종료 | HP 0 시 RunEnd, Bit 누적, Hub 전환 |
-| 허브 | 스킬 구매, Bit 차감, 출전 버튼 |
-| 모디파이어 | 스킬 효과 런에 반영 |
-| 비기능 | 콘솔 에러 0건, 프레임 드롭 없음 |
+- **체크리스트 정본**: `soulspire-qa-ops` 스킬의 `references/checklist.md`
+- **BAT (Build Acceptance Test)**: `references/bat.md` — 빌드 직전에만 실행, 기본 루프 + 핵심 기능 전체 검증
+- **시각 검증**: `references/visual-verification-tasks.md` — 해당 작업 유형일 때만 단위 QA에서 실행
+- QA팀원에게 위임 시 checklist.md에서 해당 항목을 지정하여 할당
 
 ## 머지 게이트 절차
 
@@ -87,6 +86,8 @@ soulspire-qa-ops 스킬의 `references/checklist.md`에 전체 항목 있음. �
 ## QA 결과: [Pass/Fail]
 - 대상: [브랜치명] [커밋 해시]
 - 체크리스트: N/N 통과
+- 시각 검증: [해당 없음/Pass/Fail] (visual-verification-tasks.md 해당 시에만)
+- BAT: [미실행/Pass/Fail] (빌드 직전에만 실행)
 - 실패 항목: (있으면 기술)
   - [항목명]: [증상] — [재현 방법]
 - 콘솔 에러: N건 (내용 첨부)

@@ -43,6 +43,11 @@ Soulspire의 코어 게임플레이 C# 코드를 구현한다. 매니저, 타워
 - **데이터**: `Data/` — StageData(SO), SkillNodeData(SO)
 - **UI**: `Scripts/UI/` — UI팀장 담당 (프로그래밍팀장은 데이터 인터페이스만 제공)
 
+## 기획서 참조
+- 기획서는 `Docs/Design/` 로컬 md 파일을 참조한다 (Notion 직접 접근 불필요)
+- 주요 참조: `Docs/Design/GDD.md`, `Docs/Design/SkillTree_Spec.md`
+- 기획팀장이 로컬 md를 항상 최신 상태로 유지하므로, 로컬 파일이 기준이다
+
 ## 아키텍처 패턴 (Soulspire 특화)
 
 - **SO 기반 데이터**: 타워/몬스터/스테이지/스킬 데이터는 모두 ScriptableObject

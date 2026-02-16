@@ -54,7 +54,7 @@
 ### 위임 원칙 (필수 준수 — 예외 없음)
 1. **개발PD는 절대 직접 코딩/UI/빌드 작업하지 않음** — 무조건 해당 에이전트에게 위임
 2. **에이전트 실패 시에도 개발PD 직접 작업 금지** — 네트워크 오류/MCP 장애/API 에러 등으로 에이전트가 실패하면 원인 해결 후 에이전트를 재실행할 것. 어떤 예외 상황에서도 개발PD가 "직접 하겠다"고 판단해서는 안 됨
-3. **실무자 자체 QA**: 프로그래밍팀장, UI팀장 등은 작업 후 자체 QA
+3. **실무자 자체 QA**: 프로그래밍팀장, UI팀장, 기획팀장 등은 작업 후 자체 QA
 4. **QA 조기 착수**: 각 팀장 작업 단위 완료 시 즉시 해당 부분 QA
 5. **QA 통과 후 빌더에게 빌드 명령**: 모든 작업 완료 + QA 통과 → 빌더가 빌드
 6. **UI 작업은 반드시 UI팀장 경유**: UI 수정/생성은 unity-ui-developer 에이전트 사용
@@ -123,32 +123,27 @@
 
 ---
 
-## 디자인 문서 관리 (Notion 중심)
-- 모든 디자인 문서는 **Notion**에서 관리 (git 브랜치 독립)
-- Notion 위치: Soulspire 프로젝트 > 디자인 문서
-- 에이전트가 기획서 참조 시 Notion fetch 도구 사용
-- git의 Docs/Design/은 레거시 아카이브로만 유지, **신규 문서는 Notion에만 생성**
+## 디자인 문서 관리 (로컬 md 기준 + Notion 동기화)
+- **에이전트 기준 문서**: `Docs/Design/` 로컬 md 파일 (항상 최신 상태 유지)
+- **총괄PD 확인 공간**: Notion (기획 확인, 피드백, 외부 공유용)
+- **동기화 흐름**: 기획팀장이 로컬 md 수정 → Notion에도 최신화 → git 커밋
+- **동기화 책임**: 기획팀장 (game-designer)
+- **에이전트는 Notion을 직접 참조하지 않음** (로컬 md만 참조)
+- **총괄PD 피드백**: 총괄PD가 Notion에서 기획을 수시로 확인하고 기획팀장에게 피드백
 
 ---
 
-## 빌드/배포 파이프라인
-1. Unity 씬 저장: `manage_scene(action="save")`
-2. 리컴파일: `refresh_unity`
-3. 빌드: `execute_menu_item` → Tools/Build Windows
-4. sleep 20 (빌드 완료 대기)
-5. Steam 업로드 (VDF 파일 선택):
-   - **개발 빌드**: `app_build_dev.vdf` → `dev_test` 브랜치 자동 라이브
-   - **QA 빌드**: `app_build_qa.vdf` → `live_test` 브랜치 자동 라이브
-   - **출시 빌드**: `app_build.vdf` + Web API로 default 브랜치 설정
-- SteamCMD 경로: /mnt/c/steamworks_sdk/tools/ContentBuilder/builder/steamcmd.exe
+## 빌드/배포 정책
+- 빌드 절차는 `soulspire-build-deploy` 스킬 참조
 - **프로토타입 기간: 빌드 전 반드시 총괄PD 승인 필요**
+- **로컬 직접 복사 테스트 통과 후에만 Steam 업로드 진행**
 
 ---
 
-## QA 프로세스
-- **Notion 업무 카드 보드**: 업무 제목/스프린트/담당팀/작업 내용/QA 상태/QA 결과/관련 커밋
-- **흐름**: 작업자 커밋 → Notion 업무 카드 등록 → 개발PD가 QA 지시 → 테스트 수행 & 결과 기입 → 이슈 발생 시 작업자에게 직통 전달 → 즉시 수정
-- **스프린트 마지막 QA**: QA팀장이 전체 플로우 검증 → 빌더 빌드 → 빌드 성공 시 Discord 알림 → 총괄PD 전달
+## QA 정책
+- QA 운영 절차는 `soulspire-qa-ops` 스킬 참조
+- **sprint 브랜치 머지는 QA팀장만 가능** (QA 통과 필수)
+- **빌드 전 BAT 필수** (1건이라도 실패 시 빌드 금지)
 
 ---
 

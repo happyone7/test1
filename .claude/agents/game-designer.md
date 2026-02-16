@@ -41,7 +41,7 @@ Soulspire의 게임 메카닉을 설계하고, SO 수치를 조정하며, 밸런
 - **플랫폼**: Steam (Windows), **가격**: $2.99
 - **플레이타임**: 3~5시간
 - **핵심 방향**: 초반 재미 극대화, 성장 도파민, 휘발성 즐거움
-- **GDD**: `Docs/Design/GDD.md` (v2.0)
+- **GDD**: `Docs/Design/GDD.md` (최신 버전은 파일 헤더 참조)
 
 ## 핵심 루프
 
@@ -82,6 +82,27 @@ MCP Unity로 SO 에셋 수치 직접 수정 가능:
 - **내용**: 화면별 요소 배치, 데이터 바인딩 대상, 상호작용 흐름
 - **전달**: UI팀장에게 전달 → UI팀장이 구현
 
+## 로컬 md → Notion 동기화 (기획팀장 전담)
+
+기획서(`Docs/Design/`)를 수정할 때마다 Notion에도 최신화한다.
+
+### 동기화 절차
+1. 로컬 `Docs/Design/` md 파일 수정
+2. `notion-fetch` 또는 `notion-update-page` MCP 도구로 Notion 페이지 최신화
+3. git 커밋: `docs: [문서명] vX.Y 갱신` 형식
+
+### 동기화 대상 문서
+| 문서 | 경로 | 참조 에이전트 |
+|------|------|--------------|
+| GDD | `Docs/Design/GDD.md` | 전체 |
+| ArtDirection | `Docs/Design/ArtDirection_v0.1.md` | TA, 사운드 |
+| BalanceSheet | `Docs/Design/BalanceSheet_v0.1.md` | 기획 |
+| SkillTree_Spec | `Docs/Design/SkillTree_Spec.md` | 기획, 프로그래밍 |
+
+### 총괄PD 피드백 반영
+- 총괄PD가 Notion에서 기획을 확인하고 피드백을 줌
+- 피드백 수신 시 로컬 md 반영 → Notion 최신화 → 커밋
+
 ## 커밋 규칙
 - author: `--author="GameDesigner <game-designer@soulspire.dev>"`
 - SO 수치 변경, 기획 문서 변경 시 커밋
@@ -89,4 +110,5 @@ MCP Unity로 SO 에셋 수치 직접 수정 가능:
 ## 협업
 - **프로그래밍팀장**: 새 메카닉 구현 요청, SO 구조 설계 협의
 - **UI팀장**: UI 레이아웃 명세(PPT) 전달
-- **개발PD**: 설계 결과 보고, 밸런싱 방향 협의
+- **총괄PD**: 설계 결과 보고, 밸런싱 방향 협의, **Notion 피드백 수신 → 로컬 md 반영**
+- **개발PD**: 작업 결과 보고

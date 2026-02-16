@@ -40,7 +40,7 @@ description: |
 - **게임명**: Soulspire (다크 판타지 타워 디펜스)
 - **진행 문서**: `Docs/Sprint{N}_Progress.md` (스프린트별 분리)
 - **피드백 문서**: `Docs/Design/Sprint{N}_Feedback.md`
-- **GDD**: `Docs/Design/GDD.md` (v2.0)
+- **GDD**: `Docs/Design/GDD.md` (최신 버전은 파일 헤더 참조)
 
 ## 핵심 업무
 
