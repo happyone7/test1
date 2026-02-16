@@ -231,10 +231,10 @@ namespace Soulspire.UI
                 var meta = Core.MetaManager.Instance;
 
                 if (totalBitText != null)
-                    totalBitText.text = $"Bit: {meta.TotalBit:N0}";
+                    totalBitText.text = $"Soul: {meta.TotalBit:N0}";
 
                 if (totalCoreText != null)
-                    totalCoreText.text = $"Core: {meta.TotalCore}";
+                    totalCoreText.text = $"Core Fragment: {meta.TotalCore}";
 
                 RefreshStageDropdown();
                 RefreshIdleBitNotification();
@@ -267,7 +267,7 @@ namespace Soulspire.UI
             var options = new List<Dropdown.OptionData>();
             for (int i = 0; i < unlockedCount; i++)
             {
-                options.Add(new Dropdown.OptionData($"Stage {i + 1}"));
+                options.Add(new Dropdown.OptionData($"Floor {i + 1}"));
             }
             stageDropdown.AddOptions(options);
 
@@ -288,7 +288,7 @@ namespace Soulspire.UI
             {
                 idleBitPanel.SetActive(true);
                 if (idleBitText != null)
-                    idleBitText.text = $"방치 Bit: {_pendingIdleBit:N0} [수령!]";
+                    idleBitText.text = $"방치 Soul: {_pendingIdleBit:N0} [수령!]";
             }
             else
             {
@@ -444,7 +444,7 @@ namespace Soulspire.UI
                 else
                 {
                     int cost = _selectedSkill.GetCost(level);
-                    detailCostText.text = $"{cost} Bit";
+                    detailCostText.text = $"{cost} Soul";
                     detailCostText.color = totalBit >= cost ? ColorYellowGold : ColorRed;
                 }
             }

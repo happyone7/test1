@@ -54,7 +54,7 @@ namespace Soulspire.UI
                 titleText.text = "방치 보상";
 
             if (bitAmountText != null)
-                bitAmountText.text = $"+{bitAmount:N0} Bit";
+                bitAmountText.text = $"+{bitAmount:N0} Soul";
 
             if (absenceTimeText != null)
             {
