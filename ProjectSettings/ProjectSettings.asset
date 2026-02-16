@@ -166,7 +166,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: 
-    Standalone: unity.MyCompany.MyGame
+    Standalone: unity.SBGames.Soulspire
     VisionOS: 
     iPhone: 
     tvOS: 
