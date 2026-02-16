@@ -261,6 +261,10 @@ namespace Soulspire.Core
                     // value는 추가 감속률 (예: 0.1 = +10% 감속 효과 강화)
                     _slowEffectBonus += choice.value;
                     break;
+                case TreasureChoiceType.TowerReward:
+                    // 타워 보상: 실제 타워 배치는 이벤트 구독자가 수행
+                    Debug.Log($"[TreasureManager] 타워 보상 선택: {choice.rewardTower?.towerName ?? "null"}");
+                    break;
 
                 default:
                     Debug.LogWarning($"[TreasureManager] 알 수 없는 choiceType: {choice.choiceType}");

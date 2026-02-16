@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee80b1e30437994bb7e976f77cc50ab, type: 3}
+  m_Name: TreasureChoice_Tower_Cannon
+  m_EditorClassIdentifier:
+  displayName: "\uB300\uD3EC \uD0C0\uC6CC"
+  description: "\uB192\uC740 \uB370\uBBF8\uC9C0\uC640 \uBC94\uC704 \uACF5\uACA9\uC744 \uAC00\uC9C4 \uD0C0\uC6CC\uB97C \uD68D\uB4DD\uD569\uB2C8\uB2E4."
+  icon: {fileID: 0}
+  choiceType: 8
+  value: 0
+  rewardTower: {fileID: 11400000, guid: 52b1b0476b292d84e8b526b411a440b2, type: 2}
+  rarity: 1

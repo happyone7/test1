@@ -115,7 +115,7 @@ namespace Soulspire.Core
                 Tower.PlacementGrid.Instance.ClearOccupied();
 
             // FTUE: Arrow 타워 3개를 필드에 자동 배치
-            AutoPlaceStarterTowers(3);
+            AutoPlaceStarterTowers(1);
 
             // InGameUI 활성화 (Hub에서 비활성화되었을 수 있음)
             if (_cachedInGameUI == null)

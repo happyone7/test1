@@ -30,6 +30,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4291b594e60c8204fbdb1b910e291c19, type: 2}
   - {fileID: 11400000, guid: 7caa2d45ded8221428d7326f7c8ef4d9, type: 2}
   - {fileID: 11400000, guid: 609431c314b08ec41a6a755ed163fcfa, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6, type: 2}
+  - {fileID: 11400000, guid: b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7, type: 2}
+  - {fileID: 11400000, guid: c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8, type: 2}
   commonWeight: 0.6
   rareWeight: 0.3
   epicWeight: 0.1
