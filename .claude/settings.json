@@ -4,7 +4,8 @@
   },
   "permissions": {
     "allow": [
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

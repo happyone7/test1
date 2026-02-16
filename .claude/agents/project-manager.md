@@ -1,4 +1,5 @@
 ---
+model: sonnet
 name: "📋 project-manager"
 description: |
   스프린트 진행 취합, 진행 문서(Sprint*_Progress.md) 갱신, 팀간 소통 브릿지 담당.

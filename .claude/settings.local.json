@@ -1,11 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Bash(*)",
       "mcp__mcp-unity__*",
-      "Bash(git status:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "mcp__playwright__*"
     ]
   }
 }

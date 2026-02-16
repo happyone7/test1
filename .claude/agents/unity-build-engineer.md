@@ -1,4 +1,5 @@
 ---
+model: sonnet
 name: "\U0001F680 unity-build-engineer"
 description: |
   Unity Windows 빌드, SteamCMD 업로드, VDF 관리, 빌드 자동화 담당.
