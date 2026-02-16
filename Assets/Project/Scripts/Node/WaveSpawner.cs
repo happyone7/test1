@@ -68,6 +68,10 @@ namespace Soulspire.Node
                 {
                     SoundManager.Instance.PlaySfx(SoundKeys.BossDefeat, 1f);
 
+                    // 보스 처치 시 타워 보물상자 드롭
+                    if (Singleton<Core.TreasureManager>.HasInstance)
+                        Core.TreasureManager.Instance.OnBossKilled();
+
                     // 보스 HP 바 숨김
                     var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
                     if (inGameUI != null)
@@ -82,14 +86,11 @@ namespace Soulspire.Node
                 if (Singleton<Core.RunManager>.HasInstance)
                     Core.RunManager.Instance.OnSingleWaveCleared();
 
-                // 마지막 웨이브가 아닌 경우에만 타워 드롭 + 보물상자 판정
+                // 마지막 웨이브가 아닌 경우에만 타워 드롭
                 if (_currentWaveIndex < _currentStage.waves.Length)
                 {
                     DropRandomTowerToInventory();
 
-                    // 보물상자 드랍 판정
-                    if (Singleton<Core.TreasureManager>.HasInstance)
-                        Core.TreasureManager.Instance.OnWaveCleared();
                 }
             }
 
@@ -135,7 +136,7 @@ namespace Soulspire.Node
                     waypoints,
                     _currentStage.hpMultiplier,
                     _currentStage.speedMultiplier,
-                    _currentStage.bitDropMultiplier
+                    _currentStage.soulDropMultiplier
                 );
                 _aliveCount++;
             }

@@ -14,7 +14,7 @@ namespace Soulspire.Node
 
         float _scaledHp;
         float _scaledSpeed;
-        int _scaledBitDrop;
+        int _scaledSoulDrop;
         int _defense;
 
         // 감속 디버프
@@ -34,7 +34,7 @@ namespace Soulspire.Node
         Transform[] _waypoints;
         int _waypointIndex;
 
-        public void Initialize(Data.NodeData data, Transform[] waypoints, float hpMul, float speedMul, float bitMul)
+        public void Initialize(Data.NodeData data, Transform[] waypoints, float hpMul, float speedMul, float soulMul)
         {
             Data = data;
             _waypoints = waypoints;
@@ -42,7 +42,7 @@ namespace Soulspire.Node
 
             _scaledHp = data.hp * hpMul;
             _scaledSpeed = data.speed * speedMul;
-            _scaledBitDrop = Mathf.RoundToInt(data.bitDrop * bitMul);
+            _scaledSoulDrop = Mathf.RoundToInt(data.soulDrop * soulMul);
             _defense = data.defense;
             _baseDefense = data.defense;
 
@@ -183,11 +183,11 @@ namespace Soulspire.Node
             SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
             {
-                int bitDrop = _scaledBitDrop;
-                // 보물 BitBonus 효과 적용
+                int soulDrop = _scaledSoulDrop;
+                // 보물 SoulBonus 효과 적용
                 if (Tesseract.Core.Singleton<Core.TreasureManager>.HasInstance)
-                    bitDrop += Core.TreasureManager.Instance.BitBonusPerKill;
-                Core.RunManager.Instance.AddBit(bitDrop);
+                    soulDrop += Core.TreasureManager.Instance.SoulBonusPerKill;
+                Core.RunManager.Instance.AddSoul(soulDrop);
                 Core.RunManager.Instance.OnNodeKilled();
             }
             RemoveFromWave();

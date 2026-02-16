@@ -17,12 +17,19 @@ namespace Soulspire.Core
         [Header("스테이지 데이터")]
         public Data.StageData[] stages;
 
+        [Header("초기 타워 설정")]
+        [Tooltip("런 시작 시 자동 배치할 기본 타워. null이면 TowerManager의 첫 번째 타워 사용.")]
+        public Data.TowerData starterTowerData;
+
+        [Tooltip("런 시작 시 자동 배치할 타워 수 (Early Game: 1기)")]
+        public int starterTowerCount = 1;
+
         [Header("현재 상태")]
         public GameState State { get; private set; } = GameState.Title;
 
         // MetaManager 위임 프로퍼티
-        public int TotalBit => MetaManager.Instance.TotalBit;
-        public int TotalCore => MetaManager.Instance.TotalCore;
+        public int TotalSoul => MetaManager.Instance.TotalSoul;
+        public int TotalCoreFragment => MetaManager.Instance.TotalCoreFragment;
         public int CurrentStageIndex => MetaManager.Instance.CurrentStageIndex;
 
         // UI 캐시 참조 (FindFirstObjectByType 반복 호출 방지)
@@ -114,8 +121,8 @@ namespace Soulspire.Core
             if (Singleton<Tower.PlacementGrid>.HasInstance)
                 Tower.PlacementGrid.Instance.ClearOccupied();
 
-            // FTUE: Arrow 타워 3개를 필드에 자동 배치
-            AutoPlaceStarterTowers(3);
+            // 초기 타워 자동 배치 (Early Game Flow: 타워 1기로 시작)
+            AutoPlaceStarterTowers(starterTowerCount);
 
             // InGameUI 활성화 (Hub에서 비활성화되었을 수 있음)
             if (_cachedInGameUI == null)
@@ -135,24 +142,24 @@ namespace Soulspire.Core
             RunManager.Instance.StartRun(stages[stageIdx], mods);
         }
 
-        public void OnRunEnd(bool cleared, int bitEarned)
+        public void OnRunEnd(bool cleared, int soulEarned)
         {
             int stageIdx = MetaManager.Instance.CurrentStageIndex;
-            int coreEarned = cleared ? stages[Mathf.Min(stageIdx, stages.Length - 1)].coreReward : 0;
+            int coreFragmentEarned = cleared ? stages[Mathf.Min(stageIdx, stages.Length - 1)].coreFragmentReward : 0;
 
             // RunManager에서 노드 처치 수를 가져옴
             int nodesKilled = 0;
             if (Singleton<RunManager>.HasInstance)
                 nodesKilled = RunManager.Instance.NodesKilled;
 
-            MetaManager.Instance.AddRunRewards(bitEarned, coreEarned, cleared, stageIdx, nodesKilled);
+            MetaManager.Instance.AddRunRewards(soulEarned, coreFragmentEarned, cleared, stageIdx, nodesKilled);
 
-            // FTUE: 첫 스테이지 클리어 시 보너스 Bit 100 지급
+            // FTUE: 첫 스테이지 클리어 시 보너스 Soul 100 지급
             if (cleared && !MetaManager.Instance.GetFtueFlag(3))
             {
                 MetaManager.Instance.SetFtueFlag(3, true); // 첫 스테이지 클리어 플래그
-                MetaManager.Instance.AddRunRewards(100, 0, false, stageIdx, 0); // 보너스 Bit 100
-                Debug.Log("[GameManager] FTUE: 첫 클리어 보너스 Bit 100 지급!");
+                MetaManager.Instance.AddRunRewards(100, 0, false, stageIdx, 0); // 보너스 Soul 100
+                Debug.Log("[GameManager] FTUE: 첫 클리어 보너스 Soul 100 지급!");
             }
 
             State = GameState.RunEnd;
@@ -202,8 +209,8 @@ namespace Soulspire.Core
         }
 
         /// <summary>
-        /// PlacementGrid의 빈 buildable 셀에 Arrow 타워를 자동 배치합니다.
-        /// 인벤토리 드래그 시스템이 구현될 때까지의 임시 FTUE 로직입니다.
+        /// PlacementGrid의 빈 buildable 셀에 기본 타워를 자동 배치합니다.
+        /// starterTowerData가 설정되어 있으면 해당 타워를, 아니면 TowerManager의 첫 번째 타워를 사용합니다.
         /// </summary>
         private void AutoPlaceStarterTowers(int count)
         {
@@ -216,21 +223,11 @@ namespace Soulspire.Core
             var towerManager = Tower.TowerManager.Instance;
             var grid = Tower.PlacementGrid.Instance;
 
-            // Arrow 타워 데이터 찾기
-            Data.TowerData starterTower = null;
-            if (towerManager.availableTowers != null)
+            // 기본 타워 데이터 결정: SO에서 지정된 starterTowerData 우선, 없으면 fallback
+            Data.TowerData starterTower = starterTowerData;
+            if (starterTower == null && towerManager.availableTowers != null && towerManager.availableTowers.Length > 0)
             {
-                foreach (var td in towerManager.availableTowers)
-                {
-                    if (td.type == Data.TowerType.Arrow)
-                    {
-                        starterTower = td;
-                        break;
-                    }
-                }
-                // Arrow 타워가 없으면 첫 번째 타워 사용
-                if (starterTower == null && towerManager.availableTowers.Length > 0)
-                    starterTower = towerManager.availableTowers[0];
+                starterTower = towerManager.availableTowers[0];
             }
 
             if (starterTower == null)

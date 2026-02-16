@@ -14,8 +14,8 @@ namespace Soulspire.Core
         PlayerSaveData _data;
         Dictionary<string, int> _skillLevelCache = new Dictionary<string, int>();
 
-        public int TotalBit => _data.totalBit;
-        public int TotalCore => _data.totalCore;
+        public int TotalSoul => _data.totalSoul;
+        public int TotalCoreFragment => _data.totalCoreFragment;
         public int CurrentStageIndex => _data.currentStageIndex;
         public int TotalNodesKilled => _data.totalNodesKilled;
 
@@ -54,7 +54,7 @@ namespace Soulspire.Core
             if (currentLevel >= skillData.maxLevel) return false;
 
             int cost = skillData.GetCost(currentLevel);
-            return _data.totalBit >= cost;
+            return _data.totalSoul >= cost;
         }
 
         public bool TryPurchaseSkill(string skillId)
@@ -65,16 +65,16 @@ namespace Soulspire.Core
             int currentLevel = GetSkillLevel(skillId);
             int cost = skillData.GetCost(currentLevel);
 
-            _data.totalBit -= cost;
+            _data.totalSoul -= cost;
             _skillLevelCache[skillId] = currentLevel + 1;
             Save();
             return true;
         }
 
-        public void AddRunRewards(int bit, int core, bool cleared, int stageIdx, int nodesKilled = 0)
+        public void AddRunRewards(int soul, int coreFragment, bool cleared, int stageIdx, int nodesKilled = 0)
         {
-            _data.totalBit += bit;
-            _data.totalCore += core;
+            _data.totalSoul += soul;
+            _data.totalCoreFragment += coreFragment;
             _data.totalNodesKilled += nodesKilled;
             if (cleared)
                 _data.currentStageIndex = Mathf.Max(_data.currentStageIndex, stageIdx + 1);
@@ -84,8 +84,8 @@ namespace Soulspire.Core
         /// <summary>
         /// 스테이지 해금 조건을 확인합니다.
         /// Stage 1: 항상 해금
-        /// Stage 2: totalBit >= 500 AND totalNodesKilled >= 100
-        /// Stage 3: totalBit >= 3000 AND totalNodesKilled >= 500
+        /// Stage 2: totalSoul >= 500 AND totalNodesKilled >= 100
+        /// Stage 3: totalSoul >= 3000 AND totalNodesKilled >= 500
         /// </summary>
         public bool IsStageUnlocked(int stageIndex)
         {
@@ -94,9 +94,9 @@ namespace Soulspire.Core
                 case 0: // Stage 1: 항상 해금
                     return true;
                 case 1: // Stage 2
-                    return _data.totalBit >= 500 && _data.totalNodesKilled >= 100;
+                    return _data.totalSoul >= 500 && _data.totalNodesKilled >= 100;
                 case 2: // Stage 3
-                    return _data.totalBit >= 3000 && _data.totalNodesKilled >= 500;
+                    return _data.totalSoul >= 3000 && _data.totalNodesKilled >= 500;
                 default: // 이후 스테이지: currentStageIndex 기반 진행도 체크
                     return _data.currentStageIndex >= stageIndex;
             }

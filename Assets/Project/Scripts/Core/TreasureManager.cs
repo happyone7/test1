@@ -8,13 +8,17 @@ namespace Soulspire.Core
 {
     /// <summary>
     /// 보물상자 시스템 매니저.
-    /// 웨이브 클리어 시 확률적으로 보물상자를 드랍하고,
-    /// 플레이어가 3택 중 하나를 선택하면 해당 효과를 현재 런에 적용한다.
+    /// Phase 2: 보스 처치 시 보물상자 드롭 → 타워 3택 → 인벤토리 추가.
+    /// 기존 버프 효과 시스템도 API 호환을 위해 유지.
     /// </summary>
     public class TreasureManager : Singleton<TreasureManager>
     {
         [Header("보물 설정")]
         public TreasureConfig treasureConfig;
+
+        [Header("타워 보물상자 설정")]
+        [Tooltip("보스 처치 시 제시할 타워 후보 수")]
+        public int towerChoiceCount = 3;
 
         // ── UI 이벤트 ──
         /// <summary>
@@ -28,6 +32,18 @@ namespace Soulspire.Core
         /// 파라미터: 선택된 TreasureChoiceData
         /// </summary>
         public event Action<TreasureChoiceData> OnTreasureChosen;
+
+        // ── UI 이벤트 (타워 보물상자 - Phase 2) ──
+        /// <summary>
+        /// 보스 처치 시 타워 보물상자가 드롭되었을 때 발행.
+        /// UI가 구독하여 타워 3택 패널을 표시한다.
+        /// </summary>
+        public event Action<List<TowerData>> OnTowerTreasureDropped;
+
+        /// <summary>
+        /// 플레이어가 타워를 선택했을 때 발행.
+        /// </summary>
+        public event Action<TowerData> OnTowerTreasureChosen;
 
         // ── 현재 런의 활성 보물 효과 ──
         readonly List<TreasureChoiceData> _activeEffects = new List<TreasureChoiceData>();
@@ -43,7 +59,7 @@ namespace Soulspire.Core
         float _critChance = 0f;
         float _slowEffectBonus = 0f;
         int _bonusMaxHp = 0;
-        int _bitBonusPerKill = 0;
+        int _soulBonusPerKill = 0;
 
         public float DamageMultiplier => _damageMultiplier;
         public float AttackSpeedMultiplier => _attackSpeedMultiplier;
@@ -52,17 +68,112 @@ namespace Soulspire.Core
         public float CritChance => _critChance;
         public float SlowEffectBonus => _slowEffectBonus;
         public int BonusMaxHp => _bonusMaxHp;
-        public int BitBonusPerKill => _bitBonusPerKill;
+        public int SoulBonusPerKill => _soulBonusPerKill;
 
         // ── 대기 상태 (UI가 3택을 표시 중인지) ──
         bool _waitingForChoice;
         public bool IsWaitingForChoice => _waitingForChoice;
 
-        // ── 공개 API ──
+        // ═══════════════════════════════════════
+        // 타워 보물상자 API (Phase 2)
+        // ═══════════════════════════════════════
 
         /// <summary>
-        /// 웨이브 클리어 시 WaveSpawner에서 호출.
-        /// dropChance 확률로 보물상자를 드랍한다.
+        /// 보스 처치 시 WaveSpawner에서 호출.
+        /// TowerManager.availableTowers에서 랜덤으로 타워 후보를 뽑아 UI에 제시한다.
+        /// </summary>
+        public void OnBossKilled()
+        {
+            if (!Singleton<Tower.TowerManager>.HasInstance)
+            {
+                Debug.LogWarning("[TreasureManager] OnBossKilled: TowerManager 인스턴스 없음");
+                return;
+            }
+
+            var available = Tower.TowerManager.Instance.availableTowers;
+            if (available == null || available.Length == 0)
+            {
+                Debug.LogWarning("[TreasureManager] OnBossKilled: 사용 가능한 타워가 없음");
+                return;
+            }
+
+            var candidates = PickRandomTowers(towerChoiceCount, available);
+            if (candidates.Count == 0)
+            {
+                Debug.LogWarning("[TreasureManager] OnBossKilled: 타워 후보를 생성할 수 없음");
+                return;
+            }
+
+            Debug.Log($"[TreasureManager] 보스 처치! 타워 보물상자 드롭 — 후보 {candidates.Count}개");
+            _waitingForChoice = true;
+            OnTowerTreasureDropped?.Invoke(candidates);
+        }
+
+        /// <summary>
+        /// 플레이어가 타워 3택 중 하나를 선택했을 때 UI에서 호출.
+        /// 선택된 타워를 인벤토리에 추가한다.
+        /// </summary>
+        public void ApplyTowerChoice(TowerData towerData)
+        {
+            if (towerData == null)
+            {
+                Debug.LogWarning("[TreasureManager] ApplyTowerChoice: null towerData");
+                _waitingForChoice = false;
+                return;
+            }
+
+            _waitingForChoice = false;
+
+            // 인벤토리에 타워 추가
+            if (Singleton<Tower.TowerInventory>.HasInstance)
+            {
+                bool added = Tower.TowerInventory.Instance.TryAddTower(towerData, 1);
+                if (added)
+                    Debug.Log($"[TreasureManager] 타워 획득: {towerData.towerName} Lv1 인벤토리 추가");
+                else
+                    Debug.LogWarning($"[TreasureManager] 인벤토리 가득 참 — {towerData.towerName} 획득 실패");
+            }
+            else
+            {
+                Debug.LogWarning("[TreasureManager] ApplyTowerChoice: TowerInventory 인스턴스 없음");
+            }
+
+            OnTowerTreasureChosen?.Invoke(towerData);
+        }
+
+        /// <summary>
+        /// availableTowers에서 중복 없이 count개의 타워를 랜덤 추출한다.
+        /// </summary>
+        List<TowerData> PickRandomTowers(int count, TowerData[] available)
+        {
+            var result = new List<TowerData>();
+            var usedIndices = new HashSet<int>();
+            int maxAttempts = count * 10;
+            int attempts = 0;
+
+            int actualCount = Mathf.Min(count, available.Length);
+
+            while (result.Count < actualCount && attempts < maxAttempts)
+            {
+                attempts++;
+                int idx = UnityEngine.Random.Range(0, available.Length);
+                if (!usedIndices.Contains(idx) && available[idx] != null)
+                {
+                    usedIndices.Add(idx);
+                    result.Add(available[idx]);
+                }
+            }
+
+            return result;
+        }
+
+        // ═══════════════════════════════════════
+        // 기존 버프 보물 API (호환용 유지)
+        // ═══════════════════════════════════════
+
+        /// <summary>
+        /// 웨이브 클리어 시 호출 (현재 비활성 — Phase 2에서 보스 처치 트리거로 대체).
+        /// WaveSpawner에서 더 이상 호출하지 않지만 API 호환을 위해 유지.
         /// </summary>
         public void OnWaveCleared()
         {
@@ -125,7 +236,7 @@ namespace Soulspire.Core
             _critChance = 0f;
             _slowEffectBonus = 0f;
             _bonusMaxHp = 0;
-            _bitBonusPerKill = 0;
+            _soulBonusPerKill = 0;
             _waitingForChoice = false;
 
             Debug.Log("[TreasureManager] 보물 효과 초기화 완료");
@@ -234,9 +345,9 @@ namespace Soulspire.Core
                     _rangeMultiplier += choice.value;
                     break;
 
-                case TreasureChoiceType.BitBonus:
-                    // value는 노드 처치 시 추가 Bit (예: 2 = +2 Bit per kill)
-                    _bitBonusPerKill += Mathf.RoundToInt(choice.value);
+                case TreasureChoiceType.SoulBonus:
+                    // value는 노드 처치 시 추가 Soul (예: 2 = +2 Soul per kill)
+                    _soulBonusPerKill += Mathf.RoundToInt(choice.value);
                     break;
 
                 case TreasureChoiceType.MaxHpBoost:

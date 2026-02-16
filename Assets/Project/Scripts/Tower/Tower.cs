@@ -171,10 +171,10 @@ namespace Soulspire.Tower
         }
 
         /// <summary>
-        /// Bit를 소모하여 타워를 업그레이드합니다.
-        /// 성공 시 true 반환, Bit 부족 또는 최대 레벨이면 false 반환.
+        /// Soul을 소모하여 타워를 업그레이드합니다.
+        /// 성공 시 true 반환, Soul 부족 또는 최대 레벨이면 false 반환.
         /// </summary>
-        public bool UpgradeWithBit()
+        public bool UpgradeWithSoul()
         {
             if (data == null) return false;
             int cost = data.GetUpgradeCost(Level);
@@ -189,11 +189,11 @@ namespace Soulspire.Tower
             }
 
             if (!Singleton<Core.RunManager>.HasInstance) return false;
-            if (Core.RunManager.Instance.BitEarned < cost) return false;
+            if (Core.RunManager.Instance.SoulEarned < cost) return false;
 
-            Core.RunManager.Instance.SpendBit(cost);
+            Core.RunManager.Instance.SpendSoul(cost);
             Level++;
-            Debug.Log($"[Tower] 업그레이드 완료: {data.towerName} Lv{Level}, 비용 {cost} Bit");
+            Debug.Log($"[Tower] 업그레이드 완료: {data.towerName} Lv{Level}, 비용 {cost} Soul");
             return true;
         }
 

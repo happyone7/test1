@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Soulspire.UI
 {
@@ -31,8 +32,10 @@ namespace Soulspire.UI
         public Sprite btnAccentDisabled;
 
         [Header("아이콘")]
-        public Sprite iconBit;     // 소울(Soul) 아이콘
-        public Sprite iconCore;    // 정수(Essence) 아이콘
+        [FormerlySerializedAs("iconBit")]
+        public Sprite iconSoul;     // 소울(Soul) 아이콘
+        [FormerlySerializedAs("iconCore")]
+        public Sprite iconCoreFragment;    // 정수(Essence) 아이콘
 
         [Header("배경")]
         public Sprite titleBackground;   // 타이틀 배경 (TitleBG_01)
