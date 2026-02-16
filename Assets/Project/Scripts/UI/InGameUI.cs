@@ -102,6 +102,9 @@ namespace Nodebreaker.UI
         public GameObject corePopupContainer;   // Core 팝업 컨테이너
         public Text corePopupText;              // "+N Core" 텍스트
 
+        [Header("보물상자 3택 선택")]
+        public TreasureChoiceUI treasureChoiceUI;  // 보물상자 3택 패널 (독립 이벤트 구독)
+
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
@@ -567,6 +570,10 @@ private IEnumerator SlideUpAnimation()
             }
             if (corePopupContainer != null)
                 corePopupContainer.SetActive(false);
+
+            // 보물상자 3택 패널 숨김
+            if (treasureChoiceUI != null)
+                treasureChoiceUI.Hide();
         }
 
         public void ShowAll()

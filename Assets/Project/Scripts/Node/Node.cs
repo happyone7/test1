@@ -183,7 +183,11 @@ namespace Nodebreaker.Node
             SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
             if (Tesseract.Core.Singleton<Core.RunManager>.HasInstance)
             {
-                Core.RunManager.Instance.AddBit(_scaledBitDrop);
+                int bitDrop = _scaledBitDrop;
+                // 보물 BitBonus 효과 적용
+                if (Tesseract.Core.Singleton<Core.TreasureManager>.HasInstance)
+                    bitDrop += Core.TreasureManager.Instance.BitBonusPerKill;
+                Core.RunManager.Instance.AddBit(bitDrop);
                 Core.RunManager.Instance.OnNodeKilled();
             }
             RemoveFromWave();

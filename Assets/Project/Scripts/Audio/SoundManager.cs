@@ -103,6 +103,11 @@ namespace Nodebreaker.Audio
             Register(SoundKeys.TowerUpgrade, "Audio/SFX/Combat/SFX_Tower_Upgrade_01");
             Register(SoundKeys.UiGuideAppear, "Audio/SFX/UI/UI_Guide_Appear_01");
             Register(SoundKeys.StageUnlock, "Audio/SFX/Alert/SFX_Stage_Unlock_01");
+
+            // Phase 4: Treasure/Reward
+            Register(SoundKeys.TreasureDrop, "Audio/SFX/Reward/SFX_Treasure_Drop_01");
+            Register(SoundKeys.TreasureOpen, "Audio/SFX/Reward/SFX_Treasure_Open_01");
+            Register(SoundKeys.TreasureSelect, "Audio/SFX/Reward/SFX_Treasure_Select_01");
         }
 
         /// <summary>
@@ -150,6 +155,11 @@ namespace Nodebreaker.Audio
             _balanceMap[SoundKeys.TowerUpgrade] = 0.9f;
             _balanceMap[SoundKeys.UiGuideAppear] = 0.8f;
             _balanceMap[SoundKeys.StageUnlock] = 0.95f;
+
+            // === Phase 4: Treasure/Reward ===
+            _balanceMap[SoundKeys.TreasureDrop] = 0.9f;
+            _balanceMap[SoundKeys.TreasureOpen] = 0.95f;
+            _balanceMap[SoundKeys.TreasureSelect] = 0.85f;
         }
 
         private float GetBalance(string key)

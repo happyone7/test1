@@ -82,9 +82,15 @@ namespace Nodebreaker.Node
                 if (Singleton<Core.RunManager>.HasInstance)
                     Core.RunManager.Instance.OnSingleWaveCleared();
 
-                // 마지막 웨이브가 아닌 경우에만 타워 드롭
+                // 마지막 웨이브가 아닌 경우에만 타워 드롭 + 보물상자 판정
                 if (_currentWaveIndex < _currentStage.waves.Length)
+                {
                     DropRandomTowerToInventory();
+
+                    // 보물상자 드랍 판정
+                    if (Singleton<Core.TreasureManager>.HasInstance)
+                        Core.TreasureManager.Instance.OnWaveCleared();
+                }
             }
 
             // 모든 웨이브 완료 → RunManager에 알림

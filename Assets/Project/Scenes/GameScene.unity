@@ -867,6 +867,10 @@ MonoBehaviour:
   levelText: {fileID: 960298819}
   button: {fileID: 97434092}
   lockedOverlay: {fileID: 0}
+  backgroundImage: {fileID: 0}
+  borderImage: {fileID: 0}
+  lockedText: {fileID: 0}
+  uiSprites: {fileID: 0}
 --- !u!114 &97434092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1167,6 +1171,10 @@ MonoBehaviour:
   levelText: {fileID: 248567724}
   button: {fileID: 146181891}
   lockedOverlay: {fileID: 0}
+  backgroundImage: {fileID: 0}
+  borderImage: {fileID: 0}
+  lockedText: {fileID: 0}
+  uiSprites: {fileID: 0}
 --- !u!114 &146181891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,6 +1678,51 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 28}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!1 &334166188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 334166190}
+  - component: {fileID: 334166189}
+  m_Layer: 0
+  m_Name: TreasureManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &334166189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334166188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87d093d4a583e147be0542c40b44f44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treasureConfig: {fileID: 11400000, guid: 7c5ad440360216549b8b66ba5929a269, type: 2}
+--- !u!4 &334166190
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334166188}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &338983465
 GameObject:
   m_ObjectHideFlags: 0
@@ -2311,6 +2364,7 @@ MonoBehaviour:
   startButton: {fileID: 1886171343}
   settingsButton: {fileID: 1752056928}
   quitButton: {fileID: 487949999}
+  uiSprites: {fileID: 0}
 --- !u!114 &441692311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3306,9 +3360,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allSkills:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: fb6289d6029eb16468570008f4459463, type: 2}
+  - {fileID: 11400000, guid: a9be2a2445a6ad046ac61dd5edd75c1f, type: 2}
+  - {fileID: 11400000, guid: d4445248c4f5cb84caa61a71afe97809, type: 2}
 --- !u!4 &596621363
 Transform:
   m_ObjectHideFlags: 0
@@ -5446,6 +5500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragController: {fileID: 1442192305}
+  uiSprites: {fileID: 0}
 --- !u!114 &853306267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5849,9 +5904,13 @@ MonoBehaviour:
   damageText: {fileID: 1900751151}
   attackSpeedText: {fileID: 1708295235}
   rangeText: {fileID: 1680242462}
+  upgradeButton: {fileID: 0}
+  upgradeButtonText: {fileID: 0}
+  upgradeCostText: {fileID: 0}
   sellText: {fileID: 1831586519}
   sellButton: {fileID: 1976443424}
   closeButton: {fileID: 1184270172}
+  uiSprites: {fileID: 0}
 --- !u!224 &929865069
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8248,6 +8307,7 @@ MonoBehaviour:
   absenceTimeText: {fileID: 960427417}
   claimButton: {fileID: 1162060385}
   claimButtonText: {fileID: 944349230}
+  uiSprites: {fileID: 0}
 --- !u!114 &1317846840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10057,6 +10117,7 @@ MonoBehaviour:
   bgmValueText: {fileID: 1360828319}
   sfxValueText: {fileID: 2135427543}
   closeButton: {fileID: 1410752888}
+  uiSprites: {fileID: 0}
 --- !u!114 &1600384339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10556,6 +10617,7 @@ MonoBehaviour:
   towerPurchasePanel: {fileID: 876872012}
   towerInfoTooltip: {fileID: 929865068}
   towerPurchaseButton: {fileID: 1888808131}
+  uiSprites: {fileID: 0}
   topHudContainer: {fileID: 1735508093}
   bottomBarContainer: {fileID: 1341016549}
   runEndOverlay: {fileID: 0}
@@ -10568,6 +10630,16 @@ MonoBehaviour:
   retryButtonText: {fileID: 0}
   hubButtonOutline: {fileID: 0}
   retryButtonOutline: {fileID: 0}
+  runEndTotalBitText: {fileID: 0}
+  bossHpBarContainer: {fileID: 0}
+  bossNameText: {fileID: 0}
+  bossHpBarFill: {fileID: 0}
+  bossHpValueText: {fileID: 0}
+  guideTextContainer: {fileID: 0}
+  guideText: {fileID: 0}
+  guideTextBackground: {fileID: 0}
+  corePopupContainer: {fileID: 0}
+  corePopupText: {fileID: 0}
   baseHpSlider: {fileID: 0}
   baseHpText: {fileID: 0}
 --- !u!1 &1674605501
@@ -12208,6 +12280,15 @@ MonoBehaviour:
   quitButton: {fileID: 152722359}
   settingsPopup: {fileID: 1600384338}
   idleBitPopup: {fileID: 1317846839}
+  uiSprites: {fileID: 0}
+  bitIconImage: {fileID: 0}
+  coreIconImage: {fileID: 0}
+  detailPanelImage: {fileID: 0}
+  topBarImage: {fileID: 0}
+  bottomBarImage: {fileID: 0}
+  guideTextContainer: {fileID: 0}
+  guideText: {fileID: 0}
+  guideTextBackground: {fileID: 0}
   detailChangeBeforeText: {fileID: 0}
   detailChangeAfterText: {fileID: 0}
   purchaseButtonText: {fileID: 0}
@@ -13022,6 +13103,10 @@ MonoBehaviour:
   levelText: {fileID: 1201714211}
   button: {fileID: 1903096268}
   lockedOverlay: {fileID: 0}
+  backgroundImage: {fileID: 0}
+  borderImage: {fileID: 0}
+  lockedText: {fileID: 0}
+  uiSprites: {fileID: 0}
 --- !u!114 &1903096268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14405,3 +14490,4 @@ SceneRoots:
   - {fileID: 1442192306}
   - {fileID: 486301869}
   - {fileID: 1694449003}
+  - {fileID: 334166190}

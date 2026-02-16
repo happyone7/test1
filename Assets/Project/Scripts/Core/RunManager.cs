@@ -90,11 +90,26 @@ namespace Nodebreaker.Core
             EndRun(true);
         }
 
+        /// <summary>
+        /// 보물상자 MaxHpBoost 효과를 즉시 적용한다.
+        /// 최대 HP와 현재 HP를 동시에 증가시킨다.
+        /// </summary>
+        public void ApplyBonusMaxHp(int bonus)
+        {
+            _baseMaxHp += bonus;
+            _baseHp += bonus;
+            Debug.Log($"[RunManager] 보물 MaxHpBoost 적용: +{bonus} HP (현재 {_baseHp}/{_baseMaxHp})");
+        }
+
         public void ResetRun()
         {
             IsRunning = false;
             CurrentStage = null;
             NodesKilled = 0;
+
+            // 보물 효과 초기화
+            if (Singleton<TreasureManager>.HasInstance)
+                TreasureManager.Instance.ResetEffects();
         }
 
         void EndRun(bool cleared)

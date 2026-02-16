@@ -65,6 +65,8 @@ namespace Nodebreaker.Tower
             float attackSpeed = data.GetAttackSpeed(Level);
             if (Singleton<Core.RunManager>.HasInstance)
                 attackSpeed *= Core.RunManager.Instance.CurrentModifiers.attackSpeedMultiplier;
+            if (Singleton<Core.TreasureManager>.HasInstance)
+                attackSpeed *= Core.TreasureManager.Instance.AttackSpeedMultiplier;
 
             if (_currentTarget != null && _attackTimer >= 1f / attackSpeed)
             {
@@ -76,6 +78,8 @@ namespace Nodebreaker.Tower
         Node.Node FindTarget()
         {
             float range = data.GetRange(Level);
+            if (Singleton<Core.TreasureManager>.HasInstance)
+                range *= Core.TreasureManager.Instance.RangeMultiplier;
             var colliders = Physics2D.OverlapCircleAll(transform.position, range);
 
             Node.Node closest = null;
@@ -104,6 +108,16 @@ namespace Nodebreaker.Tower
             float damage = data.GetDamage(Level);
             if (Singleton<Core.RunManager>.HasInstance)
                 damage *= Core.RunManager.Instance.CurrentModifiers.attackDamageMultiplier;
+            if (Singleton<Core.TreasureManager>.HasInstance)
+                damage *= Core.TreasureManager.Instance.DamageMultiplier;
+
+            // 보물 크리티컬 판정
+            if (Singleton<Core.TreasureManager>.HasInstance)
+            {
+                float critChance = Core.TreasureManager.Instance.CritChance;
+                if (critChance > 0f && Random.value < critChance)
+                    damage *= 2f;
+            }
 
             if (data.projectilePrefab != null)
             {
@@ -124,6 +138,9 @@ namespace Nodebreaker.Tower
                     // Ice Tower: 감속 디버프
                     float slowRate = data.GetSlowRate(Level);
                     float slowDur = data.GetSlowDuration(Level);
+                    // 보물 SlowEffect 보너스 적용
+                    if (Singleton<Core.TreasureManager>.HasInstance)
+                        slowRate += Core.TreasureManager.Instance.SlowEffectBonus;
                     if (slowRate > 0f && slowDur > 0f)
                         proj.SetSlow(slowRate, slowDur);
                 }
@@ -162,6 +179,14 @@ namespace Nodebreaker.Tower
             if (data == null) return false;
             int cost = data.GetUpgradeCost(Level);
             if (cost < 0) return false; // 최대 레벨
+
+            // 보물 TowerCostDiscount 효과 적용
+            if (Singleton<Core.TreasureManager>.HasInstance)
+            {
+                float discount = Core.TreasureManager.Instance.TowerCostDiscount;
+                if (discount > 0f)
+                    cost = Mathf.Max(1, Mathf.RoundToInt(cost * (1f - discount)));
+            }
 
             if (!Singleton<Core.RunManager>.HasInstance) return false;
             if (Core.RunManager.Instance.BitEarned < cost) return false;

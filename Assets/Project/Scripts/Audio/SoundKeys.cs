@@ -35,5 +35,10 @@ namespace Nodebreaker.Audio
         public const string TowerUpgrade = "SFX_Tower_Upgrade_01";
         public const string UiGuideAppear = "UI_Guide_Appear_01";
         public const string StageUnlock = "SFX_Stage_Unlock_01";
+
+        // === Phase 4: Treasure/Reward ===
+        public const string TreasureDrop = "SFX_Treasure_Drop_01";
+        public const string TreasureOpen = "SFX_Treasure_Open_01";
+        public const string TreasureSelect = "SFX_Treasure_Select_01";
     }
 }
