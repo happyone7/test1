@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using Tesseract.Core;
 using UnityEngine;
-using Nodebreaker.Data;
+using Soulspire.Data;
 
-namespace Nodebreaker.Core
+namespace Soulspire.Core
 {
     /// <summary>
     /// 보물상자 시스템 매니저.

@@ -2,7 +2,7 @@ using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Nodebreaker.Tower
+namespace Soulspire.Tower
 {
     public class PlacementGrid : Singleton<PlacementGrid>
     {

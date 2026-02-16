@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
     public enum TowerType
     {
@@ -12,7 +12,7 @@ namespace Nodebreaker.Data
         Void
     }
 
-    [CreateAssetMenu(fileName = "Tower_", menuName = "Nodebreaker/Tower Data")]
+    [CreateAssetMenu(fileName = "Tower_", menuName = "Soulspire/Tower Data")]
     public class TowerData : ScriptableObject
     {
         public string towerId;

@@ -2,11 +2,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public class Phase2SceneSetup
     {
-        [MenuItem("Tools/Nodebreaker/Setup Phase 2 (Hub + MetaManager)")]
+        [MenuItem("Tools/Soulspire/Setup Phase 2 (Hub + MetaManager)")]
         static void SetupPhase2()
         {
             // 1. MetaManager 싱글톤 추가
@@ -268,7 +268,7 @@ namespace Nodebreaker.Editor
             EditorUtility.SetDirty(hubUI);
             EditorUtility.SetDirty(meta);
 
-            Debug.Log("[Nodebreaker] Phase 2 씬 설정 완료! MetaManager + HubPanel 추가됨.");
+            Debug.Log("[Soulspire] Phase 2 씬 설정 완료! MetaManager + HubPanel 추가됨.");
         }
 
         static GameObject CreateSingleton<T>(string name) where T : Component

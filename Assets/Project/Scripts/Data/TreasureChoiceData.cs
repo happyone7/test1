@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
     public enum TreasureChoiceType
     {
@@ -21,7 +21,7 @@ namespace Nodebreaker.Data
         Epic
     }
 
-    [CreateAssetMenu(fileName = "TreasureChoice_", menuName = "Nodebreaker/Treasure Choice Data")]
+    [CreateAssetMenu(fileName = "TreasureChoice_", menuName = "Soulspire/Treasure Choice Data")]
     public class TreasureChoiceData : ScriptableObject
     {
         public string displayName;

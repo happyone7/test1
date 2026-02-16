@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Tesseract.Core;
 using UnityEngine;
 
-namespace Nodebreaker.Audio
+namespace Soulspire.Audio
 {
     public class SoundManager : Singleton<SoundManager>
     {

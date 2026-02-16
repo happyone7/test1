@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Tesseract.Core;
 using UnityEngine;
 
-namespace Nodebreaker.Tower
+namespace Soulspire.Tower
 {
     public class TowerManager : Singleton<TowerManager>
     {

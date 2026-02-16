@@ -1,9 +1,9 @@
 using Tesseract.Core;
 using Tesseract.ObjectPool;
 using UnityEngine;
-using Nodebreaker.Audio;
+using Soulspire.Audio;
 
-namespace Nodebreaker.Tower
+namespace Soulspire.Tower
 {
     public class Tower : MonoBehaviour
     {

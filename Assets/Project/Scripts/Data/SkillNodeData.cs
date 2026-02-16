@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
     public enum SkillEffectType
     {
@@ -9,7 +9,7 @@ namespace Nodebreaker.Data
         BaseHp
     }
 
-    [CreateAssetMenu(fileName = "Skill_", menuName = "Nodebreaker/Skill Node Data")]
+    [CreateAssetMenu(fileName = "Skill_", menuName = "Soulspire/Skill Node Data")]
     public class SkillNodeData : ScriptableObject
     {
         public string skillId;

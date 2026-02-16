@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     /// <summary>
     /// Hub UI를 PPT 명세에 맞게 재구성하는 에디터 도구
@@ -24,7 +24,7 @@ namespace Nodebreaker.Editor
         static readonly Color ColorBorder      = new Color32(0x5B, 0x6B, 0x8A, 0xFF);
         static readonly Color ColorDarkGreen   = new Color32(0x15, 0x30, 0x25, 0xFF);
 
-        [MenuItem("Tools/Nodebreaker/Rebuild Hub UI (PPT Spec)")]
+        [MenuItem("Tools/Soulspire/Rebuild Hub UI (PPT Spec)")]
         static void RebuildHubUI()
         {
             // HubPanel 찾기

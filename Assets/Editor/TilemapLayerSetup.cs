@@ -2,11 +2,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public class TilemapLayerSetup
     {
-        [MenuItem("Tools/Nodebreaker/Setup Tilemap Layers")]
+        [MenuItem("Tools/Soulspire/Setup Tilemap Layers")]
         static void SetupTilemapLayers()
         {
             // Grid 오브젝트 생성 또는 찾기
@@ -59,7 +59,7 @@ namespace Nodebreaker.Editor
             EditorUtility.SetDirty(manager);
             EditorUtility.SetDirty(gridObj);
 
-            Debug.Log("[Nodebreaker] Tilemap 4-layer 구조 설정 완료!\n" +
+            Debug.Log("[Soulspire] Tilemap 4-layer 구조 설정 완료!\n" +
                       "  - Tilemap_Background (Order 0)\n" +
                       "  - Tilemap_Path (Order 1)\n" +
                       "  - Tilemap_Placement (Order 2)\n" +

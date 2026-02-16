@@ -2,7 +2,7 @@ using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// 타워 구매 패널 (PPT 명세 슬라이드 5-5)

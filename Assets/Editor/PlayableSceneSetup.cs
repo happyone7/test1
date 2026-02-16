@@ -2,11 +2,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public class PlayableSceneSetup
     {
-        [MenuItem("Tools/Nodebreaker/Make Scene Playable")]
+        [MenuItem("Tools/Soulspire/Make Scene Playable")]
         static void MakePlayable()
         {
             try
@@ -14,11 +14,11 @@ namespace Nodebreaker.Editor
                 PlaceTowers();
                 SetupUI();
                 EditorUtility.SetDirty(Object.FindFirstObjectByType<Canvas>());
-                Debug.Log("[Nodebreaker] 씬 플레이 가능 상태 설정 완료!");
+                Debug.Log("[Soulspire] 씬 플레이 가능 상태 설정 완료!");
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[Nodebreaker] 설정 실패: {e.Message}\n{e.StackTrace}");
+                Debug.LogError($"[Soulspire] 설정 실패: {e.Message}\n{e.StackTrace}");
             }
         }
 
@@ -29,7 +29,7 @@ namespace Nodebreaker.Editor
             var towerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Project/Prefabs/Towers/Tower_Arrow.prefab");
             if (towerData == null || towerPrefab == null)
             {
-                Debug.LogWarning("[Nodebreaker] Tower 에셋이 없습니다. Create Prototype Assets를 먼저 실행하세요.");
+                Debug.LogWarning("[Soulspire] Tower 에셋이 없습니다. Create Prototype Assets를 먼저 실행하세요.");
                 return;
             }
 
@@ -67,7 +67,7 @@ namespace Nodebreaker.Editor
                 }
 
                 EditorUtility.SetDirty(go);
-                Debug.Log($"[Nodebreaker] 타워 배치: {name} at {towerPositions[i]}");
+                Debug.Log($"[Soulspire] 타워 배치: {name} at {towerPositions[i]}");
             }
         }
 
@@ -76,7 +76,7 @@ namespace Nodebreaker.Editor
             var canvas = Object.FindFirstObjectByType<Canvas>();
             if (canvas == null)
             {
-                Debug.LogWarning("[Nodebreaker] Canvas가 없습니다. Setup Game Scene을 먼저 실행하세요.");
+                Debug.LogWarning("[Soulspire] Canvas가 없습니다. Setup Game Scene을 먼저 실행하세요.");
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace Nodebreaker.Editor
             so.ApplyModifiedProperties();
 
             EditorUtility.SetDirty(inGameUI);
-            Debug.Log("[Nodebreaker] InGame UI 설정 완료");
+            Debug.Log("[Soulspire] InGame UI 설정 완료");
         }
 
         static T CreateUIElement<T>(string name, Transform parent) where T : Component

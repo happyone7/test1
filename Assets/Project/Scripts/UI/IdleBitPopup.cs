@@ -2,7 +2,7 @@ using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// 방치 Bit 수령 팝업 (PPT 명세 슬라이드 5-4)

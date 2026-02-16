@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// InGame 화면 하단 8슬롯 타워 인벤토리 바 UI.

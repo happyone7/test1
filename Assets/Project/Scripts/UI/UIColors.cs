@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// 다크 판타지 컬러 팔레트 (ArtDirection_v0.1.md 4절 기준)

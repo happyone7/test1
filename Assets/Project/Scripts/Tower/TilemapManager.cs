@@ -2,7 +2,7 @@ using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Nodebreaker.Tower
+namespace Soulspire.Tower
 {
     /// <summary>
     /// 4-layer Tilemap 시스템을 관리합니다.

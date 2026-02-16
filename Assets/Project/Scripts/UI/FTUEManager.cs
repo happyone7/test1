@@ -1,7 +1,7 @@
 using Tesseract.Core;
 using UnityEngine;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// FTUE (First-Time User Experience) 가이드 텍스트 트리거 관리.

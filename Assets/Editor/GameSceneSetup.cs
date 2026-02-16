@@ -1,11 +1,11 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public class GameSceneSetup
     {
-        [MenuItem("Tools/Nodebreaker/Setup Game Scene")]
+        [MenuItem("Tools/Soulspire/Setup Game Scene")]
         static void SetupGameScene()
         {
             // 카메라 설정 (표준 2D: XY 평면, -Z 방향)
@@ -82,7 +82,7 @@ namespace Nodebreaker.Editor
                 canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             }
 
-            Debug.Log("[Nodebreaker] Game Scene 설정 완료!");
+            Debug.Log("[Soulspire] Game Scene 설정 완료!");
         }
 
         static GameObject CreateSingleton<T>(string name) where T : Component

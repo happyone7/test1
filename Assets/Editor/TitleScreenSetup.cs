@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public class TitleScreenSetup
     {
@@ -14,7 +14,7 @@ namespace Nodebreaker.Editor
         static readonly Color DangerRed = HexColor("#FF4D5A");
         static readonly Color SubText = HexColor("#AFC3E8");
 
-        [MenuItem("Tools/Nodebreaker/Setup TitleScreen UI")]
+        [MenuItem("Tools/Soulspire/Setup TitleScreen UI")]
         static void SetupTitleScreen()
         {
             // 기존 TitleScreenCanvas가 있으면 삭제

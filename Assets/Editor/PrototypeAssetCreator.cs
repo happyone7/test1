@@ -1,17 +1,17 @@
 using UnityEditor;
 using UnityEngine;
-using Nodebreaker.Data;
+using Soulspire.Data;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public class PrototypeAssetCreator
     {
-        [MenuItem("Tools/Nodebreaker/Create Prototype Assets")]
+        [MenuItem("Tools/Soulspire/Create Prototype Assets")]
         static void CreatePrototypeAssets()
         {
             try
             {
-                Debug.Log("[Nodebreaker] 프로토타입 에셋 생성 시작...");
+                Debug.Log("[Soulspire] 프로토타입 에셋 생성 시작...");
                 CreateFolders();
                 var arrowProjectile = CreateProjectilePrefab();
                 var bitNodePrefab = CreateNodePrefab("BitNode", Color.cyan);
@@ -23,34 +23,34 @@ namespace Nodebreaker.Editor
                 var stageData = CreateStageData(waveData);
 
                 // GameManager에 스테이지 데이터 연결
-                var gm = Object.FindFirstObjectByType<Nodebreaker.Core.GameManager>();
+                var gm = Object.FindFirstObjectByType<Soulspire.Core.GameManager>();
                 if (gm != null)
                 {
                     gm.stages = new StageData[] { stageData };
                     EditorUtility.SetDirty(gm);
-                    Debug.Log("[Nodebreaker] GameManager에 스테이지 데이터 연결 완료");
+                    Debug.Log("[Soulspire] GameManager에 스테이지 데이터 연결 완료");
                 }
                 else
                 {
-                    Debug.LogWarning("[Nodebreaker] GameManager를 씬에서 찾을 수 없습니다. 먼저 Setup Game Scene을 실행하세요.");
+                    Debug.LogWarning("[Soulspire] GameManager를 씬에서 찾을 수 없습니다. 먼저 Setup Game Scene을 실행하세요.");
                 }
 
                 // TowerManager에 타워 데이터 연결
-                var tm = Object.FindFirstObjectByType<Nodebreaker.Tower.TowerManager>();
+                var tm = Object.FindFirstObjectByType<Soulspire.Tower.TowerManager>();
                 if (tm != null)
                 {
                     tm.availableTowers = new TowerData[] { arrowTowerData };
                     EditorUtility.SetDirty(tm);
-                    Debug.Log("[Nodebreaker] TowerManager에 타워 데이터 연결 완료");
+                    Debug.Log("[Soulspire] TowerManager에 타워 데이터 연결 완료");
                 }
 
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                Debug.Log("[Nodebreaker] 프로토타입 에셋 생성 완료!");
+                Debug.Log("[Soulspire] 프로토타입 에셋 생성 완료!");
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[Nodebreaker] 에셋 생성 실패: {e.Message}\n{e.StackTrace}");
+                Debug.LogError($"[Soulspire] 에셋 생성 실패: {e.Message}\n{e.StackTrace}");
             }
         }
 
@@ -91,7 +91,7 @@ namespace Nodebreaker.Editor
             if (shader == null) shader = Shader.Find("Standard");
             if (shader == null)
             {
-                Debug.LogWarning($"[Nodebreaker] 셰이더를 찾을 수 없어 기본 Material 사용: {name}");
+                Debug.LogWarning($"[Soulspire] 셰이더를 찾을 수 없어 기본 Material 사용: {name}");
                 var defaultMat = new Material(Shader.Find("Hidden/InternalErrorShader"));
                 return defaultMat;
             }
@@ -128,11 +128,11 @@ namespace Nodebreaker.Editor
             var rb = go.AddComponent<Rigidbody2D>();
             rb.bodyType = RigidbodyType2D.Kinematic;
 
-            go.AddComponent<Nodebreaker.Node.Node>();
+            go.AddComponent<Soulspire.Node.Node>();
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);
-            Debug.Log($"[Nodebreaker] 프리팹 생성: {path}");
+            Debug.Log($"[Soulspire] 프리팹 생성: {path}");
             return prefab;
         }
 
@@ -154,13 +154,13 @@ namespace Nodebreaker.Editor
             firePoint.transform.SetParent(go.transform);
             firePoint.transform.localPosition = new Vector3(0, 0.5f, 0);
 
-            go.AddComponent<Nodebreaker.Tower.Tower>();
-            var tower = go.GetComponent<Nodebreaker.Tower.Tower>();
+            go.AddComponent<Soulspire.Tower.Tower>();
+            var tower = go.GetComponent<Soulspire.Tower.Tower>();
             tower.firePoint = firePoint.transform;
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);
-            Debug.Log($"[Nodebreaker] 프리팹 생성: {path}");
+            Debug.Log($"[Soulspire] 프리팹 생성: {path}");
             return prefab;
         }
 
@@ -179,11 +179,11 @@ namespace Nodebreaker.Editor
             renderer.sharedMaterial = mat;
 
             Object.DestroyImmediate(go.GetComponent<CapsuleCollider>());
-            go.AddComponent<Nodebreaker.Projectile.Projectile>();
+            go.AddComponent<Soulspire.Projectile.Projectile>();
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);
-            Debug.Log($"[Nodebreaker] 프리팹 생성: {path}");
+            Debug.Log($"[Soulspire] 프리팹 생성: {path}");
             return prefab;
         }
 

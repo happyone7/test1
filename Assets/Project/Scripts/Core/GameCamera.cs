@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nodebreaker.Core
+namespace Soulspire.Core
 {
     public class GameCamera : MonoBehaviour
     {

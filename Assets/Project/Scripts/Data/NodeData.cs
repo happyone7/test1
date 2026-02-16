@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
     public enum NodeType
     {
@@ -22,7 +22,7 @@ namespace Nodebreaker.Data
         ArmorRegen  // 10초마다 defense +5 (최대 25), AoE 피격 시 리셋
     }
 
-    [CreateAssetMenu(fileName = "Node_", menuName = "Nodebreaker/Node Data")]
+    [CreateAssetMenu(fileName = "Node_", menuName = "Soulspire/Node Data")]
     public class NodeData : ScriptableObject
     {
         public string nodeId;

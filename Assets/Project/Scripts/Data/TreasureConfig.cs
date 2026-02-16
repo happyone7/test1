@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
-    [CreateAssetMenu(fileName = "TreasureConfig", menuName = "Nodebreaker/Treasure Config")]
+    [CreateAssetMenu(fileName = "TreasureConfig", menuName = "Soulspire/Treasure Config")]
     public class TreasureConfig : ScriptableObject
     {
         [Header("드롭 설정")]

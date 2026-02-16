@@ -1,4 +1,4 @@
-namespace Nodebreaker.Core
+namespace Soulspire.Core
 {
     public struct RunModifiers
     {

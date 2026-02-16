@@ -1,9 +1,9 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using Nodebreaker.Data;
+using Soulspire.Data;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     /// <summary>
     /// 스프라이트 에셋을 ScriptableObject, 프리팹, UI 컴포넌트에 연결하는 에디터 도구.
@@ -89,7 +89,7 @@ namespace Nodebreaker.Editor
         /// UI 씬 오브젝트에 새 UI 에셋 스프라이트를 연결.
         /// Image.type = Sliced (9-slice), Button Transition = SpriteSwap 적용.
         /// </summary>
-        [MenuItem("Tools/Nodebreaker/Link UI Art Sprites to Scene")]
+        [MenuItem("Tools/Soulspire/Link UI Art Sprites to Scene")]
         public static void LinkUIArtSprites()
         {
             int linked = 0;

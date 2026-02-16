@@ -2,11 +2,11 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public static class AssetReorganizer
     {
-        [MenuItem("Tools/Nodebreaker/Reorganize Assets")]
+        [MenuItem("Tools/Soulspire/Reorganize Assets")]
         public static void Reorganize()
         {
             // Ensure target folders exist
@@ -66,7 +66,7 @@ namespace Nodebreaker.Editor
             DeleteIfEmpty("Assets/Scenes");
 
             AssetDatabase.Refresh();
-            Debug.Log($"[Nodebreaker] Asset reorganization complete! {moved} items moved.");
+            Debug.Log($"[Soulspire] Asset reorganization complete! {moved} items moved.");
         }
 
         static int MoveContents(string source, string destination)

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
-using Nodebreaker.Audio;
-using Nodebreaker.Data;
+using Soulspire.Audio;
+using Soulspire.Data;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// 보물상자 3택 선택 패널.

@@ -2,9 +2,9 @@ using System.Collections;
 using Tesseract.Core;
 using Tesseract.ObjectPool;
 using UnityEngine;
-using Nodebreaker.Audio;
+using Soulspire.Audio;
 
-namespace Nodebreaker.Node
+namespace Soulspire.Node
 {
     public class WaveSpawner : Singleton<WaveSpawner>
     {

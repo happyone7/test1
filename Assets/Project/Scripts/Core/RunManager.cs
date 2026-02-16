@@ -1,8 +1,8 @@
 using Tesseract.Core;
 using UnityEngine;
-using Nodebreaker.Audio;
+using Soulspire.Audio;
 
-namespace Nodebreaker.Core
+namespace Soulspire.Core
 {
     public class RunManager : Singleton<RunManager>
     {

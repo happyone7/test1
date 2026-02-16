@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
-    [CreateAssetMenu(fileName = "Wave_", menuName = "Nodebreaker/Wave Data")]
+    [CreateAssetMenu(fileName = "Wave_", menuName = "Soulspire/Wave Data")]
     public class WaveData : ScriptableObject
     {
         [Serializable]
