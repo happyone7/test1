@@ -16,7 +16,7 @@
 | 날짜 | 버전 | 내용 |
 |------|------|------|
 | 2026-02-14 | 0.1 | 초안 작성 |
-| 2026-02-15 | 0.2 | 총괄PD 피드백 8건 반영: 합성 규칙(같은 Lv끼리, 최대 Lv4), 타워 판매 불가, 인벤토리 초과 시 상자 열기 불가, 보물상자 시스템 추가, 일시정지 중 배치 불가, 첫 런 Arrow 정가운데, 분열체 재분열 없음, 스테이지간 독립 배치 확정. 게임명 Soulspire로 변경. |
+| 2026-02-15 | 0.2 | 총괄PD 피드백 8건 반영: 합성 규칙(같은 Lv끼리, 최대 Lv4), 타워 판매 불가, 인벤토리 초과 시 상자 열기 불가, 보물상자 시스템 추가, 일시정지 중 배치 불가, 첫 런 Arrow 정가운데, 분열체 재분열 없음, Floor간 독립 배치 확정. 게임명 Soulspire로 변경. |
 
 ---
 
@@ -25,38 +25,38 @@
 ### 1.1 상태 전환 다이어그램
 
 ```
-[Hub] --출격 버튼--> [InGame: 준비] --> [InGame: 전투] --기지 HP 0--> [RunEnd: 패배]
+[Sanctum] --출격 버튼--> [InGame: 준비] --> [InGame: 전투] --기지 HP 0--> [RunEnd: 패배]
                                                           |                                |
-                                                          +--최종 웨이브 클리어--> [RunEnd: 승리]
+                                                          +--최종 Incursion 클리어--> [RunEnd: 승리]
                                                                                            |
-                                                      [Hub] <--Hub 버튼-- [RunEnd] --재도전 버튼--> [InGame: 준비]
+                                                      [Sanctum] <--Sanctum 버튼-- [RunEnd] --재도전 버튼--> [InGame: 준비]
 ```
 
 ### 1.2 런 진입 흐름
 
 | 단계 | 트리거 | 동작 | UI 변화 |
 |------|--------|------|---------|
-| 1 | Hub에서 "출격" 버튼 클릭 | `GameManager.StartRun(stageIndex)` 호출 | Hub UI 페이드아웃 |
+| 1 | Hub에서 "출격" 버튼 클릭 | `GameManager.StartRun(stageIndex)` 호출 | Sanctum UI 페이드아웃 |
 | 2 | `GameManager.State = InGame` | `HubUI.Hide()` | InGame UI 페이드인 |
-| 3 | `RunManager.StartRun()` | 기지 HP 초기화, BitEarned=0, Modifiers 적용 | 상단 HUD 표시 (웨이브/Bit/HP) |
+| 3 | `RunManager.StartRun()` | 기지 HP 초기화, BitEarned=0, Modifiers 적용 | 상단 HUD 표시 (Incursion/Bit/HP) |
 | 4 | 기존 배치 타워 복원 | SaveData에서 배치 정보 로드, 타워 재생성 | 맵에 타워 표시 |
-| 5 | `WaveSpawner.StartWaves()` | 웨이브 1 딜레이(3초) 후 스폰 시작 | "Wave 1" 배너 표시 |
+| 5 | `WaveSpawner.StartWaves()` | Incursion 1 딜레이(3초) 후 스폰 시작 | "Incursion 1" 배너 표시 |
 | 6 | 전투 진행 | Node 스폰, 타워 자동 공격 | 하단 타워 인벤토리 활성 |
 
 **첫 런 특수 처리 (FTUE)**:
-- 게임 최초 시작 시 Hub를 스킵하고 바로 스테이지 1 진입 (GDD 2.1 설계 의도)
+- 게임 최초 시작 시 Hub를 스킵하고 바로 Floor 1 진입 (GDD 2.1 설계 의도)
 - Arrow Tower 1기가 **맵 정가운데** 배치 가능 칸에 자동 배치된 상태로 시작 (총괄PD 확정)
 
 ### 1.3 런 중 상태 전환
 
 ```
-[웨이브 N 스폰] --> [모든 Node 처리됨 (aliveCount == 0)]
+[Incursion N 스폰] --> [모든 Node 처리됨 (aliveCount == 0)]
                          |
-                    N < 최종 웨이브? --예--> [3초 대기] --> [웨이브 N+1 스폰]
+                    N < 최종 Incursion? --예--> [3초 대기] --> [Incursion N+1 스폰]
                          |
                         아니오
                          |
-                    [스테이지 클리어]
+                    [Floor 클리어]
 ```
 
 ### 1.4 런 종료 조건 및 결과 처리
@@ -72,24 +72,24 @@
 | 5 | UI 표시 | RunEnd 패널 슬라이드업 (0.3초) |
 | 6 | 타워 배치 저장 | 현재 배치 상태를 SaveData에 기록 |
 
-#### 승리 (스테이지 클리어)
+#### 승리 (Floor 클리어)
 
 | 단계 | 동작 | 상세 |
 |------|------|------|
-| 1 | 최종 웨이브의 마지막 Node 처리 | `RunManager.OnWaveCompleted()` -> 모든 웨이브 완료 |
+| 1 | 최종 Incursion의 마지막 Node 처리 | `RunManager.OnWaveCompleted()` -> 모든 Incursion 완료 |
 | 2 | `EndRun(true)` 호출 | |
 | 3 | 클리어 연출 | 화면 밝기 상승 + 금빛 파티클 1.5초 |
 | 4 | 보상 정산 | `MetaManager.AddRunRewards(bitEarned, coreReward, true, stageIdx)` |
-| 5 | UI 표시 | "STAGE CLEAR!" 배너 -> RunEnd 패널 (Core 포함) |
-| 6 | 타워 배치 저장 | 스테이지별 현재 배치 상태를 SaveData에 기록 |
-| 7 | 다음 스테이지 해금 | `currentStageIndex` 증가 |
+| 5 | UI 표시 | "STAGE CLEAR!" 배너 -> RunEnd 패널 (Core Fragment 포함) |
+| 6 | 타워 배치 저장 | Floor별 현재 배치 상태를 SaveData에 기록 |
+| 7 | 다음 Floor 해금 | `currentStageIndex` 증가 |
 
 #### RunEnd 패널 버튼 동작
 
 | 버튼 | 패배 시 | 승리 시 |
 |------|---------|---------|
-| Hub 버튼 | `GoToHub()` -> Hub UI 표시 | `GoToHub()` -> Hub UI 표시 |
-| 재도전/다음 | `StartRun(같은 스테이지)` | `StartRun(다음 스테이지)` |
+| Sanctum 버튼 | `GoToHub()` -> Sanctum UI 표시 | `GoToHub()` -> Sanctum UI 표시 |
+| 재도전/다음 | `StartRun(같은 Floor)` | `StartRun(다음 Floor)` |
 
 ---
 
@@ -123,7 +123,7 @@
 | 타일 크기 | 1x1 Unity Unit (= 32x32 px, PPU 32) |
 | 배치 칸 판정 | Tilemap 레이어에 "Placement" 타일 여부 |
 | 배치 불가 판정 | 경로 타일, 벽 타일, 이미 타워가 배치된 칸 |
-| 초기 배치 칸 수 | 12칸 (스테이지 1 기준) |
+| 초기 배치 칸 수 | 12칸 (Floor 1 기준) |
 | 최대 배치 칸 수 | 스킬 트리 "타워 슬롯 확장" 스킬로 +4칸/회 (최대 3회 = +12칸) |
 | 스냅 | 드래그 중 가장 가까운 격자 중심으로 스냅 |
 
@@ -323,7 +323,7 @@ public struct PlacedTowerEntry
 {
     public string towerId;      // TowerData.towerId 참조
     public int level;           // 1~4
-    public int stageIndex;      // 어느 스테이지에 배치된 타워인가
+    public int stageIndex;      // 어느 Floor에 배치된 타워인가
     public float posX;          // 배치 위치 X (월드 좌표)
     public float posY;          // 배치 위치 Y
 }
@@ -334,12 +334,12 @@ public struct PlacedTowerEntry
 | 시점 | 동작 |
 |------|------|
 | 런 종료 (패배/승리) | 현재 배치 상태를 SaveData에 기록 |
-| 런 시작 | SaveData에서 해당 스테이지의 배치 정보 로드 -> 타워 재생성 |
+| 런 시작 | SaveData에서 해당 Floor의 배치 정보 로드 -> 타워 재생성 |
 | 타워 배치/합성 시 | 즉시 SaveData 업데이트 (런 중 크래시 대비) |
 
-**스테이지별 독립 배치:**
+**Floor별 독립 배치:**
 
-각 스테이지는 독립적인 배치 레이아웃을 가진다. 스테이지 1에 배치한 타워와 스테이지 2에 배치한 타워는 별개.
+각 Floor는 독립적인 배치 레이아웃을 가진다. Floor 1에 배치한 타워와 Floor 2에 배치한 타워는 별개.
 
 ### 2.6 타워 인벤토리 관리
 
@@ -356,12 +356,12 @@ public struct PlacedTowerEntry
 
 | 경로 | 조건 | 획득 |
 |------|------|------|
-| **보물상자 (Hub)** | Hub에서 보물상자 열기 | 3후보지 중 선택 또는 뱃지 획득 (섹션 2.7 참조) |
+| **보물상자 (Sanctum)** | Hub에서 보물상자 열기 | 3후보지 중 선택 또는 뱃지 획득 (섹션 2.7 참조) |
 | 첫 런 자동 지급 | 게임 최초 시작 시 | Arrow Tower 1기 (맵 정가운데 자동 배치) |
 
-> 웨이브 클리어 시 타워를 직접 획득하지 않는다. 타워는 오직 Hub의 보물상자 시스템을 통해서만 획득 가능.
+> Incursion 클리어 시 타워를 직접 획득하지 않는다. 타워는 오직 Hub의 보물상자 시스템을 통해서만 획득 가능.
 
-### 2.7 보물상자 시스템 (Hub)
+### 2.7 보물상자 시스템 (Sanctum)
 
 타워 획득의 유일한 경로. Hub에서 보물상자를 열어 타워 또는 뱃지를 획득한다.
 
@@ -369,9 +369,9 @@ public struct PlacedTowerEntry
 
 | 획득 경로 | 조건 | 수량 |
 |-----------|------|------|
-| 스테이지 클리어 | 스테이지를 처음 클리어 시 | 2개 |
-| 웨이브 도달 마일스톤 | 누적 웨이브 클리어 N회 달성 시 | 1개 |
-| 런 종료 보상 | 매 런 종료 시 (패배 포함) | 0~1개 (도달 웨이브에 비례) |
+| Floor 클리어 | Floor를 처음 클리어 시 | 2개 |
+| Incursion 도달 마일스톤 | 누적 Incursion 클리어 N회 달성 시 | 1개 |
+| 런 종료 보상 | 매 런 종료 시 (패배 포함) | 0~1개 (도달 Incursion에 비례) |
 
 > 상자는 Hub에서만 열 수 있다. 인게임 중에는 열 수 없음.
 
@@ -382,7 +382,7 @@ public struct PlacedTowerEntry
 #### 상자 열기 흐름
 
 ```
-[Hub 화면] -- 보물상자 아이콘(보유 수량 표시) 클릭 -->
+[Sanctum 화면] -- 보물상자 아이콘(보유 수량 표시) 클릭 -->
 
 [인벤토리 빈 슬롯 확인]
    |
@@ -467,7 +467,7 @@ public struct PlacedTowerEntry
 #### 상자 UI/UX 상세
 
 **Hub에서의 상자 표시:**
-- Hub 화면 하단 또는 우측에 보물상자 아이콘 + 보유 수량 배지
+- Sanctum 화면 하단 또는 우측에 보물상자 아이콘 + 보유 수량 배지
 - 보유 수 > 0 이면 아이콘이 반짝이는 애니메이션 (주의 유도)
 - 클릭 시 상자 오픈 화면으로 전환
 
@@ -1106,7 +1106,7 @@ public void Heal(float amount)
 }
 ```
 
-**회복 수치 (스테이지 1 기준):**
+**회복 수치 (Floor 1 기준):**
 
 ```
 Regen Node HP: 50
@@ -1232,7 +1232,7 @@ public class SplitAbility : NodeAbility
                     _node.RemainingWaypoints,  // 현재 Node의 남은 경로
                     splitHpRatio * _node.MaxHp, // 분열체 HP
                     _node.ScaledSpeed * splitSpeedMultiplier,
-                    splitNodeData.bitDrop        // 분열체 Bit 드롭
+                    splitNodeData.bitDrop        // 분열체 Soul 드롭
                 );
 
                 WaveSpawner.Instance.OnNodeAdded();  // aliveCount++
@@ -1273,13 +1273,13 @@ public void InitializeAsSplit(NodeData data, Transform[] waypoints,
 }
 ```
 
-**분열체 스펙 (스테이지 1 기준):**
+**분열체 스펙 (Floor 1 기준):**
 
 | 항목 | 원본 (Split Node) | 분열체 |
 |------|-------------------|--------|
 | HP | 30 | 9 (30% of 30) |
 | 속도 | 1.3 | 1.56 (1.3 * 1.2) |
-| Bit 드롭 | 5 | 2 |
+| Soul 드롭 | 5 | 2 |
 | 기지 데미지 | 1 | 1 |
 | 수량 | 1 | 2 |
 
@@ -1340,13 +1340,13 @@ public class BossAbility : NodeAbility
 }
 ```
 
-**보스 등장 타이밍**: 각 스테이지의 최종 웨이브에서 1체 등장 (다른 Node와 함께).
+**보스 등장 타이밍**: 각 Floor의 최종 Incursion에서 1체 등장 (다른 Node와 함께).
 
 ### 4.7 Node 능력 요약표
 
 | Node | 컴포넌트 | 핵심 파라미터 | 대응 전략 |
 |------|---------|-------------|---------|
-| Bit | 없음 (기본) | - | Arrow |
+| Bit (Node) | 없음 (기본) | - | Arrow |
 | Quick | 없음 (빠른 속도) | speed: 3.0 | Ice 감속 |
 | Heavy | 없음 (높은 HP) | hp: 80 | 화력 집중 |
 | Shield | ShieldAbility | armor: 5 | 고데미지 타워 or Void(Lv3+) |
@@ -1358,15 +1358,15 @@ public class BossAbility : NodeAbility
 
 ---
 
-## 5. 웨이브 진행 시스템 상세
+## 5. Incursion 진행 시스템 상세
 
-### 5.1 웨이브 흐름
+### 5.1 Incursion 흐름
 
 ```
 [런 시작]
    |
    v
-[웨이브 1 딜레이] --delayBeforeWave 초--> [웨이브 1 스폰]
+[Incursion 1 딜레이] --delayBeforeWave 초--> [Incursion 1 스폰]
                                               |
                                     [SpawnGroup 순차 실행]
                                     - group[0]: NodeData A x count, interval초 간격
@@ -1374,32 +1374,32 @@ public class BossAbility : NodeAbility
                                               |
                                     [모든 Node 죽거나 통과 (aliveCount == 0)]
                                               |
-                                    [웨이브 클리어 판정]
+                                    [Incursion 클리어 판정]
                                     - "WAVE CLEAR" 배너 (0.8초)
-                                    - 웨이브 클리어 보너스 Bit 지급
+                                    - Incursion 클리어 보너스 Soul 지급
                                               |
-[웨이브 N+1 딜레이] --delayBeforeWave 초--> [웨이브 N+1 스폰]
+[Incursion N+1 딜레이] --delayBeforeWave 초--> [Incursion N+1 스폰]
                                               |
                                             ...
                                               |
-                                    [최종 웨이브의 모든 Node 처리됨]
+                                    [최종 Incursion의 모든 Node 처리됨]
                                               |
                                     [RunManager.OnWaveCompleted()]
                                               |
-                                    [EndRun(true) = 스테이지 클리어]
+                                    [EndRun(true) = Floor 클리어]
 ```
 
-### 5.2 웨이브 간 대기 시간 규칙
+### 5.2 Incursion 간 대기 시간 규칙
 
 | 상황 | 대기 시간 | 근거 |
 |------|----------|------|
-| 웨이브 1 시작 전 | 3초 (WaveData.delayBeforeWave) | 맵 확인 + 첫 타워 배치 시간 |
-| 이후 웨이브 시작 전 | 3초 (기본) | 타워 추가 배치/합성 시간 |
-| 보스 웨이브 전 | 5초 (총괄PD 확정) | 긴장감 + 준비 시간 |
+| Incursion 1 시작 전 | 3초 (WaveData.delayBeforeWave) | 맵 확인 + 첫 타워 배치 시간 |
+| 이후 Incursion 시작 전 | 3초 (기본) | 타워 추가 배치/합성 시간 |
+| 보스 Incursion 전 | 5초 (총괄PD 확정) | 긴장감 + 준비 시간 |
 
-현재 구현에서는 `WaveData.delayBeforeWave`로 개별 웨이브마다 설정 가능. 기본값 3초.
+현재 구현에서는 `WaveData.delayBeforeWave`로 개별 Incursion마다 설정 가능. 기본값 3초.
 
-### 5.3 웨이브 클리어 판정 로직
+### 5.3 Incursion 클리어 판정 로직
 
 **현재 구현 (WaveSpawner.cs):**
 
@@ -1407,12 +1407,12 @@ public class BossAbility : NodeAbility
 // SpawnAllWaves 코루틴 내부
 while (_aliveCount > 0)
     yield return null;
-// -> 다음 웨이브로 진행
+// -> 다음 Incursion로 진행
 ```
 
 **수정 필요 사항:**
 
-현재 코드는 웨이브 단위가 아닌 전체 웨이브 루프로 처리됨. 개별 웨이브 클리어 이벤트가 필요.
+현재 코드는 Incursion 단위가 아닌 전체 Incursion 루프로 처리됨. 개별 Incursion 클리어 이벤트가 필요.
 
 ```csharp
 // WaveSpawner.cs 수정안
@@ -1423,7 +1423,7 @@ IEnumerator SpawnAllWaves()
         _currentWaveIndex = i;
         var wave = _currentStage.waves[i];
 
-        // 웨이브 시작 배너
+        // Incursion 시작 배너
         OnWaveStart(i);
 
         yield return new WaitForSeconds(wave.delayBeforeWave);
@@ -1433,54 +1433,54 @@ IEnumerator SpawnAllWaves()
         while (_aliveCount > 0)
             yield return null;
 
-        // 웨이브 클리어 이벤트 (마지막 웨이브 제외)
+        // Incursion 클리어 이벤트 (마지막 Incursion 제외)
         if (i < _currentStage.waves.Length - 1)
             OnWaveClear(i);
     }
 
-    // 최종 웨이브 클리어 = 스테이지 클리어
+    // 최종 Incursion 클리어 = Floor 클리어
     if (Singleton<RunManager>.HasInstance)
         RunManager.Instance.OnWaveCompleted();
 }
 
 void OnWaveStart(int waveIndex)
 {
-    // UI: "Wave N" 배너 표시
-    // 보스 웨이브면 경고 연출
+    // UI: "Incursion N" 배너 표시
+    // 보스 Incursion면 경고 연출
 }
 
 void OnWaveClear(int waveIndex)
 {
     // 1. "WAVE CLEAR" 배너
-    // 2. 보너스 Bit 지급
+    // 2. 보너스 Soul 지급
     int bonus = CalculateWaveClearBonus(waveIndex);
     RunManager.Instance.AddBit(bonus);
 
-    // 3. UI: "+{bonus} Bit" 팝업
-    // (타워는 Hub 보물상자로만 획득 가능 - 웨이브 클리어 시 타워 지급 없음)
+    // 3. UI: "+{bonus} Soul" 팝업
+    // (타워는 Sanctum 보물상자로만 획득 가능 - Incursion 클리어 시 타워 지급 없음)
 }
 ```
 
-### 5.4 웨이브 클리어 보너스 계산
+### 5.4 Incursion 클리어 보너스 계산
 
 ```
-웨이브 클리어 보너스 Bit = 10 + (웨이브 번호 * 5)
+Incursion 클리어 보너스 Soul = 10 + (Incursion 번호 * 5)
 
-예시 (스테이지 1):
-웨이브 1 클리어: 10 + (1*5) = 15 Bit
-웨이브 2 클리어: 10 + (2*5) = 20 Bit
-웨이브 3 클리어: 10 + (3*5) = 25 Bit
-웨이브 4 클리어: 10 + (4*5) = 30 Bit
-웨이브 5 클리어: (스테이지 클리어 보상으로 대체)
+예시 (Floor 1):
+Incursion 1 클리어: 10 + (1*5) = 15 Soul
+Incursion 2 클리어: 10 + (2*5) = 20 Soul
+Incursion 3 클리어: 10 + (3*5) = 25 Soul
+Incursion 4 클리어: 10 + (4*5) = 30 Soul
+Incursion 5 클리어: (Floor 클리어 보상으로 대체)
 
-스테이지 배율 적용:
+Floor 배율 적용:
 최종 보너스 = 기본 보너스 * StageData.bitDropMultiplier
 ```
 
-### 5.5 스테이지 클리어 연출 타이밍
+### 5.5 Floor 클리어 연출 타이밍
 
 ```
-[최종 웨이브 마지막 Node 처리] (t=0)
+[최종 Incursion 마지막 Node 처리] (t=0)
    |
    v (0~0.5초)
 [잠시 정적] - 화면에 적이 없는 0.5초간 여운
@@ -1492,7 +1492,7 @@ void OnWaveClear(int waveIndex)
 ["STAGE CLEAR!" 대형 배너] - 0.5초 등장 애니메이션
    |
    v (2.5~4.0초)
-[Core 획득 연출] - 금색 룬석 회전 + 광선 방사 1.5초
+[Core Fragment 획득 연출] - 금색 룬석 회전 + 광선 방사 1.5초
    |
    v (4.0초)
 [RunEnd 패널 표시] - 결과 정산 + 버튼
@@ -1502,24 +1502,24 @@ void OnWaveClear(int waveIndex)
 
 ## 6. 인게임 경제 (런 내)
 
-### 6.1 Bit 수입/지출 전체 흐름
+### 6.1 Soul 수입/지출 전체 흐름
 
 ```
 [수입]                                [지출]
-Node 처치 드롭 ----+                  +---- 타워 구매 (placeCost) [인게임 Bit 구매]
-웨이브 클리어 보너스 --+-> 보유 Bit <--+
+Node 처치 드롭 ----+                  +---- 타워 구매 (placeCost) [인게임 Soul 구매]
+Incursion 클리어 보너스 --+-> 보유 Soul <--+
 콤보 보너스 --------+                  +---- (런 종료 시 잔여 Bit는 영구 저장)
 
 (타워 판매 불가 - 환불 경로 없음)
 ```
 
-### 6.2 Node 처치 Bit 드롭 상세
+### 6.2 Node 처치 Soul 드롭 상세
 
 ```
 드롭량 = NodeData.bitDrop * StageData.bitDropMultiplier * RunModifiers.bitDropMultiplier(*)
 
 (*) 현재 RunModifiers에 bitDropMultiplier 필드가 없음.
-    스킬 트리의 "Bit 획득량" 노드 효과를 반영하려면 추가 필요.
+    스킬 트리의 "Soul 획득량" 노드 효과를 반영하려면 추가 필요.
 ```
 
 **RunModifiers 확장 필요:**
@@ -1532,9 +1532,9 @@ public struct RunModifiers
     public int bonusBaseHp;
 
     // 신규 추가
-    public float bitDropMultiplier;     // 기본 1.0, "Bit 획득량" 스킬로 증가
+    public float bitDropMultiplier;     // 기본 1.0, "Soul 획득량" 스킬로 증가
     public float rangeMultiplier;       // 기본 1.0, "사거리 강화" 스킬로 증가
-    public int startBit;                // 기본 0, "시작 Bit" 스킬로 증가
+    public int startBit;                // 기본 0, "시작 Soul" 스킬로 증가
     public float spawnRateMultiplier;   // 기본 1.0, "스폰율 증가" 스킬로 증가
     public float baseHpRegen;           // 기본 0, "HP 회복" 스킬로 설정
     public bool critUnlocked;           // 크리티컬 해금 여부
@@ -1545,7 +1545,7 @@ public struct RunModifiers
 
 ### 6.3 타워 구매 비용 규칙
 
-| 타워 | Lv1 배치 비용 (Bit) |
+| 타워 | Lv1 배치 비용 (Soul) |
 |------|-------------------|
 | Arrow | 30 |
 | Cannon | 60 |
@@ -1554,7 +1554,7 @@ public struct RunModifiers
 | Laser | 120 |
 | Void | 150 |
 
-**구매 방법**: 하단 [+구매] 버튼 -> 해금된 타워 목록 팝업 -> 타워 선택 -> Bit 차감 -> 인벤토리에 Lv1 타워 추가.
+**구매 방법**: 하단 [+구매] 버튼 -> 해금된 타워 목록 팝업 -> 타워 선택 -> Soul 차감 -> 인벤토리에 Lv1 타워 추가.
 
 비용은 TowerData.placeCost에 정의. 합성 비용은 없음 (타워 1기 소모가 곧 비용).
 
@@ -1570,7 +1570,7 @@ public class ComboSystem : MonoBehaviour
 
     const float COMBO_WINDOW = 3.0f;    // 3초 이내 연속 처치
     const int COMBO_THRESHOLD = 5;       // 5콤보부터 보너스
-    const float COMBO_BONUS_RATE = 0.5f; // 50% 추가 Bit
+    const float COMBO_BONUS_RATE = 0.5f; // 50% 추가 Soul
 
     public void OnNodeKilled(int baseBitDrop)
     {
@@ -1605,36 +1605,36 @@ public class ComboSystem : MonoBehaviour
 
 **콤보 보너스 테이블:**
 
-| 콤보 수 | 추가 Bit | 시각 피드백 |
+| 콤보 수 | 추가 Soul | 시각 피드백 |
 |---------|---------|-----------|
 | 1~4 | 없음 | 콤보 카운터 표시 시작 (x1, x2...) |
 | 5~9 | +50% | "COMBO x5!" 텍스트 + 파티클 크기 증가 |
 | 10~19 | +100% | "COMBO x10!" + 화면 미세 흔들림 |
 | 20+ | +200% | "MEGA COMBO!" + 화면 플래시 |
 
-### 6.5 경제 밸런스 시뮬레이션 (스테이지 1, 영구 업그레이드 0)
+### 6.5 경제 밸런스 시뮬레이션 (Floor 1, 영구 업그레이드 0)
 
 ```
-런 시작: 0 Bit (시작 Bit 스킬 없음)
+런 시작: 0 Soul (시작 Soul 스킬 없음)
 
-웨이브 1 (Bit Node x5):
-  처치 수입: 3 Bit * 5 = 15 Bit
-  웨이브 클리어 보너스: 15 Bit
-  소계: 30 Bit
-  -> Arrow Tower 1기 구매 가능 (30 Bit)
+Incursion 1 (Bit Node x5):
+  처치 수입: 3 Soul * 5 = 15 Soul
+  Incursion 클리어 보너스: 15 Soul
+  소계: 30 Soul
+  -> Arrow Tower 1기 구매 가능 (30 Soul)
 
-웨이브 2 (Bit Node x8):
-  처치 수입: 3 * 8 = 24 Bit
-  클리어 보너스: 20 Bit
-  소계: 44 Bit
-  -> 누적 ~74 Bit (2번째 Arrow 구매 후 잔여 ~14 Bit)
+Incursion 2 (Bit Node x8):
+  처치 수입: 3 * 8 = 24 Soul
+  클리어 보너스: 20 Soul
+  소계: 44 Soul
+  -> 누적 ~74 Soul (2번째 Arrow 구매 후 잔여 ~14 Soul)
 
-웨이브 3 (Bit x6, Quick x3):
-  처치 수입: 3*6 + 4*3 = 30 Bit
-  클리어 보너스: 25 Bit
-  소계: 55 Bit
+Incursion 3 (Bit x6, Quick x3):
+  처치 수입: 3*6 + 4*3 = 30 Soul
+  클리어 보너스: 25 Soul
+  소계: 55 Soul
   -> 대부분 여기서 사망 (초기 상태)
-  -> 획득 총 Bit: ~80~130 (도달 웨이브에 따라)
+  -> 획득 총 Soul: ~80~130 (도달 Incursion에 따라)
 
 매 런 영구 업그레이드: 공격력 Lv1(50), 공속 Lv1(80) 등 1~2개 가능
 ```
@@ -1649,18 +1649,18 @@ public class ComboSystem : MonoBehaviour
 |--------|-----------|--------|--------|------|
 | 타워 공격 발사 | 타워 발사 애니메이션 (2프레임) | 타워별 공격음 | - | 매 공격 |
 | 투사체 적중 | 타격 스파크 (타워 컬러) | 히트음 (짧고 경쾌) | - | 매 적중 |
-| Node 처치 | 파괴 파티클(4~6조각) + "+N Bit" 팝업 | 처치음 (Node 타입별) | - | 매 처치 |
-| 동시 다수 처치 (AoE) | 큰 폭발 이펙트 + 합산 Bit 팝업 | 폭발음 (강조) | 미세 흔들림 (0.05s) | 3마리+ 동시 |
+| Node 처치 | 파괴 파티클(4~6조각) + "+N Soul" 팝업 | 처치음 (Node 타입별) | - | 매 처치 |
+| 동시 다수 처치 (AoE) | 큰 폭발 이펙트 + 합산 Soul 팝업 | 폭발음 (강조) | 미세 흔들림 (0.05s) | 3마리+ 동시 |
 | 콤보 5+ | "COMBO xN!" 텍스트 + 파티클 확대 | 콤보 효과음 (상승) | - | 콤보 5+ |
 | Node 기지 도착 | 빨간 플래시 (기지 위치) + HP 바 감소 | 피격음 | 화면 테두리 붉게 | HP 감소 시 |
-| 웨이브 시작 | "Wave N" 배너 슬라이드인 | 경고음 (짧게) | - | 매 웨이브 |
-| 웨이브 클리어 | "WAVE CLEAR" 배너 + 화면 가장자리 플래시 | 클리어 팡파르 (짧게) | - | 매 클리어 |
-| 보스 등장 | "WARNING!" 배너 + 화면 어두워짐 | 보스 등장 사운드 | 슬로우 모션 0.5초 | 보스 웨이브 |
-| 보스 처치 | 대형 폭발 + 대형 Bit 비산 | 보스 처치 팡파르 | 슬로우 0.5초 + 흔들림 | 보스 사망 |
+| Incursion 시작 | "Incursion N" 배너 슬라이드인 | 경고음 (짧게) | - | 매 Incursion |
+| Incursion 클리어 | "WAVE CLEAR" 배너 + 화면 가장자리 플래시 | 클리어 팡파르 (짧게) | - | 매 클리어 |
+| 보스 등장 | "WARNING!" 배너 + 화면 어두워짐 | 보스 등장 사운드 | 슬로우 모션 0.5초 | 보스 Incursion |
+| 보스 처치 | 대형 폭발 + 대형 Soul 비산 | 보스 처치 팡파르 | 슬로우 0.5초 + 흔들림 | 보스 사망 |
 | 타워 배치 | 배치 이펙트 (마법진 출현) | 배치음 (돌 놓는 느낌) | - | 배치 시 |
 | 타워 합성 | 발광 + "Lv N!" 팝업 | 강화음 (상승 글리산도) | Lv4(MAX) 시 미세 흔들림 | 합성 시 |
 | ~~타워 판매~~ | (삭제 - 타워 판매 불가) | - | - | - |
-| 스테이지 클리어 | 전체 밝기 상승 + Core 등장 + 금빛 파티클 | 대형 팡파르 | - | 스테이지 클리어 |
+| Floor 클리어 | 전체 밝기 상승 + Core Fragment 등장 + 금빛 파티클 | 대형 팡파르 | - | Floor 클리어 |
 | HP < 30% | 화면 테두리 붉은 바이넷 (지속) | 심장박동 사운드 (반복) | - | 지속 경고 |
 | HP < 10% | 바이넷 강도 증가 + 펄스 | 심장박동 빨라짐 | - | 위급 경고 |
 
@@ -1687,7 +1687,7 @@ public class DamagePopup : MonoBehaviour  // 오브젝트 풀링 대상
                 _text.color = Color.yellow;  // 금색
                 _text.fontSize = 4f;
                 break;
-            case PopupType.Bit:
+            case PopupType.Soul:
                 _text.text = "+" + damage;
                 _text.color = new Color(0.25f, 1f, 0.53f);  // 에메랄드
                 _text.fontSize = 3.5f;
@@ -1804,13 +1804,13 @@ Tilemap_Wall        : 벽/장애물 (L1)
 
 ### 8.4 다중 경로
 
-**스테이지 4 이후 도입.**
+**Floor 4 이후 도입.**
 
 ```
-스테이지 1~3: 단일 경로
-스테이지 4+: 분기/합류 경로
+Floor 1~3: 단일 경로
+Floor 4+: 분기/합류 경로
 
-예시 (스테이지 4):
+예시 (Floor 4):
               +---> WP_B1 ---> WP_B2 ---+
               |                          |
 Spawn --> WP1 +                          +--> WP_merge --> 기지
@@ -1839,9 +1839,9 @@ public Transform[][] pathWaypoints;  // pathWaypoints[0] = 기본 경로, [1] = 
 
 ## 9. 밸런싱 가이드
 
-### 9.1 스테이지 1 상세 웨이브 구성 (GDD 확인 + 보완)
+### 9.1 Floor 1 상세 Incursion 구성 (GDD 확인 + 보완)
 
-| 웨이브 | Node 구성 | 스폰 간격(초) | 지연(초) | 총 Node | 총 Bit (처치 전부) | 설계 의도 |
+| Incursion | Node 구성 | 스폰 간격(초) | 지연(초) | 총 Node | 총 Soul (처치 전부) | 설계 의도 |
 |--------|----------|-------------|---------|---------|-----------------|----------|
 | 1 | Bit x5 | 1.2 | 3.0 | 5 | 15 | 학습. 타워가 잡는다. |
 | 2 | Bit x8 | 1.0 | 3.0 | 8 | 24 | 물량 증가. 타워 추가 유도. |
@@ -1849,13 +1849,13 @@ public Transform[][] pathWaypoints;  // pathWaypoints[0] = 기본 경로, [1] = 
 | 4 | Bit x10 + Quick x5 | 0.7 | 3.0 | 15 | 50 | 물량 압박. 초기 상태 사망 구간. |
 | 5 | Bit x8 + Quick x4 + Heavy x2 | 0.6 | 5.0 | 14 | 60 | 최종. 첫 클리어 시 성취감. |
 
-**총 가능 Bit (전부 처치 + 클리어 보너스):**
+**총 가능 Soul (전부 처치 + 클리어 보너스):**
 
 ```
-처치: 15+24+30+50+60 = 179 Bit
-클리어 보너스: 15+20+25+30 = 90 Bit (웨이브5는 스테이지 클리어로 대체)
-합계: 269 Bit (모든 Node 처치 + 모든 웨이브 클리어)
-스테이지 클리어 시: +Core 2
+처치: 15+24+30+50+60 = 179 Soul
+클리어 보너스: 15+20+25+30 = 90 Soul (Incursion5는 Floor 클리어로 대체)
+합계: 269 Soul (모든 Node 처치 + 모든 Incursion 클리어)
+Floor 클리어 시: +Core Fragment 2
 ```
 
 ### 9.2 첫 런~첫 클리어 경험 곡선
@@ -1863,24 +1863,24 @@ public Transform[][] pathWaypoints;  // pathWaypoints[0] = 기본 경로, [1] = 
 ```
 런 1 (영구 업그레이드 0):
   Arrow 1기 자동 배치 (DPS 10)
-  웨이브 1: 클리어 (여유)
-  웨이브 2: 타워 1기 추가 (Bit 30 소모) -> 클리어 (빠듯)
-  웨이브 3: Quick Node 등장 -> 1~2마리 기지 도달 -> HP 감소
-  웨이브 3~4에서 사망 (HP 0)
-  획득: ~80~100 Bit
+  Incursion 1: 클리어 (여유)
+  Incursion 2: 타워 1기 추가 (Soul 30 소모) -> 클리어 (빠듯)
+  Incursion 3: Quick Node 등장 -> 1~2마리 기지 도달 -> HP 감소
+  Incursion 3~4에서 사망 (HP 0)
+  획득: ~80~100 Soul
 
 런 2~5 (공격력+1, 공속+1 구매):
   영구 업그레이드 효과 체감
-  웨이브 3~4까지 안정적 도달
-  획득: ~100~150 Bit / 런
+  Incursion 3~4까지 안정적 도달
+  획득: ~100~150 Soul / 런
 
 런 6~10 (공격력+3, 공속+2, HP+2):
   DPS 체감 상승. 타워 2~3기 운용
-  웨이브 4~5 진입
-  획득: ~130~200 Bit / 런
+  Incursion 4~5 진입
+  획득: ~130~200 Soul / 런
 
 런 11~20 (다수 업그레이드):
-  스테이지 1 클리어 가능
+  Floor 1 클리어 가능
   총 플레이 시간: ~20~30분
 ```
 
@@ -1892,10 +1892,10 @@ public Transform[][] pathWaypoints;  // pathWaypoints[0] = 기본 경로, [1] = 
 | 빠른 Node 처치 시간 | 1.0~1.5초 | 감속 없이 사거리 안에 있는 시간 |
 | Heavy Node 처치 시간 | 6~10초 | 화력 집중 유도 |
 | Boss Node 처치 시간 | 20~40초 | 전체 타워 동원 |
-| 웨이브당 기지 데미지 (목표) | 기지 HP의 10~25% | 웨이브 2~3에서 죽도록 |
+| Incursion당 기지 데미지 (목표) | 기지 HP의 10~25% | Incursion 2~3에서 죽도록 |
 | 런당 생존 시간 (초기) | 30초~1분 | 빠른 죽음 -> 빠른 재시도 |
 
-**DPS 비율 검증 (스테이지 1, 영구 업그레이드 0):**
+**DPS 비율 검증 (Floor 1, 영구 업그레이드 0):**
 
 ```
 Arrow Lv1 DPS: 10.0
@@ -1904,9 +1904,9 @@ Quick Node HP: 12, 속도 3.0 -> 사거리 통과 시간 ~2초, 처치 시간 1.
 Heavy Node HP: 80 -> Arrow 1기로 8.0초 (목표 범위 내)
 ```
 
-### 9.4 스테이지별 권장 빌드 (밸런스 가이드)
+### 9.4 Floor별 권장 빌드 (밸런스 가이드)
 
-| 스테이지 | 주력 타워 | 보조 타워 | 권장 영구 업그레이드 |
+| Floor | 주력 타워 | 보조 타워 | 권장 영구 업그레이드 |
 |---------|---------|---------|-----------------|
 | 1 | Arrow x3~4 | - | 공격력 Lv3, 공속 Lv2, HP Lv2 |
 | 2 | Arrow x3, Cannon x1~2 | - | 크리티컬 해금, Cannon 해금 |
@@ -1966,7 +1966,7 @@ void Attack()
 | 항목 | 현재 | 수정/추가 |
 |------|------|---------|
 | 배속 단계 | x1, x2, x3 | 유지 (스킬 트리 "배속 해금" 필요) |
-| 기본 해금 | 전부 해금 | x1만 기본. x2/x3은 "배속 해금" Core 노드 필요. |
+| 기본 해금 | 전부 해금 | x1만 기본. x2/x3은 "배속 해금" Core Fragment 노드 필요. |
 | 일시정지 중 조작 | 불가 | **불가 유지** (총괄PD 확정). 일시정지 중에는 타워 배치/합성 불가. |
 | 배속 중 이펙트 | 정상 속도 | 배속에 맞춰 이펙트 지속시간도 단축 (Time.deltaTime 기반이면 자동) |
 
@@ -1981,7 +1981,7 @@ void Attack()
 | 1-1 | PlacementGrid (격자 배치 판정) | 2.1 | 중 |
 | 1-2 | TowerDragController (드래그 배치) | 2.2 | 중 |
 | 1-3 | 타워 인벤토리 시스템 (TowerInventory) | 2.6 | 중 |
-| 1-4 | 웨이브 클리어 이벤트 + 보너스 (WaveSpawner 수정) | 5.3, 5.4 | 하 |
+| 1-4 | Incursion 클리어 이벤트 + 보너스 (WaveSpawner 수정) | 5.3, 5.4 | 하 |
 | 1-5 | 콤보 시스템 | 6.4 | 하 |
 | 1-6 | 데미지 숫자 팝업 | 7.2 | 하 |
 
@@ -2040,7 +2040,7 @@ public class TowerData : ScriptableObject
     public float[] attackSpeed = { 1f, 1.15f, 1.3f, 1.5f };
     public float[] range = { 3f, 3.2f, 3.5f, 4f };
 
-    [Header("인게임 배치 비용 (Bit)")]
+    [Header("인게임 배치 비용 (Soul)")]
     public int placeCost = 50;
 
     // === 신규 필드 ===
@@ -2158,12 +2158,12 @@ public class NodeData : ScriptableObject
 |---|------|----------|------|
 | 1 | **인벤토리 초과 시 처리** | 보물상자 열기 불가 (인벤토리 가득 차면 상자 못 연다) | 섹션 2.6, 2.7 반영 |
 | 2 | **일시정지 중 타워 배치 가능 여부** | **불가** | 섹션 11 반영 |
-| 3 | **보스 웨이브 대기 시간** | **5초** | 섹션 5.2 반영 |
+| 3 | **보스 Incursion 대기 시간** | **5초** | 섹션 5.2 반영 |
 | 4 | **첫 런 Arrow 자동 배치 위치** | **맵 정가운데** | 섹션 1.2 반영 |
 | 5 | **합성 규칙** | **같은 레벨끼리만 합성 가능, 최대 Lv4** | 섹션 2.3 반영 |
 | 6 | **타워 판매** | **판매 불가. 합성 비용 없음.** | 섹션 2.4 반영 |
 | 7 | **분열체 재분열** | **없음 (1회만 분열)** | 섹션 4.5 반영 |
-| 8 | **스테이지 간 타워 배치** | **독립 (스테이지별 별도 배치)** | 섹션 2.5 반영 |
+| 8 | **Floor 간 타워 배치** | **독립 (Floor별 별도 배치)** | 섹션 2.5 반영 |
 
 ### 확인 불필요 (기획팀장 자체 결정)
 
@@ -2172,7 +2172,7 @@ public class NodeData : ScriptableObject
 - 감속 중첩 불가 (가장 강한 것만 적용): 밸런스 관리 용이
 - 데미지 최소 1 보장 (방어력 관계없이): 완전 무적 방지
 - 콤보 기준 3초/5킬: Vampire Survivors 레퍼런스 + 게임 속도 고려
-- 웨이브 클리어 보너스 공식 (10 + 웨이브*5): 선형 증가로 예측 가능
+- Incursion 클리어 보너스 공식 (10 + Incursion*5): 선형 증가로 예측 가능
 - Laser 빔 방향은 첫 타겟 기준 (발사 중 타겟 전환 가능): 유연한 활용
 - Void Tower 방어력 무시는 Lv3부터: Shield Node 대응 전략 제공 시점
 - 크리티컬 확률 15%, 배율 2.0x: TD 장르 표준 범위 내
