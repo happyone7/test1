@@ -38,7 +38,7 @@ Soulspire의 모든 UI를 설계하고 Unity Canvas(uGUI)로 구현한다. 목�
 
 - **UI 방식**: Canvas UI (uGUI) — 프로토타입 단계에서 UI Toolkit 미사용
 - **기준 해상도**: 1920×1080 (CanvasScaler, Scale With Screen Size)
-- **UI 프리팹 경로**: `Assets/Prefabs/UI/`
+- **UI 프리팹 경로**: `Assets/Project/Prefabs/UI/`
 - **UI 스크립트 경로**: `Assets/Scripts/UI/`
 - **기존 UI 스크립트**: InGameUI.cs, HubUI.cs, SkillNodeUI.cs (Phase 2에서 추가)
 

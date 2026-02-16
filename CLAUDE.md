@@ -114,12 +114,13 @@
 
 ---
 
-## 씬 수정 규칙 (프리팹 기반)
+## 씬/프리팹 정책
+- 프리팹/씬 관리 절차는 `soulspire-dev-protocol` 스킬의 `references/prefab-protocol.md` 참조
 - **씬 직접 수정**: 프로그래밍팀장만 (매니저, 게임 로직 오브젝트)
 - **UI 수정**: UI팀장이 프리팹 파일 수정 (씬 터치 불필요)
+- **프리팹 추출(씬→프리팹 전환)**: UI팀장이 수행, 완료 후 프로그래밍팀장에게 참조 재연결 확인 요청
 - **TA/사운드**: 에셋 파일만 수정 (씬/프리팹 직접 수정 금지)
 - 씬 수정이 필요하면 개발PD에게 보고 후 순서 조율
-- 프리팹 추출 대상: TopHUD, RunEndPanel, HubPanel, BottomBar, SettingsOverlay, TowerPurchasePanel, TowerInfoTooltip, IdleBitOverlay, InventoryBar, HpWarningOverlay, TitleScreenPanel, ConnectionLine → `Assets/Prefabs/UI/`
 
 ---
 
@@ -151,6 +152,7 @@
 - **공수 산정**: 에이전트 병렬 실행 기준 1시간 = 단일 에이전트 6~8시간 분량
 - 모든 팀장에게 업무 배분 (유휴 팀 최소화), 팀당 2~3건
 - 상세 지침: `Docs/DevPD_Guidelines.md` 8.1절
+- **스프린트 시작 시 DevPD 필수 리뷰**: 이전 스프린트에서 발생한 문제(버그, QA 실패, 프로세스 장애)를 분석하고, 원인이 된 문서(skill, agent, CLAUDE.md, prefab-protocol 등)의 정책/절차 불일치·누락·모호함을 식별하여 수정 적용. 문서 간 경로·용어·역할 분담 일관성 검증 포함
 
 ---
 

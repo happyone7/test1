@@ -18,7 +18,9 @@
 - Main Camera, Directional Light
 - EventSystem
 - Canvas (루트, 프리팹 컨테이너 역할만)
-- 전역 매니저 오브젝트 (GameManager, AudioManager 등)
+- TitleScreenCanvas (루트, 프리팹 컨테이너 역할만)
+- 전역 매니저 오브젝트 (GameManager, RunManager, MetaManager, TowerManager, WaveSpawner, PoolManager, TreasureManager, FTUEManager, SoundManager, TowerInventory, TowerDragController, PlacementGrid)
+- 맵 오브젝트 (SpawnPoint, Waypoints, Base, Ground, Towers 컨테이너)
 
 ## 2. 프리팹 명명 규칙
 
@@ -29,7 +31,7 @@
 Tower_Arrow.prefab           # 타워
 Monster_Brute.prefab         # 몬스터
 Projectile_Arrow.prefab      # 발사체
-UI_HealthBar.prefab          # UI 요소
+UI_TopHUD.prefab             # UI 요소
 VFX_Explosion.prefab         # 이펙트
 ```
 
@@ -39,12 +41,15 @@ VFX_Explosion.prefab         # 이펙트
 Tower_Base.prefab            # 베이스 프리팹
   ├── Tower_Arrow.prefab     # Variant - 빠른 속도, 단일 타겟
   ├── Tower_Cannon.prefab    # Variant - 느림, 범위 공격
-  └── Tower_Magic.prefab     # Variant - 중간, 디버프
+  └── Tower_Ice.prefab       # Variant - 슬로우
 
 Monster_Base.prefab
   ├── Monster_Soul.prefab    # Variant
   ├── Monster_Charger.prefab # Variant
-  └── Monster_Brute.prefab   # Variant
+  ├── Monster_Brute.prefab   # Variant
+  ├── Monster_Heavy.prefab   # Variant
+  ├── Monster_Quick.prefab   # Variant
+  └── Monster_Bit.prefab     # Variant (드롭 아이템)
 ```
 
 ### Nested Prefab 사용
@@ -64,28 +69,75 @@ Tower_Arrow.prefab
 Assets/Project/Prefabs/
 ├── Towers/
 │   ├── Tower_Arrow.prefab
-│   └── Tower_Arrow_Lv2.prefab  (Variant)
+│   ├── Tower_Cannon.prefab
+│   └── Tower_Ice.prefab
 ├── Monsters/
 │   ├── Monster_Soul.prefab
 │   ├── Monster_Charger.prefab
-│   └── Monster_Brute.prefab
+│   ├── Monster_Brute.prefab
+│   ├── Monster_Heavy.prefab
+│   ├── Monster_Quick.prefab
+│   └── Monster_Bit.prefab
 ├── Projectiles/
+│   ├── Projectile_Arrow.prefab
+│   ├── Projectile_Cannon.prefab
+│   └── Projectile_Ice.prefab
 ├── Effects/
 └── UI/
     ├── Panels/
-    │   ├── UI_TowerPurchasePanel.prefab
+    │   ├── UI_HubPanel.prefab
     │   ├── UI_RunEndPanel.prefab
-    │   └── UI_SettingsPopup.prefab
-    ├── HUD/
-    │   ├── UI_HealthBar.prefab
-    │   ├── UI_WaveCounter.prefab
-    │   └── UI_InventoryBar.prefab
-    └── Common/
-        ├── UI_Button.prefab
-        └── UI_Tooltip.prefab
+    │   ├── UI_SettingsOverlay.prefab
+    │   ├── UI_TowerPurchasePanel.prefab
+    │   ├── UI_TowerInfoTooltip.prefab
+    │   ├── UI_IdleBitOverlay.prefab
+    │   ├── UI_TitleScreenPanel.prefab
+    │   ├── UI_TreasureChoiceUI.prefab
+    │   ├── UI_RunEndOverlay.prefab
+    │   └── UI_CorePopup.prefab
+    └── HUD/
+        ├── UI_TopHUD.prefab
+        ├── UI_BottomBar.prefab
+        ├── UI_InventoryBar.prefab
+        ├── UI_HpWarningOverlay.prefab
+        ├── UI_BossHpBar.prefab
+        └── UI_GuideText.prefab
 ```
 
-## 5. 씬 편집 프로토콜
+## 5. UI 프리팹 추출 대상 (GameScene 기준)
+
+현재 씬에 직접 배치된 UI 오브젝트 → 프리팹으로 추출 필요:
+
+### Canvas 하위 (15개)
+| 씬 오브젝트 | 프리팹명 | 분류 |
+|-------------|---------|------|
+| TopHUD | UI_TopHUD.prefab | HUD |
+| BottomBar | UI_BottomBar.prefab | HUD |
+| InventoryBar | UI_InventoryBar.prefab | HUD |
+| HpWarningOverlay | UI_HpWarningOverlay.prefab | HUD |
+| BossHpBarContainer | UI_BossHpBar.prefab | HUD |
+| GuideTextContainer | UI_GuideText.prefab | HUD |
+| HubPanel | UI_HubPanel.prefab | Panels |
+| RunEndPanel | UI_RunEndPanel.prefab | Panels |
+| SettingsOverlay | UI_SettingsOverlay.prefab | Panels |
+| TowerPurchasePanel | UI_TowerPurchasePanel.prefab | Panels |
+| TowerInfoTooltip | UI_TowerInfoTooltip.prefab | Panels |
+| IdleBitOverlay | UI_IdleBitOverlay.prefab | Panels |
+| TreasureChoiceUI | UI_TreasureChoiceUI.prefab | Panels |
+| RunEndOverlay | UI_RunEndOverlay.prefab | Panels |
+| CorePopupContainer | UI_CorePopup.prefab | Panels |
+
+### TitleScreenCanvas 하위 (1개)
+| 씬 오브젝트 | 프리팹명 | 분류 |
+|-------------|---------|------|
+| TitleScreenPanel | UI_TitleScreenPanel.prefab | Panels |
+
+### 추출 역할 분담
+- **UI팀장**: 씬 오브젝트 → 프리팹 추출 수행 (manage_prefabs 사용)
+- **프로그래밍팀장**: 추출 완료 후 SerializeField 참조 재연결 확인
+- **순서**: UI팀장 추출 → 씬 저장 → 프로그래밍팀장 참조 확인 → 플레이모드 테스트
+
+## 6. 씬 편집 프로토콜
 
 ### 씬 수정 전 반드시 확인
 ```
@@ -108,7 +160,7 @@ Assets/Project/Prefabs/
 4. 즉시 커밋했는가? (씬 파일은 반드시 작업 직후 커밋)
 ```
 
-## 6. 하지 말아야 할 것
+## 7. 하지 말아야 할 것
 
 - 씬에 오브젝트를 직접 만들고 프리팹화하지 않기 → 반드시 프리팹 먼저
 - Material을 Prefabs 폴더에 두기 → `Art/Materials/`로 분리
