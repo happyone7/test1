@@ -466,7 +466,7 @@ namespace Soulspire.UI
                     return $"+{data.value * 100f:F0}% 공격속도";
                 case TreasureChoiceType.RangeBoost:
                     return $"+{data.value * 100f:F0}% 사거리";
-                case TreasureChoiceType.BitBonus:
+                case TreasureChoiceType.SoulBonus:
                     return $"+{data.value:F0} Bit/킬";
                 case TreasureChoiceType.MaxHpBoost:
                     return $"+{data.value:F0} 최대 HP";

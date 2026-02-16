@@ -27,7 +27,7 @@ namespace Soulspire.Data
         public float[] attackSpeed = { 1f, 1.1f, 1.2f, 1.35f, 1.5f };
         public float[] range = { 3f, 3f, 3.5f, 3.5f, 4f };
 
-        [Header("인게임 배치 비용 (Bit)")]
+        [Header("인게임 배치 비용 (Soul)")]
         public int placeCost = 50;
 
         [Header("Cannon 전용 - AoE 폭발 범위 (레벨별)")]
@@ -44,7 +44,7 @@ namespace Soulspire.Data
         public float GetSlowRate(int level) => slowRate[Mathf.Clamp(level - 1, 0, slowRate.Length - 1)];
         public float GetSlowDuration(int level) => slowDuration[Mathf.Clamp(level - 1, 0, slowDuration.Length - 1)];
 
-        [Header("업그레이드 비용 (Bit, 레벨별: Lv1->2, Lv2->3, Lv3->4)")]
+        [Header("업그레이드 비용 (Soul, 레벨별: Lv1->2, Lv2->3, Lv3->4)")]
         public int[] upgradeCost = { 30, 60, 120 };
 
         /// <summary>

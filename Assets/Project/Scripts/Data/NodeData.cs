@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Soulspire.Data
 {
@@ -34,7 +35,8 @@ namespace Soulspire.Data
         [Header("기본 스탯")]
         public float hp = 30f;
         public float speed = 2f;
-        public int bitDrop = 5;
+        [FormerlySerializedAs("bitDrop")]
+        public int soulDrop = 5;
         public int damage = 1; // 기지에 주는 데미지
         public int defense = 0; // 방어력 (받는 데미지 차감, 최소 1)
 

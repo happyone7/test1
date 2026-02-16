@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEngine.Serialization;
 using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,12 +25,13 @@ namespace Soulspire.UI
         private static readonly Color ColorHpBg = new Color32(0x33, 0x11, 0x11, 0xFF);         // #331111
         private static readonly Color ColorSpeedActive = new Color32(0x15, 0x30, 0x20, 0xFF);  // #153020
         private static readonly Color ColorSpeedInactive = new Color32(0x1A, 0x24, 0x3A, 0xFF);// #1A243A
-        private static readonly Color ColorBitGreen = new Color32(0x2B, 0xFF, 0x88, 0xFF);     // #2BFF88
+        private static readonly Color ColorSoulGreen = new Color32(0x2B, 0xFF, 0x88, 0xFF);     // #2BFF88
         private static readonly Color ColorWarningRed = new Color32(0xFF, 0x4D, 0x5A, 0x80);   // #FF4D5A 반투명
 
         [Header("상단 HUD")]
         public Text waveText;
-        public Text bitText;
+        [FormerlySerializedAs("bitText")]
+        public Text soulText;
         public Text baseHpLabelText;   // "기지 HP:" 라벨
         public Image hpBarBackground;   // HP 바 배경 (#331111)
         public Image hpBarFill;          // HP 바 채우기 (#44CC44, fillAmount)
@@ -51,14 +53,16 @@ namespace Soulspire.UI
         [Header("런 종료 패널")]
         public GameObject runEndPanel;
         public Text runEndTitleText;
-        public Text runEndBitText;
+        [FormerlySerializedAs("runEndBitText")]
+        public Text runEndSoulText;
         public Button hubButton;
         public Button retryButton;
 
         [Header("런 종료 패널 - 추가 정보")]
         public Text runEndWaveText;
         public Text runEndNodesText;
-        public Text runEndCoreText;
+        [FormerlySerializedAs("runEndCoreText")]
+        public Text runEndCoreFragmentText;
 
         [Header("타워 구매/정보 패널")]
         public TowerPurchasePanel towerPurchasePanel;
@@ -85,7 +89,8 @@ namespace Soulspire.UI
         public Outline retryButtonOutline;      // 재도전 버튼 Outline
 
         [Header("런 종료 패널 - 보유 Bit 총액")]
-        public Text runEndTotalBitText;         // "보유 Bit: 1,234" 텍스트
+        [FormerlySerializedAs("runEndTotalBitText")]
+        public Text runEndTotalSoulText;         // "보유 Bit: 1,234" 텍스트
 
         [Header("보스 HP 바")]
         public GameObject bossHpBarContainer;   // 보스 HP 바 전체 컨테이너
@@ -202,8 +207,8 @@ namespace Soulspire.UI
             }
 
             // Bit 카운터
-            if (bitText != null)
-                bitText.text = $"Bit: {run.BitEarned}";
+            if (soulText != null)
+                soulText.text = $"Bit: {run.SoulEarned}";
 
             // 기지 HP 라벨
             if (baseHpLabelText != null)
@@ -239,7 +244,7 @@ namespace Soulspire.UI
                 baseHpText.text = $"HP: {run.BaseHp}/{run.BaseMaxHp}";
         }
 
-public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEarned)
+public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFragmentEarned)
         {
             // 런 종료 시 배속을 x1로 리셋
             Time.timeScale = 1f;
@@ -291,10 +296,10 @@ public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEar
             }
 
             // Bit 획득 정보
-            if (runEndBitText != null)
+            if (runEndSoulText != null)
             {
-                runEndBitText.text = $"획득 Bit:  +{bitEarned}";
-                runEndBitText.color = ColorTextMain;
+                runEndSoulText.text = $"획득 Bit:  +{soulEarned}";
+                runEndSoulText.color = ColorTextMain;
             }
 
             // 웨이브 도달 정보 (패배 시만)
@@ -333,33 +338,33 @@ public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEar
             }
 
             // Core 획득 (클리어 시만, 보라색)
-            if (runEndCoreText != null)
+            if (runEndCoreFragmentText != null)
             {
-                if (coreEarned > 0)
+                if (coreFragmentEarned > 0)
                 {
-                    runEndCoreText.gameObject.SetActive(true);
-                    runEndCoreText.text = $"획득 Core:  {coreEarned}";
-                    runEndCoreText.color = ColorNeonPurple;
+                    runEndCoreFragmentText.gameObject.SetActive(true);
+                    runEndCoreFragmentText.text = $"획득 Core:  {coreFragmentEarned}";
+                    runEndCoreFragmentText.color = ColorNeonPurple;
                 }
                 else
                 {
-                    runEndCoreText.gameObject.SetActive(false);
+                    runEndCoreFragmentText.gameObject.SetActive(false);
                 }
             }
 
             // 보유 Bit 총액 표시 (런 보상 적립 후)
-            if (runEndTotalBitText != null)
+            if (runEndTotalSoulText != null)
             {
                 if (Singleton<Core.MetaManager>.HasInstance)
                 {
-                    int totalBit = Core.MetaManager.Instance.TotalBit;
-                    runEndTotalBitText.text = $"보유 Bit:  {totalBit:N0}";
-                    runEndTotalBitText.color = ColorBitGreen;
-                    runEndTotalBitText.gameObject.SetActive(true);
+                    int totalSoul = Core.MetaManager.Instance.TotalSoul;
+                    runEndTotalSoulText.text = $"보유 Bit:  {totalSoul:N0}";
+                    runEndTotalSoulText.color = ColorSoulGreen;
+                    runEndTotalSoulText.gameObject.SetActive(true);
                 }
                 else
                 {
-                    runEndTotalBitText.gameObject.SetActive(false);
+                    runEndTotalSoulText.gameObject.SetActive(false);
                 }
             }
 
@@ -742,7 +747,7 @@ private IEnumerator SlideUpAnimation()
         /// <summary>
         /// "+N Core" 팝업을 1초 표시 후 페이드아웃합니다.
         /// </summary>
-        public void ShowCorePopup(int coreAmount)
+        public void ShowCoreFragmentPopup(int coreAmount)
         {
             if (corePopupContainer == null || corePopupText == null) return;
 

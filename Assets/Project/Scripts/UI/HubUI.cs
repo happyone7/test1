@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 namespace Soulspire.UI
 {
@@ -30,13 +31,18 @@ namespace Soulspire.UI
         public Image backgroundImage;
 
         [Header("상단 바 - 재화")]
-        public Text totalBitText;
-        public Text totalCoreText;
+        [FormerlySerializedAs("totalBitText")]
+        public Text totalSoulText;
+        [FormerlySerializedAs("totalCoreText")]
+        public Text totalCoreFragmentText;
 
         [Header("상단 바 - 방치 Bit 알림")]
-        public GameObject idleBitPanel;
-        public Text idleBitText;
-        public Button idleBitClaimButton;
+        [FormerlySerializedAs("idleBitPanel")]
+        public GameObject idleSoulPanel;
+        [FormerlySerializedAs("idleBitText")]
+        public Text idleSoulText;
+        [FormerlySerializedAs("idleBitClaimButton")]
+        public Button idleSoulClaimButton;
 
         [Header("스킬 트리 영역")]
         public ScrollRect skillScrollRect;
@@ -65,14 +71,16 @@ namespace Soulspire.UI
 
         [Header("팝업 참조")]
         public SettingsPopup settingsPopup;
-        public IdleBitPopup idleBitPopup;
+        public IdleSoulPopup idleSoulPopup;
 
         [Header("UI 스프라이트")]
         public UISprites uiSprites;
 
         [Header("아이콘 이미지")]
-        public Image bitIconImage;     // Bit 재화 아이콘
-        public Image coreIconImage;    // Core 재화 아이콘
+        [FormerlySerializedAs("bitIconImage")]
+        public Image soulIconImage;     // Bit 재화 아이콘
+        [FormerlySerializedAs("coreIconImage")]
+        public Image coreFragmentIconImage;    // Core 재화 아이콘
 
         [Header("패널 배경 이미지")]
         public Image detailPanelImage; // 상세 패널 배경
@@ -94,7 +102,7 @@ namespace Soulspire.UI
 
         private Data.SkillNodeData _selectedSkill;
         private int _selectedStageIndex;
-        private int _pendingIdleBit;
+        private int _pendingIdleSoul;
         private Coroutine _guideTextCoroutine;
 
         /// <summary>
@@ -141,8 +149,8 @@ namespace Soulspire.UI
             if (quitButton != null)
                 quitButton.onClick.AddListener(OnQuit);
 
-            if (idleBitClaimButton != null)
-                idleBitClaimButton.onClick.AddListener(OnClaimIdleBit);
+            if (idleSoulClaimButton != null)
+                idleSoulClaimButton.onClick.AddListener(OnClaimIdleSoul);
 
             if (detailCloseButton != null)
                 detailCloseButton.onClick.AddListener(OnDetailClose);
@@ -156,8 +164,8 @@ namespace Soulspire.UI
             if (detailPanel != null)
                 detailPanel.SetActive(false);
 
-            if (idleBitPanel != null)
-                idleBitPanel.SetActive(false);
+            if (idleSoulPanel != null)
+                idleSoulPanel.SetActive(false);
 
             if (guideTextContainer != null)
                 guideTextContainer.SetActive(false);
@@ -182,15 +190,15 @@ namespace Soulspire.UI
             uiSprites.ApplyPanelFrame(bottomBarImage);
 
             // 아이콘
-            if (bitIconImage != null && uiSprites.iconBit != null)
+            if (soulIconImage != null && uiSprites.iconSoul != null)
             {
-                bitIconImage.sprite = uiSprites.iconBit;
-                bitIconImage.preserveAspect = true;
+                soulIconImage.sprite = uiSprites.iconSoul;
+                soulIconImage.preserveAspect = true;
             }
-            if (coreIconImage != null && uiSprites.iconCore != null)
+            if (coreFragmentIconImage != null && uiSprites.iconCoreFragment != null)
             {
-                coreIconImage.sprite = uiSprites.iconCore;
-                coreIconImage.preserveAspect = true;
+                coreFragmentIconImage.sprite = uiSprites.iconCoreFragment;
+                coreFragmentIconImage.preserveAspect = true;
             }
 
             // 드롭다운 프레임
@@ -205,7 +213,7 @@ namespace Soulspire.UI
             uiSprites.ApplyAccentButton(purchaseButton);
             uiSprites.ApplyBasicButton(settingsButton);
             uiSprites.ApplyBasicButton(quitButton);
-            uiSprites.ApplyBasicButton(idleBitClaimButton);
+            uiSprites.ApplyBasicButton(idleSoulClaimButton);
         }
 
         public virtual void Show()
@@ -230,14 +238,14 @@ namespace Soulspire.UI
             {
                 var meta = Core.MetaManager.Instance;
 
-                if (totalBitText != null)
-                    totalBitText.text = $"Bit: {meta.TotalBit:N0}";
+                if (totalSoulText != null)
+                    totalSoulText.text = $"Bit: {meta.TotalSoul:N0}";
 
-                if (totalCoreText != null)
-                    totalCoreText.text = $"Core: {meta.TotalCore}";
+                if (totalCoreFragmentText != null)
+                    totalCoreFragmentText.text = $"Core: {meta.TotalCoreFragment}";
 
                 RefreshStageDropdown();
-                RefreshIdleBitNotification();
+                RefreshIdleSoulNotification();
             }
 
             foreach (var node in skillNodes)
@@ -278,43 +286,43 @@ namespace Soulspire.UI
             stageDropdown.onValueChanged.AddListener(OnStageDropdownChanged);
         }
 
-        private void RefreshIdleBitNotification()
+        private void RefreshIdleSoulNotification()
         {
-            if (idleBitPanel == null) return;
+            if (idleSoulPanel == null) return;
 
             // TODO: MetaManager에 방치 보상 시스템 구현 시 연동
-            // 현재는 _pendingIdleBit 필드로 외부에서 설정 가능
-            if (_pendingIdleBit > 0)
+            // 현재는 _pendingIdleSoul 필드로 외부에서 설정 가능
+            if (_pendingIdleSoul > 0)
             {
-                idleBitPanel.SetActive(true);
-                if (idleBitText != null)
-                    idleBitText.text = $"방치 Bit: {_pendingIdleBit:N0} [수령!]";
+                idleSoulPanel.SetActive(true);
+                if (idleSoulText != null)
+                    idleSoulText.text = $"방치 Bit: {_pendingIdleSoul:N0} [수령!]";
             }
             else
             {
-                idleBitPanel.SetActive(false);
+                idleSoulPanel.SetActive(false);
             }
         }
 
         /// <summary>
         /// 외부에서 방치 Bit 보상을 설정 (MetaManager 연동용)
         /// </summary>
-        public void SetPendingIdleBit(int amount)
+        public void SetPendingIdleSoul(int amount)
         {
-            _pendingIdleBit = amount;
-            RefreshIdleBitNotification();
+            _pendingIdleSoul = amount;
+            RefreshIdleSoulNotification();
         }
 
-        private void OnClaimIdleBit()
+        private void OnClaimIdleSoul()
         {
-            if (_pendingIdleBit <= 0) return;
+            if (_pendingIdleSoul <= 0) return;
 
             if (Singleton<Core.MetaManager>.HasInstance)
             {
-                Core.MetaManager.Instance.AddRunRewards(_pendingIdleBit, 0, false, 0);
+                Core.MetaManager.Instance.AddRunRewards(_pendingIdleSoul, 0, false, 0);
             }
 
-            _pendingIdleBit = 0;
+            _pendingIdleSoul = 0;
             RefreshAll();
         }
 
@@ -347,7 +355,7 @@ namespace Soulspire.UI
 
             int level = 0;
             bool canPurchase = false;
-            int totalBit = 0;
+            int totalSoul = 0;
             bool isLocked = !ArePrerequisitesMet(_selectedSkill);
 
             if (Singleton<Core.MetaManager>.HasInstance)
@@ -355,7 +363,7 @@ namespace Soulspire.UI
                 var meta = Core.MetaManager.Instance;
                 level = meta.GetSkillLevel(_selectedSkill.skillId);
                 canPurchase = !isLocked && meta.CanPurchaseSkill(_selectedSkill.skillId);
-                totalBit = meta.TotalBit;
+                totalSoul = meta.TotalSoul;
             }
 
             bool isMaxLevel = level >= _selectedSkill.maxLevel;
@@ -445,7 +453,7 @@ namespace Soulspire.UI
                 {
                     int cost = _selectedSkill.GetCost(level);
                     detailCostText.text = $"{cost} Bit";
-                    detailCostText.color = totalBit >= cost ? ColorYellowGold : ColorRed;
+                    detailCostText.color = totalSoul >= cost ? ColorYellowGold : ColorRed;
                 }
             }
 

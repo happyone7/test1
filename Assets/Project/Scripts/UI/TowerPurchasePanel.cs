@@ -109,7 +109,7 @@ namespace Soulspire.UI
                 // 자금 부족 시 비활성화
                 bool canAfford = true;
                 if (Singleton<Core.RunManager>.HasInstance)
-                    canAfford = Core.RunManager.Instance.BitEarned >= data.placeCost;
+                    canAfford = Core.RunManager.Instance.SoulEarned >= data.placeCost;
                 costButton.interactable = canAfford;
             }
         }
@@ -199,9 +199,9 @@ namespace Soulspire.UI
             if (!Singleton<Core.RunManager>.HasInstance) return;
             var run = Core.RunManager.Instance;
 
-            if (run.BitEarned < data.placeCost)
+            if (run.SoulEarned < data.placeCost)
             {
-                Debug.Log($"[TowerPurchasePanel] 자금 부족: {data.towerName} 비용={data.placeCost}, 보유={run.BitEarned}");
+                Debug.Log($"[TowerPurchasePanel] 자금 부족: {data.towerName} 비용={data.placeCost}, 보유={run.SoulEarned}");
                 return;
             }
 

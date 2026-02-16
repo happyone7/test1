@@ -9,7 +9,7 @@ namespace Soulspire.Core
         [Header("런 상태")]
         public Data.StageData CurrentStage { get; private set; }
         public int CurrentWaveIndex { get; private set; }
-        public int BitEarned { get; private set; }
+        public int SoulEarned { get; private set; }
         public int NodesKilled { get; private set; }
         public bool IsRunning { get; private set; }
         public RunModifiers CurrentModifiers { get; private set; }
@@ -26,7 +26,7 @@ namespace Soulspire.Core
         {
             CurrentStage = stage;
             CurrentWaveIndex = 0;
-            BitEarned = 0;
+            SoulEarned = 0;
             NodesKilled = 0;
             CurrentModifiers = modifiers;
             _baseMaxHp = stage.baseHp + modifiers.bonusBaseHp;
@@ -39,15 +39,15 @@ namespace Soulspire.Core
                 Node.WaveSpawner.Instance.StartWaves(stage);
         }
 
-        public void AddBit(int amount)
+        public void AddSoul(int amount)
         {
-            BitEarned += amount;
+            SoulEarned += amount;
         }
 
-        public bool SpendBit(int amount)
+        public bool SpendSoul(int amount)
         {
-            if (BitEarned < amount) return false;
-            BitEarned -= amount;
+            if (SoulEarned < amount) return false;
+            SoulEarned -= amount;
             return true;
         }
 
@@ -119,21 +119,21 @@ namespace Soulspire.Core
                 SoundManager.Instance.PlaySfx(SoundKeys.StageClear, 1f);
 
             // core 보상 계산 (GameManager.OnRunEnd와 동일 로직)
-            int coreEarned = 0;
+            int coreFragmentEarned = 0;
             if (cleared && CurrentStage != null)
-                coreEarned = CurrentStage.coreReward;
+                coreFragmentEarned = CurrentStage.coreFragmentReward;
 
-            GameManager.Instance.OnRunEnd(cleared, BitEarned);
+            GameManager.Instance.OnRunEnd(cleared, SoulEarned);
 
             // UI에 런 종료 알림
             var ui = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
             if (ui != null)
             {
-                ui.ShowRunEnd(cleared, BitEarned, NodesKilled, coreEarned);
+                ui.ShowRunEnd(cleared, SoulEarned, NodesKilled, coreFragmentEarned);
 
                 // 보스 처치 Core 보상 팝업
-                if (cleared && coreEarned > 0)
-                    ui.ShowCorePopup(coreEarned);
+                if (cleared && coreFragmentEarned > 0)
+                    ui.ShowCoreFragmentPopup(coreFragmentEarned);
             }
 
             // FTUE: 첫 사망 가이드

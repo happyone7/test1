@@ -152,7 +152,7 @@ namespace Soulspire.UI
             else
             {
                 int currentBit = Singleton<Core.RunManager>.HasInstance
-                    ? Core.RunManager.Instance.BitEarned : 0;
+                    ? Core.RunManager.Instance.SoulEarned : 0;
                 bool canAfford = currentBit >= cost;
 
                 upgradeButton.interactable = canAfford;
@@ -205,7 +205,7 @@ namespace Soulspire.UI
         {
             if (_targetTower == null) return;
 
-            bool success = _targetTower.UpgradeWithBit();
+            bool success = _targetTower.UpgradeWithSoul();
             if (success)
             {
                 Debug.Log($"[TowerInfoTooltip] 업그레이드 성공: {_targetTower.data.towerName} Lv{_targetTower.Level}");
@@ -226,7 +226,7 @@ namespace Soulspire.UI
 
             // RunManager에 Bit 추가
             if (Singleton<Core.RunManager>.HasInstance)
-                Core.RunManager.Instance.AddBit(sellValue);
+                Core.RunManager.Instance.AddSoul(sellValue);
 
             Destroy(_targetTower.gameObject);
             Hide();
