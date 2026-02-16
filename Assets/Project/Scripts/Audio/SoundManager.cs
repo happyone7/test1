@@ -96,7 +96,7 @@ namespace Nodebreaker.Audio
             Register(SoundKeys.BgmHubPhase2, "Audio/BGM/BGM_Hub_Phase2_01");
             Register(SoundKeys.SkillPurchase, "Audio/SFX/Hub/SFX_Skill_Purchase_01");
             Register(SoundKeys.SkillMaxLevel, "Audio/SFX/Hub/SFX_Skill_MaxLevel_01");
-            Register(SoundKeys.UiHubClick, "Audio/SFX/Hub/UI_Hub_Click_01");
+            Register(SoundKeys.UiHubClick, "Audio/SFX/UI/UI_Hub_Click_01");
             Register(SoundKeys.RunStart, "Audio/SFX/Hub/SFX_Run_Start_01");
 
             // Phase 3: Tower Upgrade / FTUE / Stage Unlock
