@@ -34,6 +34,7 @@ namespace Nodebreaker.Core
 
         public void Save()
         {
+            if (_saveManager == null || _data == null) return;
             SyncFromCache();
             _saveManager.Save(_data);
         }
@@ -204,7 +205,8 @@ namespace Nodebreaker.Core
 
         protected override void OnApplicationQuit()
         {
-            Save();
+            if (_saveManager != null && _data != null)
+                Save();
             _saveManager?.Dispose();
             base.OnApplicationQuit();
         }
