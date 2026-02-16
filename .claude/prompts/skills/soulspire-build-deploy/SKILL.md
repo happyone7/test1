@@ -33,7 +33,7 @@ Unity Windows 빌드를 생성하고 SteamCMD로 업로드하는 절차. 개발/
 ```
 4. execute_menu_item → Tools/Build Windows
 5. sleep 20 (빌드 완료 대기)
-6. 빌드 결과 확인: SteamBuild/content/MyGame.exe 존재 여부
+6. 빌드 결과 확인: SteamBuild/content/Soulspire.exe 존재 여부
 7. 빌드 실패 시:
    a. read_console — 컴파일/빌드 에러 확인
    b. 에러 내용을 프로그래밍팀장에게 전달, 수정 요청
@@ -41,14 +41,14 @@ Unity Windows 빌드를 생성하고 SteamCMD로 업로드하는 절차. 개발/
    d. 2회 실패 → 개발PD에게 에스컬레이션
 ```
 
-→ Gate 2: MyGame.exe 존재 확인되어야 Step 2.5 진행. 미존재 시 빌드 실패 처리.
+→ Gate 2: Soulspire.exe 존재 확인되어야 Step 2.5 진행. 미존재 시 빌드 실패 처리.
 
 ### Step 2.5: 로컬 직접 복사 테스트 (Steam CDN 전 필수)
 ```
 1. 빌드 출력을 Steam 설치 폴더에 직접 복사:
-   cp -r "SteamBuild/content/"* "C:/Program Files (x86)/Steam/steamapps/common/Nodebreaker TD/"
+   cp -r "SteamBuild/content/"* "C:/Program Files (x86)/Steam/steamapps/common/Soulspire/"
 2. 게임 실행하여 핵심 기능 동작 확인 (UI 표시, 게임 루프 등)
-3. Player.log 확인: AppData/LocalLow/MyCompany/MyGame/Player.log
+3. Player.log 확인: AppData/LocalLow/SBGames/Soulspire/Player.log
 → Gate 2.5: 로컬 테스트 통과 시에만 Step 3 진행. 실패 시 빌드 금지, 수정 후 재빌드.
 ```
 

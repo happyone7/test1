@@ -57,8 +57,8 @@ soulspire-build-deploy 스킬의 절차에 따라 Unity Windows 빌드를 생성
 - **App ID**: 4426340, **Depot ID**: 4426341
 - **Steam 계정**: shatterbone7
 - **SteamCMD**: `/mnt/c/steamworks_sdk/tools/ContentBuilder/builder/steamcmd.exe`
-- **VDF 경로**: `/mnt/c/UnityProjects/test1/SteamBuild/scripts/`
-- **빌드 출력**: `/mnt/c/UnityProjects/test1/SteamBuild/content/MyGame.exe`
+- **VDF 경로**: `C:/UnityProjects/Soulspire/SteamBuild/scripts/`
+- **빌드 출력**: `C:/UnityProjects/Soulspire/SteamBuild/content/Soulspire.exe`
 
 ### 출시 빌드 시 default 브랜치 설정
 ```bash

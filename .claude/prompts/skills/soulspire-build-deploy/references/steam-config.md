@@ -5,12 +5,12 @@
 - Depot ID: 4426341
 - Steam 계정: shatterbone7
 - Partner ID: 377547
-- Launch Option: MyGame.exe (Windows, Launch Default)
+- Launch Option: Soulspire.exe (Windows, Launch Default)
 
 ## 경로
-- SteamCMD: `/mnt/c/steamworks_sdk/tools/ContentBuilder/builder/steamcmd.exe`
-- VDF 스크립트: `/mnt/c/UnityProjects/test1/SteamBuild/scripts/`
-- 빌드 출력: `/mnt/c/UnityProjects/test1/SteamBuild/content/`
+- SteamCMD: `C:/steamworks_sdk/tools/ContentBuilder/builder/steamcmd.exe`
+- VDF 스크립트: `C:/UnityProjects/Soulspire/SteamBuild/scripts/`
+- 빌드 출력: `C:/UnityProjects/Soulspire/SteamBuild/content/`
 
 ## VDF 파일별 용도
 
@@ -38,4 +38,4 @@
   ```
 
 ## Steam 설치 경로
-- `C:\Program Files (x86)\Steam\steamapps\common\Nodebreaker TD`
+- `C:\Program Files (x86)\Steam\steamapps\common\Soulspire`

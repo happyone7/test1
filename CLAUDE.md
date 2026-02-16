@@ -22,12 +22,12 @@
 - `.claude/prompts/skills/` - 스킬 정의 (5개)
 
 ## Steam 정보
-- **게임 이름**: Soulspire (구: Nodebreaker TD)
+- **게임 이름**: Soulspire
 - **App ID**: 4426340
 - **Depot ID**: 4426341
 - **Steam 계정**: shatterbone7
 - **Partner ID**: 377547
-- **Launch Option**: MyGame.exe
+- **Launch Option**: Soulspire.exe
 
 ## MCP 서버
 - **mcp-unity**: Unity Editor 제어 (포트 8080, CoplayDev/unity-mcp v9.4.4)
@@ -128,13 +128,13 @@ main                    ← 릴리스/배포 (Steam 빌드 기준)
 ### Git Worktree
 에이전트별 독립 워킹 디렉토리. 각 팀장이 자기 워크트리에서 동시 작업 가능:
 ```
-c:\UnityProjects\Soulspire\              ← 메인 (Unity 에디터 연결, sprint/N)
-c:\UnityProjects\wt-dev-programmer\      ← dev/programmer
-c:\UnityProjects\wt-dev-ui\              ← dev/ui
-c:\UnityProjects\wt-dev-ta\              ← dev/ta
-c:\UnityProjects\wt-dev-game-designer\   ← dev/game-designer
-c:\UnityProjects\wt-dev-sound\           ← dev/sound
-c:\UnityProjects\wt-dev-build\           ← dev/build
+C:\UnityProjects\Soulspire\              ← 메인 (Unity 에디터 연결, sprint/N)
+C:\UnityProjects\wt-dev-programmer\      ← dev/programmer
+C:\UnityProjects\wt-dev-ui\              ← dev/ui
+C:\UnityProjects\wt-dev-ta\              ← dev/ta
+C:\UnityProjects\wt-dev-game-designer\   ← dev/game-designer
+C:\UnityProjects\wt-dev-sound\           ← dev/sound
+C:\UnityProjects\wt-dev-build\           ← dev/build
 ```
 
 #### 워크트리 작업 원칙
