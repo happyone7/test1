@@ -81,12 +81,19 @@ references/audio-specs.md 참조하여 ComfyUI 워크플로우 구성.
 4. 3회 시도 후에도 미달 → 개발PD에게 보고
 ```
 
-### 방법 선택 기준
-| 유형 | 방법 | 이유 |
-|------|------|------|
-| BGM (30초+) | ComfyUI ACE-Step | 음악적 구조 필요 |
-| 게임플레이 SFX (폭발, 타격) | ComfyUI Stable Audio | 복잡한 음향 |
-| UI SFX (클릭, 팝업) | 수학 합성 | 단순, 빠름, 정밀 제어 |
+### 방법 선택 기준 (Context-Aware)
+| 유형 | 1차 방법 | 폴백 |
+|------|---------|------|
+| BGM (30초+) | ComfyUI ACE-Step | 폴백 없음 — 실패 시 개발PD 보고 |
+| 게임플레이 SFX (폭발, 타격) | ComfyUI Stable Audio | ComfyUI 접속 불가 시 → 수학 합성으로 대체 |
+| UI SFX (클릭, 팝업) | 수학 합성 | — (항상 사용 가능) |
+
+```
+ComfyUI 접속 판단:
+1. get_system_resources 호출 시도
+2. 응답 없음/타임아웃 → ComfyUI 미가동으로 판단
+3. SFX는 수학 합성으로 폴백, BGM은 개발PD에게 보고
+```
 
 ## 주의 사항
 - 커밋 시 `--author="SoundDirector <sound-director@soulspire.dev>"` 사용

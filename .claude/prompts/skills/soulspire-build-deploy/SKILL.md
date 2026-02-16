@@ -43,9 +43,15 @@ Unity Windows 빌드를 생성하고 SteamCMD로 업로드하는 절차. 개발/
 
 → Gate 2: MyGame.exe 존재 확인되어야 Step 3 진행. 미존재 시 빌드 실패 처리.
 
-### Step 3: Steam 업로드 (VDF 선택)
+### Step 3: Steam 업로드 (VDF 자동 선택)
 
-references/steam-config.md 참조하여 VDF 선택 후 SteamCMD 실행.
+빌드 유형이 명시되지 않은 경우 아래 기준으로 자동 판단:
+```
+IF 개발PD가 "출시 빌드" 또는 "default 브랜치" 언급 → 출시 빌드
+ELIF 개발PD가 "QA 빌드" 또는 "live_test" 언급 → QA 빌드
+ELIF 통합 QA 통과 후 빌드 → QA 빌드
+ELSE → 개발 빌드 (기본값)
+```
 
 | 빌드 유형 | VDF 파일 | 자동 라이브 브랜치 |
 |----------|----------|-----------------|
