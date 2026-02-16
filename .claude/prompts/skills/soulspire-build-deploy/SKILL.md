@@ -41,7 +41,16 @@ Unity Windows 빌드를 생성하고 SteamCMD로 업로드하는 절차. 개발/
    d. 2회 실패 → 개발PD에게 에스컬레이션
 ```
 
-→ Gate 2: MyGame.exe 존재 확인되어야 Step 3 진행. 미존재 시 빌드 실패 처리.
+→ Gate 2: MyGame.exe 존재 확인되어야 Step 2.5 진행. 미존재 시 빌드 실패 처리.
+
+### Step 2.5: 로컬 직접 복사 테스트 (Steam CDN 전 필수)
+```
+1. 빌드 출력을 Steam 설치 폴더에 직접 복사:
+   cp -r "SteamBuild/content/"* "C:/Program Files (x86)/Steam/steamapps/common/Nodebreaker TD/"
+2. 게임 실행하여 핵심 기능 동작 확인 (UI 표시, 게임 루프 등)
+3. Player.log 확인: AppData/LocalLow/MyCompany/MyGame/Player.log
+→ Gate 2.5: 로컬 테스트 통과 시에만 Step 3 진행. 실패 시 빌드 금지, 수정 후 재빌드.
+```
 
 ### Step 3: Steam 업로드 (VDF 자동 선택)
 

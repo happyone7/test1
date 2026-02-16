@@ -10,6 +10,15 @@
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest", "--cdp-endpoint", "http://127.0.0.1:9222"]
+    },
+    "comfy-ui-builder": {
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": ["C:\\UnityProjects\\Soulspire\\Tools\\mcp-comfy-ui-builder\\node_modules\\mcp-comfy-ui-builder\\dist\\mcp-server.js"],
+      "env": {
+        "COMFYUI_HOST": "http://100.94.138.29:8188",
+        "COMFYUI_PATH": "C:\\UnityProjects\\Soulspire\\Tools\\ComfyUI",
+        "COMFYUI_KNOWLEDGE_DIR": "C:\\UnityProjects\\Soulspire\\Tools\\mcp-comfy-ui-builder\\node_modules\\mcp-comfy-ui-builder\\knowledge"
+      }
     }
   }
 }
