@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__mcp-unity__refresh_unity",
+      "mcp__mcp-unity__read_console",
+      "mcp__mcp-unity__manage_editor",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
