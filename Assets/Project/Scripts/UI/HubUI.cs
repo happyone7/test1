@@ -222,11 +222,6 @@ namespace Nodebreaker.UI
         public virtual void Hide()
         {
             gameObject.SetActive(false);
-
-            // 부모 Canvas도 비활성화 (자신이 Canvas가 아닌 경우에만)
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null && parentCanvas.transform != transform)
-                parentCanvas.gameObject.SetActive(false);
         }
 
         public void RefreshAll()
