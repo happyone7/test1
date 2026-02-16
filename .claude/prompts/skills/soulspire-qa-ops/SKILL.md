@@ -61,6 +61,20 @@ git merge --no-ff dev/{팀장} -m "merge: {팀장}팀 작업 머지 (QA 통과)"
 - **sprint 브랜치 머지는 QA팀장만 가능** (다른 팀장 직접 머지 금지)
 - DevPD_Guidelines.md 5절 참조
 
+## QA 결과 연동 (Multi-MCP)
+
+### Notion 업무카드 업데이트
+QA 완료 후 해당 업무 카드의 상태를 갱신한다.
+- DB ID: `58c89f190c684412969f7c41341489d1`
+- `QA 상태` → "통과" 또는 "실패"
+- `QA 결과` → 구체적 결과 기술 (통과 항목, 실패 항목, 스크린샷 경로)
+- `관련 커밋` → 검증 대상 커밋 해시
+
+### Discord 알림
+통합 QA 완료 시 Discord Webhook으로 결과 전송:
+- Webhook: QA 완료 알림 채널
+- 내용: 스프린트명, 통과/실패 수, 블로커 유무, 빌드 가능 여부
+
 ## 주의 사항
 - QA팀장은 코드 수정 금지 — 버그 발견 시 해당 팀장에게 수정 요청
 - 커밋 시 `--author="QAEngineer <qa-engineer@soulspire.dev>"` 사용

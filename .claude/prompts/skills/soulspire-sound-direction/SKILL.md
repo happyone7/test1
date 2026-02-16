@@ -37,12 +37,17 @@ references/audio-specs.md 참조하여 ComfyUI 워크플로우 구성.
 4. 3회 시도 후에도 미달 → 개발PD에게 보고 (모델/설정 문제 가능성)
 ```
 
-### Step 4: Unity 적용
+### Step 4: Unity 적용 (Multi-MCP: ComfyUI → MCP Unity)
 ```
-1. 생성된 파일을 Assets/Audio/BGM/ 또는 Assets/Audio/SFX/ 에 복사
-2. refresh_unity — 에셋 인식
-3. manage_asset — 임포트 설정 조정 (BGM: Streaming, SFX: Decompress On Load)
-4. read_console — 임포트 에러 확인. 에러 시 포맷/설정 수정 후 재임포트
+1. download_output (ComfyUI MCP) — 생성 파일을 로컬에 다운로드
+2. 파일을 Assets/Audio/BGM/ 또는 Assets/Audio/SFX/ 에 복사
+3. refresh_unity (MCP Unity) — 에셋 인식
+4. manage_asset(action="search") (MCP Unity) — 임포트된 에셋 확인
+5. manage_asset 으로 임포트 설정 조정:
+   - BGM: Load In Background + Streaming
+   - SFX (짧은): Decompress On Load
+   - SFX (긴): Compressed In Memory
+6. read_console (MCP Unity) — 임포트 에러 확인. 에러 시 포맷/설정 수정 후 재임포트
 ```
 
 ## SFX 제작 절차

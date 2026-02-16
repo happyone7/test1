@@ -70,3 +70,16 @@ curl -X POST "https://partner.steam-api.com/ISteamApps/SetAppBuildLive/v2/" \
 실패 시 buildid 값 재확인 (SteamCMD 출력에서 추출).
 
 API 키와 상세 설정은 references/steam-config.md 참조.
+
+### Step 6: 빌드/배포 결과 알림 (Multi-MCP)
+
+#### Discord 알림
+업로드 성공 시 Discord Webhook으로 결과 전송:
+- 내용: 빌드 유형(개발/QA/출시), VDF, Steam 브랜치, 빌드 번호
+- 실패 시에도 알림: 에러 요약 + 에스컬레이션 상태
+
+#### Notion 업무카드 업데이트
+빌드 관련 업무 카드의 상태를 갱신:
+- DB ID: `58c89f190c684412969f7c41341489d1`
+- `QA 상태` → "빌드 완료" 또는 "빌드 실패"
+- `관련 커밋` → 빌드 대상 커밋 해시
