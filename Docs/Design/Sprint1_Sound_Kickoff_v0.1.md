@@ -47,11 +47,11 @@ PM 에이전트 응답 기준(2026-02-15):
 - 이벤트 훅 연결:
 - 타워 발사/투사체 적중/Node 처치
 - 타워 배치/합성
-- 웨이브 시작/클리어
+- Incursion 시작/클리어
 - 보스 등장/처치
 - 기지 피격 + HP 30%/10% 경고
-- 스테이지 클리어
-- Hub/Combat/Boss BGM 전환
+- Floor 클리어
+- Sanctum/Combat/Boss BGM 전환
 - 설정 팝업 BGM/SFX 슬라이더 연동
 
 ## 4) Sprint 1 종료 전 현실적 완료선

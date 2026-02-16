@@ -32,7 +32,7 @@ Assets/Art/UI/
 │   └── btn_accent_disabled.png(48x24)  - 금박 버튼 비활성
 └── Icons/
     ├── icon_bit.png           (24x24)  - 소울(Bit) 아이콘
-    └── icon_core.png          (24x24)  - 정수(Core) 아이콘
+    └── icon_core.png          (24x24)  - 정수(Core Fragment) 아이콘
 ```
 
 ---
@@ -116,7 +116,7 @@ Assets/Art/UI/
 - **Disabled**: 기본 버튼 Disabled와 동일 (금색 제거, 무채색)
 
 **사용 기준:**
-- 골드(Core) 소모 행동 -> 금박 버튼
+- 골드(Core Fragment) 소모 행동 -> 금박 버튼
 - 소울(Bit) 소모 행동 -> 금박 버튼
 - 단순 네비게이션/취소 -> 기본 버튼
 
@@ -186,18 +186,18 @@ Assets/Art/UI/
 
 **사용처:**
 - InGameUI 상단 자원 표시 영역
-- 웨이브 클리어 보상 팝업
+- Incursion 클리어 보상 팝업
 - 타워 구매 비용 표시
 - 숫자 팝업 ("+3" 옆에 아이콘)
 
 ---
 
-### 2.7 정수(Core) 아이콘 (`icon_core.png`)
+### 2.7 정수(Core Fragment) 아이콘 (`icon_core.png`)
 
 | 항목 | 값 |
 |------|-----|
 | 크기 | 24x24 px |
-| 용도 | 정수(Core) 프리미엄 자원 표시 아이콘 |
+| 용도 | 정수(Core Fragment) 프리미엄 자원 표시 아이콘 |
 | Image Type | Simple |
 | Preserve Aspect | true |
 | Native Size 사용 | 권장 |
@@ -212,7 +212,7 @@ Assets/Art/UI/
 **사용처:**
 - HubUI 상단 자원 표시
 - 스킬 트리 업그레이드 비용
-- 스테이지 클리어 보상
+- Floor 클리어 보상
 
 ---
 
@@ -312,7 +312,7 @@ UI 코드에서 하드코딩 색상을 사용할 경우 아래 값을 참조하�
 | 텍스트 서브 | `#A09890` | (160, 152, 144) |
 | 텍스트 비활성 | `#605850` | (96, 88, 80) |
 | 소울(Bit) 녹색 | `#40D470` | (64, 212, 112) |
-| 정수(Core) 금색 | `#FFD84D` | (255, 216, 77) |
+| 정수(Core Fragment) 금색 | `#FFD84D` | (255, 216, 77) |
 | HP 위험 적색 | `#D44040` | (212, 64, 64) |
 
 ---
