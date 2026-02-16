@@ -267,9 +267,109 @@ PM: 진행 현황 갱신 + 병목 보고
 
 ---
 
+## 9. Git Worktree 운영 (단일 로컬 머신)
+
+### 9.1 문제
+단일 머신에서 `git checkout`으로 브랜치를 전환하면:
+- Unity 씬 파일(.unity)이 24,000줄 이상 변경되어 충돌 발생
+- Library/ 캐시 무효화로 에셋 재임포트 필요
+- stash 누적으로 작업 상태 오염
+
+### 9.2 Worktree 구조
+각 dev/* 브랜치에 독립 워킹 디렉토리를 할당:
+
+```
+/mnt/c/UnityProjects/
+  test1/                  ← 메인 (Unity 에디터 연결, feature/ 또는 sprint 브랜치)
+  wt-dev-programmer/      ← dev/programmer 전용
+  wt-dev-ui/              ← dev/ui 전용
+  wt-dev-ta/              ← dev/ta 전용
+  wt-dev-game-designer/   ← dev/game-designer 전용
+  wt-dev-sound/           ← dev/sound 전용
+  wt-dev-build/           ← dev/build 전용
+```
+
+### 9.3 Worktree 사용 규칙
+1. **스크립트/SO/문서 편집**: worktree 디렉토리에서 직접 편집 + 커밋 (브랜치 전환 불필요)
+2. **Unity MCP 작업** (씬 수정, 컴포넌트 조작, 플레이모드): 메인 프로젝트에서만 수행
+   - 메인 프로젝트의 브랜치를 해당 dev/*로 전환 필요
+   - 전환 전 반드시 현재 브랜치 커밋 완료 (stash 금지)
+   - 전환 후 `refresh_unity` 필수
+3. **Worktree 갱신**: sprint 브랜치에서 dev/*로 최신 변경 가져오기
+   ```bash
+   cd /mnt/c/UnityProjects/wt-dev-programmer
+   git merge sprint5 --no-edit
+   ```
+
+### 9.4 브랜치 전환 프로토콜 (Unity MCP 작업 시)
+```
+1. 현재 브랜치에서 모든 변경 커밋 (WIP 커밋 허용, stash 금지)
+2. git checkout dev/{팀장} 실행
+3. refresh_unity 실행 (에셋 재인식)
+4. read_console — 컴파일 에러 확인
+5. 작업 수행
+6. 작업 완료 후 커밋
+7. 다른 브랜치로 전환 시 1번부터 반복
+```
+
+**금지 사항:**
+- `git stash` 사용 금지 → 반드시 커밋 (WIP 접두사 허용)
+- 커밋 없이 `git checkout` 금지
+- 동시에 두 팀이 같은 .unity 씬 파일 수정 금지
+
 ---
 
-## 9. Sprint 2 계획 (1시간 축소판, 총괄PD 승인됨)
+## 10. 씬 수정 규칙 (프리팹 기반)
+
+### 10.1 문제
+GameScene.unity에 UI 오브젝트가 직접 배치되어 있어, 여러 팀이 동시에 수정하면 머지 불가능.
+
+### 10.2 프리팹 추출 대상
+현재 씬에 직접 존재하는 UI 오브젝트를 프리팹으로 분리:
+
+| 씬 오브젝트 | 프리팹 경로 | 담당 |
+|------------|------------|------|
+| Canvas/TopHUD | Assets/Prefabs/UI/TopHUD.prefab | UI팀장 |
+| Canvas/RunEndPanel | Assets/Prefabs/UI/RunEndPanel.prefab | UI팀장 |
+| Canvas/HubPanel | Assets/Prefabs/UI/HubPanel.prefab | UI팀장 |
+| Canvas/BottomBar | Assets/Prefabs/UI/BottomBar.prefab | UI팀장 |
+| Canvas/SettingsOverlay | Assets/Prefabs/UI/SettingsOverlay.prefab | UI팀장 |
+| Canvas/TowerPurchasePanel | Assets/Prefabs/UI/TowerPurchasePanel.prefab | UI팀장 |
+| Canvas/TowerInfoTooltip | Assets/Prefabs/UI/TowerInfoTooltip.prefab | UI팀장 |
+| Canvas/IdleBitOverlay | Assets/Prefabs/UI/IdleBitOverlay.prefab | UI팀장 |
+| Canvas/InventoryBar | Assets/Prefabs/UI/InventoryBar.prefab | UI팀장 |
+| Canvas/HpWarningOverlay | Assets/Prefabs/UI/HpWarningOverlay.prefab | UI팀장 |
+| TitleScreenCanvas/TitleScreenPanel | Assets/Prefabs/UI/TitleScreenPanel.prefab | UI팀장 |
+| ConnectionLine | Assets/Prefabs/UI/ConnectionLine.prefab | 프로그래밍팀장 |
+
+### 10.3 씬 수정 권한
+프리팹화 완료 후:
+- **씬 직접 수정**: 프로그래밍팀장만 (매니저 오브젝트, 게임 로직)
+- **UI 수정**: UI팀장이 프리팹 파일 수정 (씬 터치 불필요)
+- **TA/사운드**: 에셋 파일만 수정 (씬/프리팹 직접 수정 금지)
+- 씬을 수정해야 하는 상황이 생기면 개발PD에게 보고 후 순서 조율
+
+---
+
+## 11. 디자인 문서 관리 (Notion 중심)
+
+### 11.1 원칙
+- 모든 디자인 문서는 **Notion**에서 관리 (브랜치 독립)
+- git의 Docs/Design/은 Notion 링크 README만 유지
+- 에이전트가 기획서 참조 시 Notion fetch 도구 사용
+
+### 11.2 Notion 디자인 문서 위치
+- 부모 페이지: Soulspire 프로젝트 > 디자인 문서
+- 각 문서는 하위 페이지로 생성
+
+### 11.3 문서 업데이트 규칙
+- 기획팀장이 기획서 수정 시 Notion에서 직접 수정
+- 버전 히스토리는 Notion이 자동 관리
+- 중요 변경은 커밋 메시지나 PM 보고에 언급
+
+---
+
+## 12. Sprint 2 계획 (1시간 축소판, 총괄PD 승인됨)
 
 **계획서 전문**: `Docs/Sprint2_Plan.md`
 
@@ -297,3 +397,4 @@ PM: 진행 현황 갱신 + 병목 보고
 |------|-----------|
 | 2026-02-15 | 초안 작성 — 3인 개발PD 정보공유 체계, 팀장별 git author, QA 조기착수, 기획팀장 활용 |
 | 2026-02-15 | Sprint 2 계획 추가 (1시간 축소판, 총괄PD 승인) |
+| 2026-02-16 | 9~11절 추가: Git Worktree 운영, 씬 수정 규칙(프리팹 기반), 디자인 문서 Notion 이전 |

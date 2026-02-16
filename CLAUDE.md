@@ -94,6 +94,39 @@
 - 커밋 메시지는 **한글**로 작성
 - 작업 완료 즉시 커밋 (미커밋 상태로 세션 종료 금지)
 - 프로젝트 관리 파일(에이전트/스킬/메모리/문서) 수정 후 다른 작업으로 넘어갈 때 즉시 커밋
+- **stash 금지** — 브랜치 전환 전 반드시 커밋 (WIP 접두사 허용)
+
+### Git Worktree (단일 로컬 머신)
+에이전트별 독립 워킹 디렉토리로 브랜치 전환 없이 작업 가능:
+```
+/mnt/c/UnityProjects/test1/           ← 메인 (Unity 에디터 연결)
+/mnt/c/UnityProjects/wt-dev-programmer/ ← dev/programmer
+/mnt/c/UnityProjects/wt-dev-ui/        ← dev/ui
+/mnt/c/UnityProjects/wt-dev-ta/        ← dev/ta
+/mnt/c/UnityProjects/wt-dev-game-designer/ ← dev/game-designer
+/mnt/c/UnityProjects/wt-dev-sound/     ← dev/sound
+/mnt/c/UnityProjects/wt-dev-build/     ← dev/build
+```
+- **스크립트/SO/문서 편집**: worktree에서 직접 (브랜치 전환 불필요)
+- **Unity MCP 작업** (씬, 컴포넌트, 플레이모드): 메인 프로젝트에서만, 해당 dev/*로 전환 후 수행
+- 전환 프로토콜: 커밋 → checkout → refresh_unity → read_console → 작업 → 커밋
+
+---
+
+## 씬 수정 규칙 (프리팹 기반)
+- **씬 직접 수정**: 프로그래밍팀장만 (매니저, 게임 로직 오브젝트)
+- **UI 수정**: UI팀장이 프리팹 파일 수정 (씬 터치 불필요)
+- **TA/사운드**: 에셋 파일만 수정 (씬/프리팹 직접 수정 금지)
+- 씬 수정이 필요하면 개발PD에게 보고 후 순서 조율
+- 프리팹 추출 대상: TopHUD, RunEndPanel, HubPanel, BottomBar, SettingsOverlay, TowerPurchasePanel, TowerInfoTooltip, IdleBitOverlay, InventoryBar, HpWarningOverlay, TitleScreenPanel, ConnectionLine → `Assets/Prefabs/UI/`
+
+---
+
+## 디자인 문서 관리 (Notion 중심)
+- 모든 디자인 문서는 **Notion**에서 관리 (git 브랜치 독립)
+- Notion 위치: Soulspire 프로젝트 > 디자인 문서
+- 에이전트가 기획서 참조 시 Notion fetch 도구 사용
+- git의 Docs/Design/은 레거시 아카이브로만 유지, **신규 문서는 Notion에만 생성**
 
 ---
 
