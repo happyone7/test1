@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     /// <summary>
     /// PPT 명세 슬라이드 5 기반 팝업/툴팁 UI 오브젝트 생성
@@ -24,7 +24,7 @@ namespace Nodebreaker.Editor
         static readonly Color ColBtnYellowBg= new Color32(0x30, 0x28, 0x10, 0xFF);
         static readonly Color ColOverlay    = new Color32(0x00, 0x00, 0x00, 0x80);
 
-        [MenuItem("Tools/Nodebreaker/Setup Popups (PPT Slide 5)")]
+        [MenuItem("Tools/Soulspire/Setup Popups (PPT Slide 5)")]
         static void SetupPopups()
         {
             // InGameUI가 붙은 Canvas를 찾기 (TitleScreenCanvas가 아닌 메인 Canvas)

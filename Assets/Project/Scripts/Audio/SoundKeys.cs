@@ -1,4 +1,4 @@
-namespace Nodebreaker.Audio
+namespace Soulspire.Audio
 {
     public static class SoundKeys
     {

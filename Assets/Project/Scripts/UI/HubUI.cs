@@ -4,7 +4,7 @@ using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// Hub 화면 UI 컨트롤러

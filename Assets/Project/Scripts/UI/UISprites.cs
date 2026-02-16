@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// UI 스프라이트 에셋 참조를 중앙 관리하는 ScriptableObject.
     /// 런타임에서 동적 UI 생성 시 사용.
     /// 에디터: Assets/Project/ScriptableObjects/UI/UISprites.asset
     /// </summary>
-    [CreateAssetMenu(fileName = "UISprites", menuName = "Nodebreaker/UI Sprites")]
+    [CreateAssetMenu(fileName = "UISprites", menuName = "Soulspire/UI Sprites")]
     public class UISprites : ScriptableObject
     {
         [Header("프레임")]

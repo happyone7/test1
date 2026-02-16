@@ -1,8 +1,8 @@
 using Tesseract.ObjectPool;
 using UnityEngine;
-using Nodebreaker.Audio;
+using Soulspire.Audio;
 
-namespace Nodebreaker.Projectile
+namespace Soulspire.Projectile
 {
     public class Projectile : Poolable
     {

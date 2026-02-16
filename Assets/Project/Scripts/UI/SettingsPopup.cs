@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Nodebreaker.Audio;
+using Soulspire.Audio;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     /// <summary>
     /// 설정 팝업 (PPT 명세 슬라이드 5-3)

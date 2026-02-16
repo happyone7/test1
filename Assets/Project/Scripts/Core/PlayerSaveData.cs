@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nodebreaker.Core
+namespace Soulspire.Core
 {
     [Serializable]
     public class PlayerSaveData

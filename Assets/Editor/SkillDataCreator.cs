@@ -1,10 +1,10 @@
 using UnityEditor;
 using UnityEngine;
-using Nodebreaker.Data;
+using Soulspire.Data;
 
 public class SkillDataCreator
 {
-    [MenuItem("Tools/Nodebreaker/Create Skill Data Assets")]
+    [MenuItem("Tools/Soulspire/Create Skill Data Assets")]
     static void CreateSkillAssets()
     {
         string folder = "Assets/Data/Skills";
@@ -57,6 +57,6 @@ public class SkillDataCreator
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[Nodebreaker] 스킬 데이터 에셋 3개 생성 완료!");
+        Debug.Log("[Soulspire] 스킬 데이터 에셋 3개 생성 완료!");
     }
 }

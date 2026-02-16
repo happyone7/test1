@@ -6,7 +6,7 @@ using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.U2D;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public static class AIUIAssetPipeline
     {
@@ -38,7 +38,7 @@ namespace Nodebreaker.Editor
             { "NB_HubIcon_UnlockVoid.png", "NB_Hub_UnlockVoid.png" },
         };
 
-        [MenuItem("Tools/Nodebreaker/AI Assets/Run All (Sync + Import + Atlas)")]
+        [MenuItem("Tools/Soulspire/AI Assets/Run All (Sync + Import + Atlas)")]
         public static void RunAll()
         {
             ApplySelectedUIAssets();
@@ -46,7 +46,7 @@ namespace Nodebreaker.Editor
             BuildHubSpriteAtlas();
         }
 
-        [MenuItem("Tools/Nodebreaker/AI Assets/Apply Selected UI Assets")]
+        [MenuItem("Tools/Soulspire/AI Assets/Apply Selected UI Assets")]
         public static void ApplySelectedUIAssets()
         {
             Directory.CreateDirectory(ToAbsolutePath(UiHubDir));
@@ -101,7 +101,7 @@ namespace Nodebreaker.Editor
             }
         }
 
-        [MenuItem("Tools/Nodebreaker/AI Assets/Apply UI Sprite Import Settings")]
+        [MenuItem("Tools/Soulspire/AI Assets/Apply UI Sprite Import Settings")]
         public static void ApplyUISpriteImportSettings()
         {
             int updated = 0;
@@ -112,7 +112,7 @@ namespace Nodebreaker.Editor
             Debug.Log($"[AIUIAssetPipeline] Applied sprite import settings to {updated} textures.");
         }
 
-        [MenuItem("Tools/Nodebreaker/AI Assets/Build Hub SpriteAtlas")]
+        [MenuItem("Tools/Soulspire/AI Assets/Build Hub SpriteAtlas")]
         public static void BuildHubSpriteAtlas()
         {
             var atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(HubAtlasPath);

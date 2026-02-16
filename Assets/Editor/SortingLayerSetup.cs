@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     /// <summary>
     /// ArtDirection_v0.1.md 기준 Sorting Layer를 자동 등록하는 에디터 스크립트.
@@ -23,7 +23,7 @@ namespace Nodebreaker.Editor
             "UI_World"      // 60 - 월드 스페이스 UI
         };
 
-        [MenuItem("Tools/Nodebreaker/Setup Sorting Layers")]
+        [MenuItem("Tools/Soulspire/Setup Sorting Layers")]
         static void SetupSortingLayers()
         {
             var tagManager = new SerializedObject(
@@ -44,11 +44,11 @@ namespace Nodebreaker.Editor
             if (addedCount > 0)
             {
                 tagManager.ApplyModifiedProperties();
-                Debug.Log($"[Nodebreaker] Sorting Layer {addedCount}개 추가 완료: {string.Join(", ", RequiredSortingLayers)}");
+                Debug.Log($"[Soulspire] Sorting Layer {addedCount}개 추가 완료: {string.Join(", ", RequiredSortingLayers)}");
             }
             else
             {
-                Debug.Log("[Nodebreaker] 모든 Sorting Layer가 이미 존재합니다.");
+                Debug.Log("[Soulspire] 모든 Sorting Layer가 이미 존재합니다.");
             }
         }
 

@@ -3,7 +3,7 @@ using Tesseract.Core;
 using Tesseract.Save;
 using UnityEngine;
 
-namespace Nodebreaker.Core
+namespace Soulspire.Core
 {
     public class MetaManager : Singleton<MetaManager>
     {

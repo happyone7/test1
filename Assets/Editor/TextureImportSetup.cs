@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     /// <summary>
     /// UI 에셋 텍스처 임포트 설정 도구.
@@ -37,7 +37,7 @@ namespace Nodebreaker.Editor
         /// 새 UI 에셋 폴더 (Assets/Art/UI/Frames, Buttons, Icons) 임포트 설정.
         /// PPU=16, Point filter, No compression, 9-slice border 적용.
         /// </summary>
-        [MenuItem("Tools/Nodebreaker/Setup UI Art Import Settings")]
+        [MenuItem("Tools/Soulspire/Setup UI Art Import Settings")]
         public static void SetupUIArtTextures()
         {
             string[] uiArtFolders = new[]
@@ -164,7 +164,7 @@ namespace Nodebreaker.Editor
         /// <summary>
         /// 전체 UI 에셋 임포트 상태 검증 (QA용).
         /// </summary>
-        [MenuItem("Tools/Nodebreaker/Verify UI Art Import Settings")]
+        [MenuItem("Tools/Soulspire/Verify UI Art Import Settings")]
         public static void VerifyUIArtImportSettings()
         {
             string[] uiArtFolders = new[]
@@ -234,7 +234,7 @@ namespace Nodebreaker.Editor
             if (failed == 0)
                 Debug.Log($"[Verify] ALL PASS: {passed}/{total} UI art textures configured correctly.");
             else
-                Debug.LogError($"[Verify] {failed}/{total} textures have incorrect settings. Run 'Tools/Nodebreaker/Setup UI Art Import Settings' to fix.");
+                Debug.LogError($"[Verify] {failed}/{total} textures have incorrect settings. Run 'Tools/Soulspire/Setup UI Art Import Settings' to fix.");
         }
     }
 }

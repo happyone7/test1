@@ -1,11 +1,11 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Nodebreaker.Editor
+namespace Soulspire.Editor
 {
     public static class CleanupArrowTowers
     {
-        [MenuItem("Tools/Nodebreaker/Cleanup Pre-placed ArrowTowers")]
+        [MenuItem("Tools/Soulspire/Cleanup Pre-placed ArrowTowers")]
         static void Cleanup()
         {
             string[] names = { "ArrowTower_0", "ArrowTower_1", "ArrowTower_2" };

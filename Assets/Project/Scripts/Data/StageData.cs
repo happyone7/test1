@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Nodebreaker.Data
+namespace Soulspire.Data
 {
-    [CreateAssetMenu(fileName = "Stage_", menuName = "Nodebreaker/Stage Data")]
+    [CreateAssetMenu(fileName = "Stage_", menuName = "Soulspire/Stage Data")]
     public class StageData : ScriptableObject
     {
         public string stageId;

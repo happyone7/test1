@@ -1,9 +1,9 @@
 using System.Collections;
 using Tesseract.ObjectPool;
 using UnityEngine;
-using Nodebreaker.Audio;
+using Soulspire.Audio;
 
-namespace Nodebreaker.Node
+namespace Soulspire.Node
 {
     public class Node : Poolable
     {
@@ -64,7 +64,7 @@ namespace Nodebreaker.Node
                 _slowTimer -= Time.deltaTime;
 
             // 보스 능력: ArmorRegen - 10초마다 defense +5 (최대 25)
-            if (Data != null && Data.bossAbilityType == Nodebreaker.Data.BossAbilityType.ArmorRegen)
+            if (Data != null && Data.bossAbilityType == Soulspire.Data.BossAbilityType.ArmorRegen)
             {
                 _armorRegenTimer += Time.deltaTime;
                 if (_armorRegenTimer >= ARMOR_REGEN_INTERVAL)
@@ -93,7 +93,7 @@ namespace Nodebreaker.Node
             float speed = _scaledSpeed;
 
             // 보스 능력: Enrage - HP 50% 이하 시 속도 2배
-            if (!_enraged && Data != null && Data.bossAbilityType == Nodebreaker.Data.BossAbilityType.Enrage)
+            if (!_enraged && Data != null && Data.bossAbilityType == Soulspire.Data.BossAbilityType.Enrage)
             {
                 if (CurrentHp <= _scaledHp * 0.5f)
                 {
@@ -120,7 +120,7 @@ namespace Nodebreaker.Node
             CurrentHp -= actualDamage;
 
             // 보스 HP 바 실시간 업데이트
-            if (Data != null && Data.type == Nodebreaker.Data.NodeType.Boss)
+            if (Data != null && Data.type == Soulspire.Data.NodeType.Boss)
             {
                 var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
                 if (inGameUI != null)
@@ -139,7 +139,7 @@ namespace Nodebreaker.Node
             if (!IsAlive) return;
 
             // ArmorRegen 보스: AoE 피격 시 방어력 리젠 리셋
-            if (Data != null && Data.bossAbilityType == Nodebreaker.Data.BossAbilityType.ArmorRegen)
+            if (Data != null && Data.bossAbilityType == Soulspire.Data.BossAbilityType.ArmorRegen)
             {
                 _defense = _baseDefense;
                 _armorRegenTimer = 0f;
@@ -171,7 +171,7 @@ namespace Nodebreaker.Node
             CurrentHp = 0f;
 
             // 보스 처치 슬로우모션 연출
-            bool isBoss = Data != null && Data.type == Nodebreaker.Data.NodeType.Boss;
+            bool isBoss = Data != null && Data.type == Soulspire.Data.NodeType.Boss;
             if (isBoss)
             {
                 Time.timeScale = 0.2f;
