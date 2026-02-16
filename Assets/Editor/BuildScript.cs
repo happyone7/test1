@@ -13,7 +13,7 @@ public class BuildScript
     public static void BuildWindows()
     {
         string buildPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "SteamBuild", "content");
-        string exePath = Path.Combine(buildPath, "MyGame.exe");
+        string exePath = Path.Combine(buildPath, "Soulspire.exe");
 
         // EditorBuildSettings도 GameScene만 포함하도록 동기화
         EditorBuildSettings.scenes = new[]

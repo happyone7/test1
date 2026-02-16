@@ -1,7 +1,7 @@
 "AppBuild"
 {
 	"AppID" "4426340"
-	"Desc" "Nodebreaker TD dev build"
+	"Desc" "Soulspire dev build"
 	"BuildOutput" "../output"
 	"ContentRoot" ""
 	"SetLive" "dev_test"
