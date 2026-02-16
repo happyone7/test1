@@ -6,6 +6,7 @@ namespace Nodebreaker.Core
 {
     public enum GameState
     {
+        Title,
         Hub,
         InGame,
         RunEnd
@@ -17,7 +18,7 @@ namespace Nodebreaker.Core
         public Data.StageData[] stages;
 
         [Header("현재 상태")]
-        public GameState State { get; private set; } = GameState.Hub;
+        public GameState State { get; private set; } = GameState.Title;
 
         // MetaManager 위임 프로퍼티
         public int TotalBit => MetaManager.Instance.TotalBit;
@@ -31,44 +32,43 @@ namespace Nodebreaker.Core
 
         void Start()
         {
-            State = GameState.Hub;
+            State = GameState.Title;
 
             // InGame UI 요소 숨기기
             var inGameUI = Object.FindFirstObjectByType<UI.InGameUI>(FindObjectsInactive.Include);
             if (inGameUI != null)
                 inGameUI.HideAll();
 
-            // FTUE: 첫 플레이 감지 시 Hub 스킵하고 바로 Stage 1 진입
-            if (MetaManager.Instance.IsFirstPlay)
-            {
-                Debug.Log("[GameManager] FTUE: 첫 플레이 감지 - Hub 스킵, Stage 1 바로 진입");
-                MetaManager.Instance.SetFtueFlag(0, true); // 첫 플레이 완료 플래그
-
-                // Hub, 타이틀 숨기기
-                var hubUIFtue = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
-                if (hubUIFtue != null)
-                    hubUIFtue.Hide();
-
-                var titleUIFtue = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
-                if (titleUIFtue != null)
-                    titleUIFtue.Hide();
-
-                SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0f);
-                StartRun(0); // Stage 1 바로 시작
-                return;
-            }
-
             // Hub 숨기기 (타이틀 화면부터 시작)
             var hubUI = Object.FindFirstObjectByType<UI.HubUI>(FindObjectsInactive.Include);
             if (hubUI != null)
                 hubUI.Hide();
 
-            // 타이틀 화면 표시
+            // 타이틀 화면은 모든 사용자에게 항상 표시
             var titleUI = Object.FindFirstObjectByType<UI.TitleScreenUI>(FindObjectsInactive.Include);
             if (titleUI != null)
                 titleUI.Show();
 
             SoundManager.Instance.PlayBgm(SoundKeys.BgmHub, 0f);
+        }
+
+        /// <summary>
+        /// 타이틀 화면에서 Play 버튼 클릭 후 호출.
+        /// FTUE(첫 플레이)이면 Hub 스킵하고 Stage 1 직행,
+        /// 기존 사용자이면 Hub(스테이지 선택) 진입.
+        /// </summary>
+        public void OnTitlePlayClicked()
+        {
+            if (MetaManager.Instance.IsFirstPlay)
+            {
+                Debug.Log("[GameManager] FTUE: 첫 플레이 감지 - Hub 스킵, Stage 1 바로 진입");
+                MetaManager.Instance.SetFtueFlag(0, true); // 첫 플레이 완료 플래그
+                StartRun(0);
+            }
+            else
+            {
+                GoToHub();
+            }
         }
 
         public void StartRun(int stageIndex = -1)

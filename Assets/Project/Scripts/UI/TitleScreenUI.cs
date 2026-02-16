@@ -58,8 +58,8 @@ namespace Nodebreaker.UI
         {
             if (Singleton<Core.GameManager>.HasInstance)
             {
-                Core.GameManager.Instance.GoToHub();
                 Hide();
+                Core.GameManager.Instance.OnTitlePlayClicked();
             }
             else
             {
