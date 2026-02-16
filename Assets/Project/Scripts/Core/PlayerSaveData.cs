@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Serialization;
 using System.Collections.Generic;
 
 namespace Soulspire.Core
@@ -6,8 +7,10 @@ namespace Soulspire.Core
     [Serializable]
     public class PlayerSaveData
     {
-        public int totalBit;
-        public int totalCore;
+        [FormerlySerializedAs("totalBit")]
+        public int totalSoul;
+        [FormerlySerializedAs("totalCore")]
+        public int totalCoreFragment;
         public int currentStageIndex;
         public int totalNodesKilled;
         public List<SkillLevelEntry> skillLevels = new List<SkillLevelEntry>();

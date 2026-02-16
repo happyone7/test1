@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Soulspire.Data
 {
@@ -15,10 +16,12 @@ namespace Soulspire.Data
         [Header("스케일링 배율")]
         public float hpMultiplier = 1f;
         public float speedMultiplier = 1f;
-        public float bitDropMultiplier = 1f;
+        [FormerlySerializedAs("bitDropMultiplier")]
+        public float soulDropMultiplier = 1f;
 
         [Header("클리어 보상")]
-        public int coreReward = 2;
+        [FormerlySerializedAs("coreReward")]
+        public int coreFragmentReward = 2;
 
         [Header("기지")]
         public int baseHp = 10;

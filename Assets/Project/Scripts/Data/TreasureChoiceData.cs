@@ -7,7 +7,7 @@ namespace Soulspire.Data
         DamageBoost,
         AttackSpeedBoost,
         RangeBoost,
-        BitBonus,
+        SoulBonus,
         MaxHpBoost,
         TowerCostDiscount,
         CritChance,

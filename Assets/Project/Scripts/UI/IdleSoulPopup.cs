@@ -12,11 +12,11 @@ namespace Soulspire.UI
     /// 부재 시간: 12pt, #AFC3E8
     /// 수령 버튼: 220x50px, 채우기=#302810, 테두리=#FFD84D
     /// </summary>
-    public class IdleBitPopup : MonoBehaviour
+    public class IdleSoulPopup : MonoBehaviour
     {
         [Header("텍스트")]
         public Text titleText;
-        public Text bitAmountText;
+        public Text soulAmountText;
         public Text absenceTimeText;
 
         [Header("버튼")]
@@ -26,7 +26,7 @@ namespace Soulspire.UI
         [Header("UI 스프라이트")]
         public UISprites uiSprites;
 
-        private int _pendingBit;
+        private int _pendingSoul;
         private float _absenceSeconds;
 
         void Start()
@@ -45,16 +45,16 @@ namespace Soulspire.UI
             gameObject.SetActive(false);
         }
 
-        public void Show(int bitAmount, float absenceSeconds)
+        public void Show(int soulAmount, float absenceSeconds)
         {
-            _pendingBit = bitAmount;
+            _pendingSoul = soulAmount;
             _absenceSeconds = absenceSeconds;
 
             if (titleText != null)
                 titleText.text = "방치 보상";
 
-            if (bitAmountText != null)
-                bitAmountText.text = $"+{bitAmount:N0} Bit";
+            if (soulAmountText != null)
+                soulAmountText.text = $"+{soulAmount:N0} Bit";
 
             if (absenceTimeText != null)
             {
@@ -78,13 +78,13 @@ namespace Soulspire.UI
 
         private void OnClaim()
         {
-            if (_pendingBit > 0 && Singleton<Core.MetaManager>.HasInstance)
+            if (_pendingSoul > 0 && Singleton<Core.MetaManager>.HasInstance)
             {
-                Core.MetaManager.Instance.AddRunRewards(_pendingBit, 0, false, 0);
-                Debug.Log($"[IdleBitPopup] 방치 보상 수령: {_pendingBit} Bit");
+                Core.MetaManager.Instance.AddRunRewards(_pendingSoul, 0, false, 0);
+                Debug.Log($"[IdleSoulPopup] 방치 보상 수령: {_pendingSoul} Bit");
             }
 
-            _pendingBit = 0;
+            _pendingSoul = 0;
             Hide();
 
             // 허브 UI 갱신
