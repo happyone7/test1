@@ -108,21 +108,37 @@ namespace Soulspire.UI
         }
 
         /// <summary>
-        /// prerequisite 스킬들이 모두 1레벨 이상인지 확인
+        /// prerequisite 스킬 충족 여부 확인.
+        /// prerequisiteIsOr == true: 하나라도 충족하면 true (OR)
+        /// prerequisiteIsOr == false: 모두 충족해야 true (AND, 기본값)
         /// </summary>
         private bool ArePrerequisitesMet(Core.MetaManager meta)
         {
             if (data.prerequisiteIds == null || data.prerequisiteIds.Length == 0)
                 return true;
 
-            foreach (var prereqId in data.prerequisiteIds)
+            if (data.prerequisiteIsOr)
             {
-                if (string.IsNullOrEmpty(prereqId)) continue;
-                if (meta.GetSkillLevel(prereqId) <= 0)
-                    return false;
+                // OR: 하나라도 충족하면 true
+                foreach (var prereqId in data.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    if (meta.GetSkillLevel(prereqId) > 0)
+                        return true;
+                }
+                return false;
             }
-
-            return true;
+            else
+            {
+                // AND: 모두 충족해야 true (기존 로직)
+                foreach (var prereqId in data.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    if (meta.GetSkillLevel(prereqId) <= 0)
+                        return false;
+                }
+                return true;
+            }
         }
 
         /// <summary>

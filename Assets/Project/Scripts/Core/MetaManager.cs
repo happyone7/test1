@@ -133,6 +133,21 @@ namespace Soulspire.Core
                     case Data.SkillEffectType.BaseHp:
                         mods.bonusBaseHp += Mathf.RoundToInt(value);
                         break;
+                    case Data.SkillEffectType.Range:
+                        mods.rangeBonus += value;
+                        break;
+                    case Data.SkillEffectType.SoulGain:
+                        mods.soulGainMultiplier += value;
+                        break;
+                    case Data.SkillEffectType.StartSoul:
+                        mods.startSoul += Mathf.RoundToInt(value);
+                        break;
+                    case Data.SkillEffectType.SpawnRate:
+                        mods.spawnRateMultiplier += value;
+                        break;
+                    case Data.SkillEffectType.HpRegen:
+                        mods.hpRegenPerSecond += value;
+                        break;
                 }
             }
 
