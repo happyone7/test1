@@ -18,11 +18,27 @@ namespace Soulspire.Tower
 
         public Tower PlaceTower(Data.TowerData towerData, Vector3 position, int level = 1)
         {
+            if (towerData == null)
+            {
+                Debug.LogError("[TowerManager] PlaceTower 실패: towerData가 null");
+                return null;
+            }
+
+            if (towerData.prefab == null)
+            {
+                Debug.LogError($"[TowerManager] PlaceTower 실패: {towerData.towerName}({towerData.towerId})의 prefab이 null — SO 참조를 확인하세요");
+                return null;
+            }
+
             var go = Instantiate(towerData.prefab, position, Quaternion.identity);
             var tower = go.GetComponent<Tower>();
             if (tower == null) tower = go.AddComponent<Tower>();
             tower.Initialize(towerData, level);
             _placedTowers.Add(tower);
+
+            if (towerData.icon == null)
+                Debug.LogWarning($"[TowerManager] {towerData.towerName}({towerData.towerId})의 icon 스프라이트가 null — SO에 아이콘을 할당하세요");
+
             return tower;
         }
 

@@ -26,6 +26,64 @@ namespace Soulspire.Tower
         [Header("타워 감지")]
         public LayerMask towerLayer;
 
+        void Start()
+        {
+            DiagnoseTilemaps();
+        }
+
+        /// <summary>
+        /// 각 Tilemap 레이어의 참조, 타일 유무, TilemapRenderer 활성 상태를 진단 로그로 출력합니다.
+        /// </summary>
+        private void DiagnoseTilemaps()
+        {
+            DiagnoseSingleTilemap("Background", backgroundTilemap, 0);
+            DiagnoseSingleTilemap("Path", pathTilemap, 1);
+            DiagnoseSingleTilemap("Placement", placementTilemap, 2);
+            DiagnoseSingleTilemap("Wall", wallTilemap, 3);
+        }
+
+        private void DiagnoseSingleTilemap(string layerName, Tilemap tilemap, int expectedOrder)
+        {
+            if (tilemap == null)
+            {
+                Debug.LogWarning($"[TilemapManager] {layerName} Tilemap 참조가 null — 씬에서 할당이 필요합니다");
+                return;
+            }
+
+            var renderer = tilemap.GetComponent<TilemapRenderer>();
+            if (renderer == null)
+            {
+                Debug.LogError($"[TilemapManager] {layerName} Tilemap에 TilemapRenderer가 없습니다");
+                return;
+            }
+
+            if (!renderer.enabled)
+            {
+                Debug.LogError($"[TilemapManager] {layerName} TilemapRenderer가 비활성(disabled) 상태입니다 — 활성화합니다");
+                renderer.enabled = true;
+            }
+
+            if (!tilemap.gameObject.activeInHierarchy)
+            {
+                Debug.LogError($"[TilemapManager] {layerName} Tilemap GameObject가 비활성 상태입니다");
+            }
+
+            int tileCount = 0;
+            var bounds = tilemap.cellBounds;
+            foreach (var pos in bounds.allPositionsWithin)
+            {
+                if (tilemap.HasTile(pos))
+                    tileCount++;
+            }
+
+            if (tileCount == 0)
+            {
+                Debug.LogWarning($"[TilemapManager] {layerName} Tilemap에 배치된 타일이 0개입니다 — 타일 페인팅이 필요합니다");
+            }
+
+            Debug.Log($"[TilemapManager] {layerName}: tiles={tileCount}, sortingLayer={renderer.sortingLayerName}, order={renderer.sortingOrder}, active={tilemap.gameObject.activeInHierarchy}, rendererEnabled={renderer.enabled}");
+        }
+
         /// <summary>
         /// 해당 월드 좌표에 타워를 배치할 수 있는지 확인합니다.
         /// Placement Tilemap에 타일이 존재하고, 해당 위치에 타워가 없어야 합니다.
