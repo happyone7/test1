@@ -207,7 +207,7 @@ namespace Soulspire.Tower
         {
             if (other.data.type != data.type) return false;
             if (other.Level != Level) return false; // 같은 레벨끼리만 합성
-            if (Level >= 4) return false; // 최대 Lv4
+            if (Level >= data.MaxLevel) return false; // TowerData 기반 동적 레벨 캡
             Level++;
             Destroy(other.gameObject);
             return true;
@@ -218,7 +218,7 @@ namespace Soulspire.Tower
         /// </summary>
         public void LevelUp()
         {
-            if (Level < 4)
+            if (data != null && Level < data.MaxLevel)
                 Level++;
         }
 
