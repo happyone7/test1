@@ -1,39 +1,39 @@
-# 시각 검증 필요 작업 리스트
+# Visual Verification Task List
 
-단위 QA 시, 아래 유형에 해당하는 작업만 플레이모드 시각 검증을 수행한다.
-해당하지 않는 작업(SO 수치 변경, 코드 리팩터링, 문서 수정 등)은 시각 검증 생략.
+During unit QA, perform play-mode visual verification only for work types listed below.
+Skip visual verification for non-matching work (SO value changes, code refactoring, doc edits, etc.).
 
-## 시각 검증 대상 작업 유형
+## Work Types Requiring Visual Verification
 
-### UI 관련
-- UI 패널/HUD 신규 생성 또는 레이아웃 변경
-- UI 요소 표시/숨김 로직 변경
-- Canvas/패널 활성화 상태 변경
-- 스프라이트/이미지 교체 또는 추가
-- 버튼 인터랙션(호버, 클릭 효과) 변경
+### UI Related
+- New UI panel/HUD creation or layout changes
+- UI element show/hide logic changes
+- Canvas/panel activation state changes
+- Sprite/image replacement or addition
+- Button interaction (hover, click effect) changes
 
-### 화면 전환
-- 씬 전환 또는 게임 상태(Title/Hub/InGame/RunEnd) 전환 로직 변경
-- Show/Hide 호출 흐름 변경
+### Screen Transitions
+- Scene transition or game state (Title/Hub/InGame/RunEnd) transition logic changes
+- Show/Hide call flow changes
 
-### 시각 이펙트
-- 셰이더, 파티클, VFX 추가/변경
-- 애니메이션 추가/변경
-- 타워/몬스터 스프라이트 변경
+### Visual Effects
+- Shader, particle, VFX additions/changes
+- Animation additions/changes
+- Tower/monster sprite changes
 
-### 게임 오브젝트 배치
-- 씬 내 오브젝트 추가/삭제/이동
-- 프리팹 구조 변경 (자식 오브젝트 추가/삭제)
-- 카메라 설정 변경
+### GameObject Placement
+- Scene object add/delete/move
+- Prefab structure changes (child object add/delete)
+- Camera setting changes
 
-### 게임플레이 시각 요소
-- 타워 사거리 표시, 투사체 시각화
-- HP바, 데미지 텍스트 등 인게임 시각 피드백
-- 몬스터 경로 시각화
+### Gameplay Visual Elements
+- Tower range display, projectile visualization
+- HP bar, damage text, and other in-game visual feedback
+- Monster path visualization
 
-## 시각 검증 불필요 작업 유형 (참고)
-- SO 수치만 변경 (데미지, 비용, 쿨다운 등)
-- 내부 로직 리팩터링 (동작 변경 없음)
-- 오디오/사운드만 변경
-- 문서/에이전트/스킬 파일 수정
-- 빌드 스크립트/CI 설정 변경
+## Work Types NOT Requiring Visual Verification (reference)
+- SO value-only changes (damage, cost, cooldown, etc.)
+- Internal logic refactoring (no behavior change)
+- Audio/sound-only changes
+- Document/agent/skill file edits
+- Build script/CI configuration changes

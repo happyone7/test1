@@ -1,64 +1,64 @@
-# QA 체크리스트
+# QA Checklist
 
-## 코어 루프 (매 QA 시 필수)
+## Core Loop (required every QA session)
 
-### 게임 시작
-- [ ] 게임 시작 시 Hub 화면 표시
-- [ ] Hub에서 보유 Bit/Core 재화 정상 표시
-- [ ] "출전" 버튼 클릭 시 스테이지 진입
+### Game Start
+- [ ] Hub screen displays on game start
+- [ ] Bit/Core currency shown correctly in Hub
+- [ ] "Deploy" button click enters stage
 
-### 전투 (인게임)
-- [ ] 웨이브 카운터 정상 표시 및 증가
-- [ ] 몬스터 경로 따라 이동
-- [ ] 타워 배치 가능 (비용 차감)
-- [ ] 타워 공격 → 몬스터 HP 감소 → 처치 시 Bit 획득
-- [ ] 기지 HP 감소 시 HealthBar 반영
-- [ ] 기지 HP 0 → RunEnd 패널 표시
+### Combat (InGame)
+- [ ] Wave counter displays and increments correctly
+- [ ] Monsters follow path
+- [ ] Tower placement works (cost deducted)
+- [ ] Tower attacks -> monster HP decreases -> Bit gained on kill
+- [ ] Base HP decrease reflected in HealthBar
+- [ ] Base HP 0 -> RunEnd panel displays
 
-### 런 종료
-- [ ] RunEnd 패널에 획득 Bit 표시
-- [ ] Hub 복귀 시 Bit 누적 반영
+### Run End
+- [ ] RunEnd panel shows earned Bit
+- [ ] Bit accumulated on Hub return
 
-### 영구 성장 (Hub)
-- [ ] 스킬 노드 표시 (잠금/해금 상태 구분)
-- [ ] Bit 충분 시 스킬 구매 가능
-- [ ] 구매 후 레벨 증가, Bit 차감
-- [ ] 최대 레벨 시 구매 불가
-- [ ] Bit 부족 시 구매 불가
+### Permanent Growth (Hub)
+- [ ] Skill nodes displayed (locked/unlocked states)
+- [ ] Skill purchase possible when Bit sufficient
+- [ ] Level increases after purchase, Bit deducted
+- [ ] Max level prevents further purchase
+- [ ] Insufficient Bit prevents purchase
 
-### 모디파이어 적용
-- [ ] 공격력 스킬 → 타워 데미지 증가 확인
-- [ ] 공격속도 스킬 → 타워 공격 간격 감소 확인
-- [ ] 기지HP 스킬 → 시작 HP 증가 확인
+### Modifier Application
+- [ ] Attack skill -> tower damage increase confirmed
+- [ ] Attack speed skill -> tower attack interval decrease confirmed
+- [ ] Base HP skill -> starting HP increase confirmed
 
-## 콘텐츠 (Phase 3)
+## Content (Phase 3)
 
-### 스테이지 진행
-- [ ] Stage 1 클리어 → Stage 2 해금
-- [ ] Stage 2 클리어 → Stage 3 해금
-- [ ] 각 스테이지 보스 등장 및 처치 가능
+### Stage Progression
+- [ ] Stage 1 clear -> Stage 2 unlocked
+- [ ] Stage 2 clear -> Stage 3 unlocked
+- [ ] Each stage boss appears and can be defeated
 
-### 타워 업그레이드
-- [ ] 배치된 타워 클릭 → 업그레이드 UI 표시
-- [ ] 업그레이드 비용 차감, 레벨 증가
-- [ ] 최대 레벨 시 업그레이드 불가
+### Tower Upgrade
+- [ ] Click placed tower -> upgrade UI displays
+- [ ] Upgrade cost deducted, level increases
+- [ ] Max level prevents upgrade
 
-## 비기능 검증
+## Non-Functional Verification
 
-### 콘솔
-- [ ] Error 로그 0건
-- [ ] Warning 중 치명적 항목 없음
+### Console
+- [ ] 0 Error logs
+- [ ] No critical Warnings
 
-### 성능
-- [ ] 프레임 드롭 없이 원활한 플레이
-- [ ] 메모리 누수 징후 없음 (반복 플레이 시)
+### Performance
+- [ ] Smooth play without frame drops
+- [ ] No memory leak signs (during repeated play)
 
-### 세이브/로드
-- [ ] 플레이 후 앱 재시작 → 데이터 유지
-- [ ] 스킬 레벨, Bit, 스테이지 해금 상태 보존
+### Save/Load
+- [ ] Data persists after app restart
+- [ ] Skill levels, Bit, stage unlock status preserved
 
-## 스크린샷 명명 규칙
+## Screenshot Naming Convention
 ```
-Assets/Screenshots/qa_{스프린트}_{항목}.png
-예: qa_sprint4_hub.png, qa_sprint4_combat.png
+Assets/Screenshots/qa_{sprint}_{item}.png
+Example: qa_sprint4_hub.png, qa_sprint4_combat.png
 ```

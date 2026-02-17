@@ -28,7 +28,9 @@
 .DS_Store
 Thumbs.db
 
-# Telegram bot token (secret)
+# Secrets
+.env
+.env.*
 .claude/telegram-notify.sh
 
 # Unity asset meta backup
@@ -52,6 +54,9 @@ Assets/Plugins/Steamworks.NET/*.so
 .playwright-mcp/
 mcp-debug.log
 mcp-server-wrapper.js
+
+# Backups
+backups/
 
 # 디자인 문서는 Notion으로 이전 — git에서 제거하지는 않되 신규 추가 금지
 # Docs/Design/ 폴더 자체는 유지 (README + 레거시 아카이브)

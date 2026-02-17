@@ -1,57 +1,49 @@
-# Sprint Progress 문서 포맷
+# Sprint Progress Document Format
 
-## 문서 경로
-- `Docs/Sprint1_Progress.md`
-- `Docs/Sprint2_Progress.md`
-- `Docs/Sprint3_Progress.md`
-- `Docs/Sprint4_Progress.md`
-- (스프린트 추가 시 번호 증가)
+## Document Path
+- `Docs/Sprint{N}_Progress.md` (increment N per sprint)
 
-## 문서 헤더 (필수)
+## Required Header
 
 ```markdown
-# Sprint N 진행 현황
+# Sprint N Progress
 
-**프로젝트**: Soulspire
-**브랜치**: <현재 작업 브랜치>
-**기준 문서**: <참조 기획문서>
-**최종 업데이트**: YYYY-MM-DD
-**상태**: <전체 상태 한줄>
+**Project**: Soulspire
+**Branch**: <current working branch>
+**Reference Doc**: <design doc reference>
+**Last Updated**: YYYY-MM-DD
+**Status**: <one-line overall status>
 ```
 
-## 목표 섹션
+## Goals Section
 
 ```markdown
-## 스프린트 목표
-"<한줄 목표>"
-- 구체적 달성 항목 나열
+## Sprint Goals
+"<one-line goal>"
+- Specific deliverables list
 ```
 
-## 업무 카드 현황 (Notion 연동)
+## Task Card Status (Notion Integration)
 
 ```markdown
-## Notion 업무 카드 현황
+## Notion Task Cards
 
-| 카드 | 담당팀 | 상태 |
-|------|--------|------|
-| <업무명> | <팀> | 완료/진행중/대기/블로커 |
+| Card | Team | Status |
+|------|------|--------|
+| <task name> | <team> | Done/In Progress/Waiting/Blocked |
 ```
 
-## 팀장별 작업 기록
+## Per-Team Work Log
 
 ```markdown
-### <팀장명> (<에이전트명>) -- 커밋 <해시>
-- [x] 완료 항목 -- 설명
-- [ ] 미완료 항목 -- 설명
+### <Team Lead> (<agent-name>) -- commit <hash>
+- [x] Completed item -- description
+- [ ] Incomplete item -- description
 ```
 
-## 공수 산정 기준
-- 에이전트 병렬 실행: 1시간 = 단일 에이전트 6~8시간 분량
-- 모든 팀장에게 업무 배분 (유휴 팀 최소화)
-- 팀당 P0 + P1 업무 2~3개씩 배정
-- DevPD_Guidelines.md 8.1절 참조
+For effort estimation rules → see CLAUDE.md "Sprint Operations" section.
 
-## 관련 문서
-- 개발PD 지침서: `Docs/DevPD_Guidelines.md`
+## Related Documents
+- DevPD Guidelines: `Docs/DevPD_Guidelines.md`
 - GDD: `Docs/Design/GDD.md`
-- 아트 디렉션: `Docs/Design/ArtDirection_v0.1.md`
+- Art Direction: `Docs/Design/ArtDirection_v0.1.md`

@@ -1,113 +1,109 @@
 ---
 name: soulspire-qa-ops
 description: |
-  에디터 플레이모드 QA, 스크린샷 시각 검증, 콘솔 에러 확인, dev→sprint 머지 게이트.
-  트리거: "QA 해줘", "검증해줘", "머지 검증", "통합 QA"
-  제외: 코드 수정, UI 구현, 빌드, 에셋 제작
+  Editor play-mode QA, screenshot visual verification, console error checks, dev-to-sprint merge gate.
+  Triggers: "run QA", "verify", "merge check", "integration QA"
+  Excludes: code modification, UI implementation, builds, asset creation
 ---
 
-# Soulspire QA 운영
+# Soulspire QA Operations
 
-## 목적
-에디터 플레이모드에서 게임 동작을 검증하고, 통과한 작업만 sprint 브랜치에 머지한다.
+## Purpose
+Verify game behavior in editor play-mode. Only work that passes QA gets merged to sprint branch.
 
-## QA 유형별 절차
+## QA Types
 
-### 단위 QA (dev/* 브랜치 검증)
+### Unit QA (dev/* branch verification)
 
-사전조건 (미충족 시 QA 시작 금지):
+Prerequisites (do not start QA if unmet):
 ```
-1. 해당 팀장이 작업 완료 + 커밋 완료 상태인지 확인
-2. Notion 업무카드에 "자체 QA 범위" 기재되어 있는지 확인
-→ 미충족 시 해당 팀장에게 완료 요청 후 대기
-```
-
-절차:
-```
-1. 해당 dev/* 브랜치 체크아웃
-2. refresh_unity — 리컴파일
-3. read_console — 컴파일 에러 확인
-→ Gate: 컴파일 에러 0건이어야 4번 진행. 에러 시 즉시 팀장에게 수정 요청.
-4. manage_editor(action="enter_play_mode") — 플레이 시작
-5. references/checklist.md 기반 항목 확인
-6. manage_editor(action="take_screenshot") — 증거 스크린샷
-7. manage_editor(action="exit_play_mode") — 플레이 종료
-8. read_console — 런타임 에러/워닝 확인
+1. Confirm team lead has committed all work
+2. Confirm Notion task card has "self-QA scope" documented
+   -> If unmet, request completion from team lead and wait
 ```
 
-검증 통과 시:
+Procedure:
+```
+1. Checkout target dev/* branch
+2. refresh_unity — recompile
+3. read_console — check compile errors
+   -> Gate: 0 compile errors required. If errors, request fix from team lead immediately.
+4. manage_editor(action="enter_play_mode") — start play
+5. Verify items from references/checklist.md
+6. manage_editor(action="take_screenshot") — capture evidence
+7. manage_editor(action="exit_play_mode") — stop play
+8. read_console — check runtime errors/warnings
+```
+
+On pass:
 ```bash
 git checkout sprint{N}
-git merge --no-ff dev/{팀장} -m "merge: {팀장}팀 작업 머지 (QA 통과)"
+git merge --no-ff dev/{team} -m "merge: {team} work merged (QA passed)"
 ```
 
-검증 실패 시 (재검증 루프, 최대 2회):
+On fail (re-verify loop, max 2 attempts):
 ```
-1. 실패 항목 + 구체적 증거(콘솔 에러, 스크린샷) 포함하여 해당 팀장에게 수정 요청
-2. 팀장 수정 완료 후 → 해당 항목만 재검증 (전체 재실행 아님)
-3. 2회 재검증 후에도 실패 → 개발PD에게 에스컬레이션 (블로커 보고)
-```
-
-### 단위 QA — 조건부 시각 검증
-
-단위 QA 시 시각 검증 실행 여부 판단:
-```
-1. 작업 내용이 references/visual-verification-tasks.md에 해당하는지 확인
-2. 해당 → 플레이모드 실행 후 시각 상태 확인 (스크린샷 포함)
-3. 비해당 → 시각 검증 생략 (정적 검증만 수행)
+1. Send fail details + evidence (console errors, screenshots) to team lead
+2. After fix -> re-verify only failed items (not full re-run)
+3. After 2 failed re-verifications -> escalate to DevPD (blocker report)
 ```
 
-### 통합 QA (빌드 직전)
+### Unit QA — Conditional Visual Verification
 
-사전조건:
+Determine whether visual verification is needed:
 ```
-1. 모든 단위 QA 통과 완료 (Notion 카드에서 전원 "통과" 확인)
-2. 모든 dev/* → sprint 머지 완료
-3. sprint 브랜치에서 컴파일 에러 0건
-→ 미충족 시 통합 QA 시작하지 않고 잔여 작업 처리
+1. Check if work matches references/visual-verification-tasks.md
+2. Match -> Run visual check in play-mode (include screenshots)
+3. No match -> Skip visual check (static verification only)
+```
+
+### Integration QA (pre-build)
+
+Prerequisites:
+```
+1. All unit QAs passed (verify all Notion cards show "passed")
+2. All dev/* -> sprint merges completed
+3. 0 compile errors on sprint branch
+   -> If unmet, do not start integration QA; resolve remaining work first
 ```
 
 ```
-1. sprint 브랜치에서 전체 플로우 테스트
-2. references/checklist.md 전체 항목 확인
-3. 스크린샷 촬영 (Assets/Screenshots/)
-4. 전체 통과 → 결과 보고 → 총괄PD 승인 → 빌더에게 빌드 명령
-5. 실패 항목 존재 시:
-   a. 해당 dev/* 머지 원인 파악
-   b. 담당 팀장에게 수정 요청 (dev/* 브랜치에서 수정 후 재머지)
-   c. 수정 후 실패 항목만 재검증
-   d. 2회 재검증 실패 → 개발PD에게 에스컬레이션
+1. Full flow test on sprint branch
+2. Verify all items in references/checklist.md
+3. Capture screenshots (Assets/Screenshots/)
+4. All pass -> report results -> LeadPD approval -> build command to builder
+5. If any failures:
+   a. Identify which dev/* merge caused the issue
+   b. Request fix from responsible team lead (fix in dev/*, re-merge)
+   c. Re-verify only failed items
+   d. After 2 failed re-verifications -> escalate to DevPD
 ```
 
 ### BAT (Build Acceptance Test)
 
-빌드 직전 필수 실행. 통합 QA 통과 후, 빌더에게 빌드 명령 전에 수행:
+Required before every build. Run after integration QA passes, before commanding builder:
 ```
-1. references/bat.md 전체 항목 실행
-2. 플레이모드에서 기본 루프 (타이틀→Hub→인게임→런종료→Hub) 완주 확인
-3. 콘솔 Error 0건 확인
-4. 전체 통과 → 빌드 진행 / 1건이라도 실패 → 빌드 금지, 수정 후 재검증
+1. Execute all items in references/bat.md
+2. Verify basic loop in play-mode (Title -> Hub -> InGame -> RunEnd -> Hub)
+3. Confirm 0 console Errors
+4. All pass -> proceed to build / Any fail -> block build, fix and re-verify
 ```
 
-## 머지 권한
-- **sprint 브랜치 머지는 QA팀장만 가능** (다른 팀장 직접 머지 금지)
-- DevPD_Guidelines.md 5절 참조
+## Merge Authority
+- **Only QA lead can merge to sprint branch** (other team leads cannot merge directly)
+- See DevPD_Guidelines.md section 5
 
-## QA 결과 연동 (Multi-MCP)
+## QA Result Integration
 
-### Notion 업무카드 업데이트
-QA 완료 후 해당 업무 카드의 상태를 갱신한다.
-- DB ID: `58c89f190c684412969f7c41341489d1`
-- `QA 상태` → "통과" 또는 "실패"
-- `QA 결과` → 구체적 결과 기술 (통과 항목, 실패 항목, 스크린샷 경로)
-- `관련 커밋` → 검증 대상 커밋 해시
+### Notion Task Card Update
+After QA, update the task card status:
+- DB ID: see `.env` `$NOTION_DB_ID`
+- `QA Status` -> "Passed" or "Failed"
+- `QA Result` -> Specific details (passed items, failed items, screenshot paths)
+- `Related Commit` -> Verified commit hash
 
-### Discord 알림
-통합 QA 완료 시 Discord Webhook으로 결과 전송:
-- Webhook: QA 완료 알림 채널
-- 내용: 스프린트명, 통과/실패 수, 블로커 유무, 빌드 가능 여부
-
-## 주의 사항
-- QA팀장은 코드 수정 금지 — 버그 발견 시 해당 팀장에게 수정 요청
-- 커밋 시 `--author="QAEngineer <qa-engineer@soulspire.dev>"` 사용
-- 스크린샷은 `Assets/Screenshots/` 에 저장
+## Important Notes
+- QA lead must not modify code — report bugs to responsible team lead
+- Use QA author tag (see CLAUDE.md Git policy)
+- Save screenshots to `Assets/Screenshots/`
+- Report format: `## QA Result: [Pass/Fail]` with target branch, checklist N/N, visual/BAT status, failed items with symptoms, console errors, merge eligibility

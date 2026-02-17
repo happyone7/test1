@@ -1,50 +1,48 @@
-# 검증 체크리스트
+# Validation Checklist
 
-에이전트 또는 스킬을 생성/수정한 직후 아래 6항목을 **자동 수행**한다 (총괄PD가 요청하기 전에 알아서).
+Run these 6 checks **automatically** after creating/modifying any agent or skill (without waiting for LeadPD to ask).
 
-## 스킬 검증 (SKILL.md 대상)
+## Skill Validation (SKILL.md)
 
-### 1. SKILL.md 존재 확인
-- `.claude/prompts/skills/[스킬명]/SKILL.md` 파일 존재 여부
+### 1. SKILL.md Exists
+- `.claude/prompts/skills/[skill-name]/SKILL.md` file must exist
 
-### 2. YAML frontmatter 유효성
-- `name` 필드 존재 (soulspire- 접두사)
-- `description` 필드 존재
+### 2. YAML Frontmatter Valid
+- `name` field exists (must have `soulspire-` prefix)
+- `description` field exists
 
-### 3. description 길이
-- ~100 단어 이내
+### 3. Description Length
+- ~100 words or less
 
-### 4. body 길이
-- 5000 단어 이내
+### 4. Body Length
+- 5000 words or less
 
-### 5. 리소스 참조 유효성
-- SKILL.md body에서 `references/` 파일을 참조하는 경우, 해당 파일이 실제 존재하는지
+### 5. Resource Reference Validity
+- If SKILL.md body references `references/` files, verify those files actually exist
 
-### 6. 미사용 리소스 경고
-- `references/` 디렉토리에 파일이 있지만 SKILL.md body에서 참조하지 않는 파일이 있으면 경고
+### 6. Unused Resource Warning
+- If files exist in `references/` but are not referenced from SKILL.md body, issue a warning
 
-## 에이전트 검증 (.claude/agents/*.md 대상)
+## Agent Validation (.claude/agents/*.md)
 
-### 1. frontmatter 유효성
-- `name` 필드 존재
-- `description` 필드 존재 (~100 단어 이내)
-- Examples 2~3개 포함
+### 1. Frontmatter Valid
+- `name` field exists
+- `description` field exists (~100 words or less)
 
-### 2. 필수 섹션 존재
-- `## 역할` 섹션
-- `## 커밋 규칙` 섹션 (author 태그 포함)
-- `## 협업` 섹션
+### 2. Required Sections Exist
+- `## Role` section
+- `## Commit Rules` section (with author tag)
+- `## Collaboration` section
 
-### 3. 일반 지식 혼입 검사
-- body에 50줄 이상의 C# 코드 블록이 있으면 경고
-- "핵심 전문 분야", "모범 사례" 같은 일반 지식 목록이 있으면 경고
-- 프로젝트에 존재하지 않는 에이전트 참조가 있으면 경고
+### 3. General Knowledge Check
+- Warn if body contains C# code blocks over 50 lines
+- Warn if body references agents that don't exist in the project
 
-### 4. 크기 검사
-- body 100줄 초과 시 경고 (스킬 references로 분리 검토)
+### 4. Size Check
+- Warn if body exceeds 100 lines (consider splitting into skill references)
 
-## 공통: 변경 후 후속 작업
+## Post-Change Actions
 
-1. **커밋**: 에이전트/스킬 파일 변경 즉시 커밋 (프로젝트 관리 파일 자동 커밋 규칙)
-2. **노션 동기화**: 에이전트 추가/삭제, 스킬 생성/수정/삭제, 매핑 변경 시 노션 "에이전트 - 스킬 매핑" 페이지 갱신
-   - 페이지 ID: `30894296-0f5e-818a-86dc-e5dd3c7f8df8`
+1. **Commit**: Commit agent/skill file changes immediately (project management file auto-commit rule)
+2. **Notion sync**: Update Notion "Agent-Skill Mapping" page when agents are added/removed, skills are created/modified/deleted, or mappings change
+   - Page ID: `30894296-0f5e-818a-86dc-e5dd3c7f8df8`
