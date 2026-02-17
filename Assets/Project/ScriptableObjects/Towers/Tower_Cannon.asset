@@ -15,7 +15,7 @@ MonoBehaviour:
   towerId: cannon
   towerName: Cannon
   type: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 28ec67aec8614245bd311c9de2ca841b, type: 3}
   prefab: {fileID: 7350125889063344380, guid: b8b750f4e80ca3d4798c2cab047f19d1, type: 3}
   projectilePrefab: {fileID: 2542825949555221321, guid: 9a1eb5ffc3c74534293e14f896bae8ef, type: 3}
   damage:
