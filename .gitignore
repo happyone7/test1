@@ -28,6 +28,9 @@
 .DS_Store
 Thumbs.db
 
+# Telegram bot token (secret)
+.claude/telegram-notify.sh
+
 # Unity asset meta backup
 *.pidb.meta
 *.pdb.meta
