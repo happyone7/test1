@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Nodebreaker TD - UI 레이아웃 명세서 PPT 생성기
+Soulspire TD - UI 레이아웃 명세서 PPT 생성기
 해상도: 1920x1080 (16:9)
 모든 좌표는 픽셀 단위이며, PPT용 EMU로 변환됩니다.
 """
@@ -176,7 +176,7 @@ def build_slide_title_screen(prs):
     add_rect(slide, title_x, title_y, title_w, title_h,
              fill_color=None, border_color=C_NEON_GREEN, border_width=1)
     add_text(slide, title_x, title_y + 10, title_w, title_h,
-             "NODEBREAKER TD", font_size=48, color=C_NEON_GREEN,
+             "SOULSPIRE TD", font_size=48, color=C_NEON_GREEN,
              bold=True, align=PP_ALIGN.CENTER)
     add_dimension_label(slide, title_x, title_y - 18, 500, 20,
                         f"제목: ({title_x},{title_y-40}) {title_w}x{title_h}px, 48pt 굵게, #2BFF88, Anchor=Center-Center")
