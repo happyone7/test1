@@ -55,7 +55,11 @@ namespace Soulspire.Core
             if (currentLevel >= skillData.maxLevel) return false;
 
             int cost = skillData.GetCost(currentLevel);
-            return _data.totalSoul >= cost;
+
+            if (skillData.isCoreNode)
+                return _data.totalCoreFragment >= cost;
+            else
+                return _data.totalSoul >= cost;
         }
 
         public bool TryPurchaseSkill(string skillId)
@@ -66,7 +70,11 @@ namespace Soulspire.Core
             int currentLevel = GetSkillLevel(skillId);
             int cost = skillData.GetCost(currentLevel);
 
-            _data.totalSoul -= cost;
+            if (skillData.isCoreNode)
+                _data.totalCoreFragment -= cost;
+            else
+                _data.totalSoul -= cost;
+
             _skillLevelCache[skillId] = currentLevel + 1;
             Save();
             return true;
@@ -80,6 +88,24 @@ namespace Soulspire.Core
             if (cleared)
                 _data.currentStageIndex = Mathf.Max(_data.currentStageIndex, stageIdx + 1);
             Save();
+        }
+
+        /// <summary>
+        /// 특정 타워가 해금되었는지 확인합니다.
+        /// Arrow는 항상 해금. 다른 타워는 스킬트리에서 해당 해금 노드를 구매해야 합니다.
+        /// </summary>
+        public bool IsTowerUnlocked(string towerId)
+        {
+            if (towerId == "arrow") return true; // Arrow는 항상 사용 가능
+
+            if (allSkills == null) return false;
+            foreach (var skill in allSkills)
+            {
+                if (skill == null || !skill.isCoreNode) continue;
+                if (skill.unlockTargetId == towerId && GetSkillLevel(skill.skillId) > 0)
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>

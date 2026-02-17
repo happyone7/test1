@@ -37,6 +37,10 @@ namespace Soulspire.Data
         [Header("Prerequisite Mode")]
         public bool prerequisiteIsOr; // true = OR (하나만 충족), false = AND (모두 충족, 기본값)
 
+        [Header("Core Fragment Node")]
+        public bool isCoreNode;          // true = Core Fragment로 구매 (1회용), false = Soul로 구매 (반복)
+        public string unlockTargetId;    // 해금 대상 ID (예: "cannon", "ice", "lightning", "critical")
+
         public int GetCost(int currentLevel)
         {
             return Mathf.RoundToInt(baseCost * Mathf.Pow(growthRate, currentLevel));
