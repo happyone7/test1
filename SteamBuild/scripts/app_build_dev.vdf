@@ -1,9 +1,9 @@
 "AppBuild"
 {
 	"AppID" "4426340"
-	"Desc" "Soulspire dev build"
+	"Desc" "Soulspire Sprint 6 (v0.6.0) dev build"
 	"BuildOutput" "../output"
-	"ContentRoot" ""
+	"ContentRoot" "C:\\UnityProjects\\Soulspire\\SteamBuild\\content"
 	"SetLive" "dev_test"
 	"Depots"
 	{
