@@ -124,6 +124,10 @@ namespace Soulspire.Core
 
             _waitingForChoice = false;
 
+            // FTUE: 보물상자 첫 획득 가이드
+            if (Singleton<UI.FTUEManager>.HasInstance)
+                UI.FTUEManager.Instance.TriggerInGame("FirstTreasure", UI.FTUEManager.GuideFirstTreasure);
+
             // 인벤토리에 타워 추가
             if (Singleton<Tower.TowerInventory>.HasInstance)
             {

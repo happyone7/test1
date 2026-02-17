@@ -119,7 +119,7 @@ namespace Soulspire.UI
 
             if (sellText != null)
             {
-                int sellValue = Mathf.RoundToInt(data.placeCost * 0.5f);
+                int sellValue = _targetTower.GetSellValue();
                 sellText.text = $"판매: +{sellValue} Soul";
             }
 
@@ -221,14 +221,10 @@ namespace Soulspire.UI
         {
             if (_targetTower == null) return;
 
-            int sellValue = Mathf.RoundToInt(_targetTower.data.placeCost * 0.5f);
-            Debug.Log($"[TowerInfoTooltip] 타워 판매: {_targetTower.data.towerName}, +{sellValue} Soul");
+            // TowerManager를 통해 판매 (Soul 환급 + 배치 해제 + 목록 제거)
+            if (Singleton<Tower.TowerManager>.HasInstance)
+                Tower.TowerManager.Instance.SellTower(_targetTower);
 
-            // RunManager에 Bit 추가
-            if (Singleton<Core.RunManager>.HasInstance)
-                Core.RunManager.Instance.AddSoul(sellValue);
-
-            Destroy(_targetTower.gameObject);
             Hide();
         }
     }

@@ -36,6 +36,34 @@ namespace Soulspire.Tower
             return false;
         }
 
+        /// <summary>
+        /// 타워를 판매합니다. 70% Soul 환급 + 배치 해제.
+        /// </summary>
+        public bool SellTower(Tower tower)
+        {
+            if (tower == null || tower.data == null) return false;
+
+            int sellValue = tower.GetSellValue();
+
+            // Soul 환급
+            if (Singleton<Core.RunManager>.HasInstance)
+                Core.RunManager.Instance.AddSoul(sellValue);
+
+            // 배치 그리드 해제
+            if (Singleton<PlacementGrid>.HasInstance)
+            {
+                var cellPos = PlacementGrid.Instance.WorldToCell(tower.transform.position);
+                PlacementGrid.Instance.SetOccupied(cellPos, false);
+            }
+
+            // 목록에서 제거
+            _placedTowers.Remove(tower);
+
+            Debug.Log($"[TowerManager] 타워 판매: {tower.data.towerName} Lv{tower.Level}, +{sellValue} Soul");
+            Destroy(tower.gameObject);
+            return true;
+        }
+
         public void ClearAllTowers()
         {
             foreach (var tower in _placedTowers)
