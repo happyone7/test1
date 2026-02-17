@@ -31,7 +31,7 @@ namespace Soulspire.Node
 
         IEnumerator SpawnAllWaves()
         {
-            while (_currentWaveIndex < _currentStage.waves.Length)
+            while (_currentWaveIndex < _currentStage.waves.Length && Singleton<Core.RunManager>.HasInstance && Core.RunManager.Instance.IsRunning)
             {
                 var wave = _currentStage.waves[_currentWaveIndex];
                 bool isBossWave = IsBossWave(wave);
@@ -62,7 +62,14 @@ namespace Soulspire.Node
 
                 // 웨이브의 모든 노드가 죽거나 도착할 때까지 대기
                 while (_aliveCount > 0)
+                {
+                    if (!Singleton<Core.RunManager>.HasInstance || !Core.RunManager.Instance.IsRunning)
+                        yield break;
                     yield return null;
+                }
+                // 패배 체크 (alive가 0이 됐지만 런이 종료된 경우)
+                if (!Singleton<Core.RunManager>.HasInstance || !Core.RunManager.Instance.IsRunning)
+                    yield break;
 
                 if (isBossWave)
                 {
@@ -85,13 +92,6 @@ namespace Soulspire.Node
                 // RunManager 웨이브 카운터 동기화
                 if (Singleton<Core.RunManager>.HasInstance)
                     Core.RunManager.Instance.OnSingleWaveCleared();
-
-                // 마지막 웨이브가 아닌 경우에만 타워 드롭
-                if (_currentWaveIndex < _currentStage.waves.Length)
-                {
-                    DropRandomTowerToInventory();
-
-                }
             }
 
             // 모든 웨이브 완료 → RunManager에 알림
@@ -179,31 +179,6 @@ namespace Soulspire.Node
                     break;
                 }
             }
-        }
-
-        private void DropRandomTowerToInventory()
-        {
-            if (!Singleton<Tower.TowerManager>.HasInstance) return;
-
-            var available = Tower.TowerManager.Instance.availableTowers;
-            if (available == null || available.Length == 0) return;
-
-            if (!Singleton<Tower.TowerInventory>.HasInstance) return;
-
-            var inventory = Tower.TowerInventory.Instance;
-            if (inventory.IsFull)
-            {
-                Debug.Log("[WaveSpawner] 인벤토리가 가득 차서 타워 드롭 불가");
-                return;
-            }
-
-            var randomTower = available[Random.Range(0, available.Length)];
-            inventory.TryAddTower(randomTower, 1);
-            Debug.Log($"[WaveSpawner] 웨이브 클리어 보상: {randomTower.towerName} Lv1 획득");
-
-            // FTUE: 첫 타워 드롭 가이드
-            if (Singleton<UI.FTUEManager>.HasInstance)
-                UI.FTUEManager.Instance.TriggerInGame("FirstTowerDrop", UI.FTUEManager.GuideFirstTowerDrop);
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
