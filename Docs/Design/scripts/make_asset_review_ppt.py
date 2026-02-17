@@ -4,7 +4,7 @@ import os
 import zipfile
 from xml.sax.saxutils import escape
 
-OUT_PATH = os.path.join("Docs", "Design", "Nodebreaker_Asset_Review_v0.2.pptx")
+OUT_PATH = os.path.join("Docs", "Design", "Soulspire_Asset_Review_v0.2.pptx")
 
 SLIDE_W = 12192000
 SLIDE_H = 6858000
@@ -84,7 +84,7 @@ def build_slides():
     sid = 2
     s.append(textbox(sid, "bg", 0, 0, SLIDE_W, SLIDE_H, "", fill="0B0F1A", line=None))
     sid += 1
-    s.append(textbox(sid, "title", 685800, 685800, 10800000, 900000, "Nodebreaker TD Asset Review", size=4400, bold=True, color="D8E4FF", line=None))
+    s.append(textbox(sid, "title", 685800, 685800, 10800000, 900000, "Soulspire TD Asset Review", size=4400, bold=True, color="D8E4FF", line=None))
     sid += 1
     s.append(textbox(sid, "sub", 685800, 1600200, 10800000, 900000, "AssetManifest 기반 그래픽/사운드 검토용\n버전: v0.2 / 날짜: 2026-02-14", size=1800, color="AFC3E8", line=None))
     sid += 1
@@ -311,7 +311,7 @@ def core_xml():
                    xmlns:dcterms="http://purl.org/dc/terms/"
                    xmlns:dcmitype="http://purl.org/dc/dcmitype/"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <dc:title>Nodebreaker TD Asset Review</dc:title>
+  <dc:title>Soulspire TD Asset Review</dc:title>
   <dc:creator>Codex</dc:creator>
   <cp:lastModifiedBy>Codex</cp:lastModifiedBy>
   <dcterms:created xsi:type="dcterms:W3CDTF">{now}</dcterms:created>
