@@ -1,0 +1,12 @@
+"AppBuild"
+{
+	"AppID" "4426340"
+	"Desc" "Soulspire dev build"
+	"BuildOutput" "../output"
+	"ContentRoot" ""
+	"SetLive" "dev_test"
+	"Depots"
+	{
+		"4426341" "depot_build.vdf"
+	}
+}

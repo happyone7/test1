@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../TaskbarHero"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.core"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.objectpool"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.save"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.ui"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.audio"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.qa"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.cache"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.tooltip"
+		},
+		{
+			"path": "../../../../../../home/happy/tesseract-packages/com.tesseract.toast"
+		}
+	],
+	"settings": {}
+}

@@ -24,7 +24,7 @@ if [ ! -f "$SCRIPT_DIR/scripts/app_build.vdf" ]; then
 fi
 
 # content 폴더 확인
-if [ ! -f "$SCRIPT_DIR/content/MyGame.exe" ]; then
+if [ ! -f "$SCRIPT_DIR/content/Soulspire.exe" ]; then
     echo "[오류] content 폴더에 빌드 파일이 없습니다."
     echo "Unity에서 먼저 빌드하세요: Tools > Build Windows"
     exit 1

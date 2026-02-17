@@ -1,0 +1,600 @@
+using System.Collections;
+using System.Collections.Generic;
+using Tesseract.Core;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Serialization;
+
+namespace Soulspire.UI
+{
+    /// <summary>
+    /// Hub 화면 UI 컨트롤러
+    /// PPT 명세 기반 레이아웃: 상단 바(50px) + 스킬 트리(나머지) + 하단 바(55px)
+    /// </summary>
+    public class HubUI : MonoBehaviour
+    {
+        #region 색상 팔레트
+        public static readonly Color ColorMainBg       = new Color32(0x0B, 0x0F, 0x1A, 0xFF);
+        public static readonly Color ColorPanel        = new Color32(0x12, 0x1A, 0x2A, 0xFF);
+        public static readonly Color ColorBrightPanel  = new Color32(0x1A, 0x24, 0x3A, 0xFF);
+        public static readonly Color ColorNeonGreen    = new Color32(0x2B, 0xFF, 0x88, 0xFF);
+        public static readonly Color ColorNeonBlue     = new Color32(0x37, 0xB6, 0xFF, 0xFF);
+        public static readonly Color ColorNeonPurple   = new Color32(0xB8, 0x6C, 0xFF, 0xFF);
+        public static readonly Color ColorRed          = new Color32(0xFF, 0x4D, 0x5A, 0xFF);
+        public static readonly Color ColorYellowGold   = new Color32(0xFF, 0xD8, 0x4D, 0xFF);
+        public static readonly Color ColorTextPrimary  = new Color32(0xD8, 0xE4, 0xFF, 0xFF);
+        public static readonly Color ColorTextSecondary = new Color32(0xAF, 0xC3, 0xE8, 0xFF);
+        public static readonly Color ColorBorder       = new Color32(0x5B, 0x6B, 0x8A, 0xFF);
+        #endregion
+
+        [Header("배경")]
+        public Image backgroundImage;
+
+        [Header("상단 바 - 재화")]
+        [FormerlySerializedAs("totalBitText")]
+        public Text totalSoulText;
+        [FormerlySerializedAs("totalCoreText")]
+        public Text totalCoreFragmentText;
+
+        [Header("상단 바 - 방치 Bit 알림")]
+        [FormerlySerializedAs("idleBitPanel")]
+        public GameObject idleSoulPanel;
+        [FormerlySerializedAs("idleBitText")]
+        public Text idleSoulText;
+        [FormerlySerializedAs("idleBitClaimButton")]
+        public Button idleSoulClaimButton;
+
+        [Header("스킬 트리 영역")]
+        public ScrollRect skillScrollRect;
+
+        [Header("스킬 노드")]
+        public SkillNodeUI[] skillNodes;
+
+        [Header("상세 패널")]
+        public GameObject detailPanel;
+        public Text detailNameText;
+        public Text detailDescText;
+        public Text detailLevelText;
+        public Text detailCostText;
+        public Text detailEffectText;
+        public Button purchaseButton;
+
+        [Header("하단 바 - 스테이지 선택")]
+        public Dropdown stageDropdown;
+
+        [Header("하단 바 - 출격")]
+        public Button startRunButton;
+
+        [Header("하단 바 - 설정/종료")]
+        public Button settingsButton;
+        public Button quitButton;
+
+        [Header("팝업 참조")]
+        public SettingsPopup settingsPopup;
+        public IdleSoulPopup idleSoulPopup;
+
+        [Header("UI 스프라이트")]
+        public UISprites uiSprites;
+
+        [Header("아이콘 이미지")]
+        [FormerlySerializedAs("bitIconImage")]
+        public Image soulIconImage;     // Bit 재화 아이콘
+        [FormerlySerializedAs("coreIconImage")]
+        public Image coreFragmentIconImage;    // Core 재화 아이콘
+
+        [Header("패널 배경 이미지")]
+        public Image detailPanelImage; // 상세 패널 배경
+        public Image topBarImage;      // 상단 바 배경
+        public Image bottomBarImage;   // 하단 바 배경
+
+        [Header("가이드 텍스트 오버레이")]
+        public GameObject guideTextContainer;
+        public Text guideText;
+        public Image guideTextBackground;
+
+        [Header("상세 패널 - 추가 (PPT 명세)")]
+        public Text detailChangeBeforeText;  // 변경 전 값
+        public Text detailChangeAfterText;   // 변경 후 값
+        public Text purchaseButtonText;      // 구매 버튼 텍스트
+        public Button detailCloseButton;     // 닫기 X 버튼
+
+        private static readonly Color ColorOverlay = new Color32(0x05, 0x08, 0x12, 0xCC);
+
+        private Data.SkillNodeData _selectedSkill;
+        private int _selectedStageIndex;
+        private int _pendingIdleSoul;
+        private Coroutine _guideTextCoroutine;
+
+        /// <summary>
+        /// prerequisite 스킬들이 모두 1레벨 이상인지 확인
+        /// </summary>
+        private bool ArePrerequisitesMet(Data.SkillNodeData skill)
+        {
+            if (skill == null) return false;
+            if (skill.prerequisiteIds == null || skill.prerequisiteIds.Length == 0)
+                return true;
+
+            if (!Singleton<Core.MetaManager>.HasInstance) return false;
+            var meta = Core.MetaManager.Instance;
+
+            foreach (var prereqId in skill.prerequisiteIds)
+            {
+                if (string.IsNullOrEmpty(prereqId)) continue;
+                if (meta.GetSkillLevel(prereqId) <= 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 현재 드롭다운에서 선택된 스테이지 인덱스
+        /// </summary>
+        public int SelectedStageIndex => _selectedStageIndex;
+
+        void Start()
+        {
+            if (purchaseButton != null)
+                purchaseButton.onClick.AddListener(OnPurchase);
+
+            if (startRunButton != null)
+                startRunButton.onClick.AddListener(OnStartRun);
+
+            if (stageDropdown != null)
+                stageDropdown.onValueChanged.AddListener(OnStageDropdownChanged);
+
+            if (settingsButton != null)
+                settingsButton.onClick.AddListener(OnSettings);
+
+            if (quitButton != null)
+                quitButton.onClick.AddListener(OnQuit);
+
+            if (idleSoulClaimButton != null)
+                idleSoulClaimButton.onClick.AddListener(OnClaimIdleSoul);
+
+            if (detailCloseButton != null)
+                detailCloseButton.onClick.AddListener(OnDetailClose);
+
+            foreach (var node in skillNodes)
+            {
+                if (node != null)
+                    node.Initialize(OnSkillNodeSelected);
+            }
+
+            if (detailPanel != null)
+                detailPanel.SetActive(false);
+
+            if (idleSoulPanel != null)
+                idleSoulPanel.SetActive(false);
+
+            if (guideTextContainer != null)
+                guideTextContainer.SetActive(false);
+
+            // UI 스프라이트 적용
+            ApplyUISprites();
+        }
+
+        /// <summary>
+        /// UISprites SO에서 배경/패널/버튼/아이콘/드롭다운 스프라이트 적용.
+        /// </summary>
+        private void ApplyUISprites()
+        {
+            if (uiSprites == null) return;
+
+            // 배경
+            uiSprites.ApplyBackground(backgroundImage, true);
+
+            // 패널 프레임
+            uiSprites.ApplyPanelFrame(detailPanelImage);
+            uiSprites.ApplyPanelFrame(topBarImage);
+            uiSprites.ApplyPanelFrame(bottomBarImage);
+
+            // 아이콘
+            if (soulIconImage != null && uiSprites.iconSoul != null)
+            {
+                soulIconImage.sprite = uiSprites.iconSoul;
+                soulIconImage.preserveAspect = true;
+            }
+            if (coreFragmentIconImage != null && uiSprites.iconCoreFragment != null)
+            {
+                coreFragmentIconImage.sprite = uiSprites.iconCoreFragment;
+                coreFragmentIconImage.preserveAspect = true;
+            }
+
+            // 드롭다운 프레임
+            if (stageDropdown != null)
+            {
+                var dropdownImage = stageDropdown.GetComponent<Image>();
+                uiSprites.ApplyDropdownFrame(dropdownImage);
+            }
+
+            // 버튼 스프라이트
+            uiSprites.ApplyAccentButton(startRunButton);
+            uiSprites.ApplyAccentButton(purchaseButton);
+            uiSprites.ApplyBasicButton(settingsButton);
+            uiSprites.ApplyBasicButton(quitButton);
+            uiSprites.ApplyBasicButton(idleSoulClaimButton);
+        }
+
+        public virtual void Show()
+        {
+            // 부모 Canvas가 비활성일 수 있으므로 함께 활성화
+            var parentCanvas = GetComponentInParent<Canvas>(true);
+            if (parentCanvas != null)
+                parentCanvas.gameObject.SetActive(true);
+
+            gameObject.SetActive(true);
+            RefreshAll();
+        }
+
+        public virtual void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void RefreshAll()
+        {
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                var meta = Core.MetaManager.Instance;
+
+                if (totalSoulText != null)
+                    totalSoulText.text = $"Soul: {meta.TotalSoul:N0}";
+
+                if (totalCoreFragmentText != null)
+                    totalCoreFragmentText.text = $"Core Fragment: {meta.TotalCoreFragment}";
+
+                RefreshStageDropdown();
+                RefreshIdleSoulNotification();
+            }
+
+            foreach (var node in skillNodes)
+            {
+                if (node != null)
+                    node.Refresh();
+            }
+
+            if (_selectedSkill != null)
+                RefreshDetail();
+        }
+
+        private void RefreshStageDropdown()
+        {
+            if (stageDropdown == null) return;
+            if (!Singleton<Core.MetaManager>.HasInstance) return;
+            if (!Singleton<Core.GameManager>.HasInstance) return;
+
+            var meta = Core.MetaManager.Instance;
+            int maxStages = Core.GameManager.Instance.stages.Length;
+            int unlockedCount = Mathf.Min(meta.CurrentStageIndex + 1, maxStages);
+
+            // 드롭다운 재구성 중 onValueChanged 콜백으로 인한 인덱스 오염 방지
+            stageDropdown.onValueChanged.RemoveListener(OnStageDropdownChanged);
+
+            stageDropdown.ClearOptions();
+            var options = new List<Dropdown.OptionData>();
+            for (int i = 0; i < unlockedCount; i++)
+            {
+                options.Add(new Dropdown.OptionData($"Floor {i + 1}"));
+            }
+            stageDropdown.AddOptions(options);
+
+            // 마지막 해금 스테이지를 기본 선택
+            _selectedStageIndex = Mathf.Clamp(unlockedCount - 1, 0, maxStages - 1);
+            stageDropdown.SetValueWithoutNotify(_selectedStageIndex);
+
+            stageDropdown.onValueChanged.AddListener(OnStageDropdownChanged);
+        }
+
+        private void RefreshIdleSoulNotification()
+        {
+            if (idleSoulPanel == null) return;
+
+            // TODO: MetaManager에 방치 보상 시스템 구현 시 연동
+            // 현재는 _pendingIdleSoul 필드로 외부에서 설정 가능
+            if (_pendingIdleSoul > 0)
+            {
+                idleSoulPanel.SetActive(true);
+                if (idleSoulText != null)
+                    idleSoulText.text = $"방치 Soul: {_pendingIdleSoul:N0} [수령!]";
+            }
+            else
+            {
+                idleSoulPanel.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// 외부에서 방치 Bit 보상을 설정 (MetaManager 연동용)
+        /// </summary>
+        public void SetPendingIdleSoul(int amount)
+        {
+            _pendingIdleSoul = amount;
+            RefreshIdleSoulNotification();
+        }
+
+        private void OnClaimIdleSoul()
+        {
+            if (_pendingIdleSoul <= 0) return;
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                Core.MetaManager.Instance.AddRunRewards(_pendingIdleSoul, 0, false, 0);
+            }
+
+            _pendingIdleSoul = 0;
+            RefreshAll();
+        }
+
+        private void OnStageDropdownChanged(int index)
+        {
+            if (Singleton<Core.GameManager>.HasInstance)
+            {
+                int maxStages = Core.GameManager.Instance.stages.Length;
+                _selectedStageIndex = Mathf.Clamp(index, 0, maxStages - 1);
+            }
+            else
+            {
+                _selectedStageIndex = index;
+            }
+        }
+
+        private void OnSkillNodeSelected(Data.SkillNodeData data)
+        {
+            _selectedSkill = data;
+
+            if (detailPanel != null)
+                detailPanel.SetActive(true);
+
+            RefreshDetail();
+        }
+
+        private void RefreshDetail()
+        {
+            if (_selectedSkill == null) return;
+
+            int level = 0;
+            bool canPurchase = false;
+            int totalSoul = 0;
+            bool isLocked = !ArePrerequisitesMet(_selectedSkill);
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                var meta = Core.MetaManager.Instance;
+                level = meta.GetSkillLevel(_selectedSkill.skillId);
+                canPurchase = !isLocked && meta.CanPurchaseSkill(_selectedSkill.skillId);
+                totalSoul = meta.TotalSoul;
+            }
+
+            bool isMaxLevel = level >= _selectedSkill.maxLevel;
+
+            // 제목: "공격력 Lv3 -> Lv4" (PPT 명세)
+            if (detailNameText != null)
+            {
+                if (isLocked)
+                    detailNameText.text = $"{_selectedSkill.skillName} (잠금)";
+                else if (isMaxLevel)
+                    detailNameText.text = $"{_selectedSkill.skillName} Lv{level} (MAX)";
+                else
+                    detailNameText.text = $"{_selectedSkill.skillName} Lv{level} -> Lv{level + 1}";
+            }
+
+            if (detailDescText != null)
+            {
+                if (isLocked)
+                {
+                    // 선행 스킬 이름 표시
+                    string prereqNames = GetPrerequisiteNames(_selectedSkill);
+                    detailDescText.text = $"선행 스킬 필요: {prereqNames}";
+                }
+                else
+                {
+                    detailDescText.text = _selectedSkill.description;
+                }
+            }
+
+            if (detailLevelText != null)
+                detailLevelText.text = $"Lv.{level}/{_selectedSkill.maxLevel}";
+
+            // 효과 변경 전/후
+            if (detailEffectText != null)
+            {
+                if (isLocked)
+                {
+                    detailEffectText.text = $"효과: {_selectedSkill.effectType} (잠금)";
+                }
+                else
+                {
+                    float currentValue = _selectedSkill.GetTotalValue(level);
+                    if (isMaxLevel)
+                        detailEffectText.text = $"효과: {_selectedSkill.effectType} +{currentValue}";
+                    else
+                    {
+                        float nextValue = _selectedSkill.GetTotalValue(level + 1);
+                        detailEffectText.text = $"효과: {_selectedSkill.effectType} +{currentValue} -> +{nextValue}";
+                    }
+                }
+            }
+
+            // 변경 전/후 텍스트 (새 필드)
+            if (detailChangeBeforeText != null)
+            {
+                float currentValue = _selectedSkill.GetTotalValue(level);
+                detailChangeBeforeText.text = isLocked ? "현재: -" : $"현재: +{currentValue}";
+            }
+
+            if (detailChangeAfterText != null)
+            {
+                if (isLocked)
+                    detailChangeAfterText.text = "잠금 상태";
+                else if (isMaxLevel)
+                    detailChangeAfterText.text = "최대 레벨";
+                else
+                {
+                    float nextValue = _selectedSkill.GetTotalValue(level + 1);
+                    detailChangeAfterText.text = $"변경 후: +{nextValue}";
+                }
+            }
+
+            // 비용 텍스트 (자금 부족 시 빨간색, 잠금 시 회색)
+            if (detailCostText != null)
+            {
+                if (isLocked)
+                {
+                    detailCostText.text = "잠금";
+                    detailCostText.color = ColorTextSecondary;
+                }
+                else if (isMaxLevel)
+                {
+                    detailCostText.text = "MAX";
+                    detailCostText.color = ColorTextSecondary;
+                }
+                else
+                {
+                    int cost = _selectedSkill.GetCost(level);
+                    detailCostText.text = $"{cost} Soul";
+                    detailCostText.color = totalSoul >= cost ? ColorYellowGold : ColorRed;
+                }
+            }
+
+            // 구매 버튼 텍스트
+            if (purchaseButtonText != null)
+            {
+                if (isLocked)
+                    purchaseButtonText.text = "잠금";
+                else if (isMaxLevel)
+                    purchaseButtonText.text = "최대";
+                else
+                    purchaseButtonText.text = "구매";
+            }
+
+            if (purchaseButton != null)
+                purchaseButton.interactable = canPurchase;
+        }
+
+        /// <summary>
+        /// 선행 스킬 이름을 쉼표로 구분하여 반환
+        /// </summary>
+        private string GetPrerequisiteNames(Data.SkillNodeData skill)
+        {
+            if (skill.prerequisiteIds == null || skill.prerequisiteIds.Length == 0)
+                return "";
+
+            var names = new List<string>();
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                var meta = Core.MetaManager.Instance;
+                foreach (var prereqId in skill.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    // allSkills에서 이름 찾기
+                    if (meta.allSkills != null)
+                    {
+                        foreach (var s in meta.allSkills)
+                        {
+                            if (s != null && s.skillId == prereqId)
+                            {
+                                names.Add(s.skillName);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return names.Count > 0 ? string.Join(", ", names) : string.Join(", ", skill.prerequisiteIds);
+        }
+
+        private void OnPurchase()
+        {
+            if (_selectedSkill == null) return;
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                Core.MetaManager.Instance.TryPurchaseSkill(_selectedSkill.skillId);
+                RefreshAll();
+            }
+        }
+
+        private void OnStartRun()
+        {
+            if (Singleton<Core.GameManager>.HasInstance)
+                Core.GameManager.Instance.StartRun(_selectedStageIndex);
+        }
+
+        private void OnSettings()
+        {
+            if (settingsPopup != null)
+                settingsPopup.Show();
+            else
+                Debug.Log("[HubUI] Settings popup not assigned");
+        }
+
+        private void OnDetailClose()
+        {
+            if (detailPanel != null)
+                detailPanel.SetActive(false);
+            _selectedSkill = null;
+        }
+
+        private void OnQuit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+        // =====================================================================
+        // FTUE 가이드 텍스트 오버레이
+        // =====================================================================
+
+        /// <summary>
+        /// 화면 하단 중앙에 가이드 텍스트를 2초 표시 후 페이드아웃합니다.
+        /// </summary>
+        public void ShowGuideText(string text)
+        {
+            if (guideTextContainer == null || guideText == null) return;
+
+            if (_guideTextCoroutine != null)
+                StopCoroutine(_guideTextCoroutine);
+
+            _guideTextCoroutine = StartCoroutine(GuideTextRoutine(text));
+        }
+
+        private IEnumerator GuideTextRoutine(string text)
+        {
+            guideTextContainer.SetActive(true);
+            guideText.text = text;
+            guideText.color = ColorTextPrimary;
+
+            if (guideTextBackground != null)
+                guideTextBackground.color = ColorOverlay;
+
+            var canvasGroup = guideTextContainer.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = guideTextContainer.AddComponent<CanvasGroup>();
+
+            canvasGroup.alpha = 1f;
+
+            // 2초 표시
+            yield return new WaitForSecondsRealtime(2f);
+
+            // 0.5초 페이드아웃
+            float fadeTime = 0.5f;
+            float elapsed = 0f;
+            while (elapsed < fadeTime)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                canvasGroup.alpha = 1f - (elapsed / fadeTime);
+                yield return null;
+            }
+
+            canvasGroup.alpha = 0f;
+            guideTextContainer.SetActive(false);
+            _guideTextCoroutine = null;
+        }
+    }
+}

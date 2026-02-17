@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25d3b42c74bd1934085d1fb23c83363a, type: 3}
+  m_Name: UISprites
+  m_EditorClassIdentifier:
+  panelFrame: {fileID: 21300000, guid: 1ad0cd8b27a80344287afe862df69492, type: 3}
+  hpBarFrame: {fileID: 21300000, guid: 9d21e33a5213d8545ac37e3da09ae4f7, type: 3}
+  hpBarFill: {fileID: 21300000, guid: 9301fbf02e2db234bafcf44e9c046854, type: 3}
+  towerSlot: {fileID: 21300000, guid: 0ca8cdb0e02aff94d9831b479616b438, type: 3}
+  tooltipFrame: {fileID: 21300000, guid: 85fb6e559cdc2304eac5600f037af395, type: 3}
+  dropdownFrame: {fileID: 21300000, guid: cf8df9f137b5ba04ea8743facbea1a5d, type: 3}
+  btnBasicIdle: {fileID: 21300000, guid: d8a126d1da7c5014f909d43915eec269, type: 3}
+  btnBasicHover: {fileID: 21300000, guid: a524e2df19c74a546bf81ced901bc68c, type: 3}
+  btnBasicPressed: {fileID: 21300000, guid: 1e1f2e7f20e505a49b73674eb27578a1, type: 3}
+  btnBasicDisabled: {fileID: 21300000, guid: 13a4058565c64c5409836c58b38c0517, type: 3}
+  btnAccentIdle: {fileID: 21300000, guid: 5d89c7035b1d6fa498b1fa60aea0cd75, type: 3}
+  btnAccentHover: {fileID: 21300000, guid: 15ea4e105660b004492aa24163f01d80, type: 3}
+  btnAccentPressed: {fileID: 21300000, guid: fbc69ec3b5ff8f44d9379d20986e8c58, type: 3}
+  btnAccentDisabled: {fileID: 21300000, guid: 35e79ded620f88047bdd0863fb145a79, type: 3}
+  iconBit: {fileID: 21300000, guid: 5edefb0b243126048a9d8f1120772cb8, type: 3}
+  iconCore: {fileID: 21300000, guid: caf6eecc86b62a843b3f6e417d80ef5b, type: 3}
+  titleBackground: {fileID: 21300000, guid: 6ca405e80acaa424ca786a06f76330dc, type: 3}
+  hubBackground: {fileID: 21300000, guid: cf3d7aca3c99358458c39307040d1e7a, type: 3}
+  logo: {fileID: 21300000, guid: 169fd20428b2ab04e8367c3f297ff6a6, type: 3}

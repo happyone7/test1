@@ -52,7 +52,7 @@
 
 ### 방법 A: 에디터 메뉴
 1. **Tools > Build Windows** 클릭
-2. `SteamBuild/content/MyGame.exe` 에 빌드 결과물이 생성됩니다
+2. `SteamBuild/content/Soulspire.exe` 에 빌드 결과물이 생성됩니다
 
 ### 방법 B: 커맨드라인 (CI용)
 ```bash
@@ -105,7 +105,7 @@ if (SteamAPI.RestartAppIfNecessary(new AppId_t(1234560)))
 ### 5-4. 런치 옵션 설정
 1. 파트너 사이트 > 앱 관리 > **설치 > 일반 설치**
 2. Launch Options 추가:
-   - 실행 파일: `MyGame.exe`
+   - 실행 파일: `Soulspire.exe`
    - OS: Windows
 
 ## STEP 6: SteamCMD로 업로드
@@ -146,7 +146,7 @@ SET STEAM_USERNAME=your_steam_username
 ## 프로젝트 구조
 
 ```
-test1/
+Soulspire/
 ├── Assets/
 │   ├── Scripts/
 │   │   ├── PlayerController.cs    # WASD 이동 + 점프

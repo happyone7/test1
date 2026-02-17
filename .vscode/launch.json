@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "AI: Launch ComfyUI",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/Tools/ComfyUI/main.py",
+      "python": "${workspaceFolder}/Tools/.venvs/comfyui/bin/python",
+      "cwd": "${workspaceFolder}/Tools/ComfyUI",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "args": [
+        "--listen",
+        "127.0.0.1",
+        "--port",
+        "8188"
+      ]
+    }
+  ]
+}
