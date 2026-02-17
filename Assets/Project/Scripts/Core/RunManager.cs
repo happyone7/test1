@@ -140,5 +140,17 @@ namespace Soulspire.Core
             if (!cleared && Singleton<UI.FTUEManager>.HasInstance)
                 UI.FTUEManager.Instance.TriggerInGame("FirstDeath", UI.FTUEManager.GuideFirstDeath);
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// CurrentWaveIndex를 강제 설정합니다 (디버그용).
+        /// </summary>
+        public void Debug_SetWaveIndex(int index)
+        {
+            CurrentWaveIndex = index;
+        }
+#endif
     }
 }

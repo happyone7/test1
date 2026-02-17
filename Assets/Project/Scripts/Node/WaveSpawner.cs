@@ -205,5 +205,21 @@ namespace Soulspire.Node
             if (Singleton<UI.FTUEManager>.HasInstance)
                 UI.FTUEManager.Instance.TriggerInGame("FirstTowerDrop", UI.FTUEManager.GuideFirstTowerDrop);
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// 지정 웨이브부터 스폰을 재시작합니다 (디버그용).
+        /// StopSpawning() 호출 후에 사용해야 합니다.
+        /// </summary>
+        public void Debug_StartFromWave(Data.StageData stage, int waveIndex)
+        {
+            _currentStage = stage;
+            _currentWaveIndex = waveIndex;
+            _aliveCount = 0;
+            StartCoroutine(SpawnAllWaves());
+        }
+#endif
     }
 }

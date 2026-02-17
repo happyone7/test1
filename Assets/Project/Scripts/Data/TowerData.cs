@@ -37,12 +37,19 @@ namespace Soulspire.Data
         public float[] slowRate = { 0f, 0f, 0f, 0f, 0f };        // 0~1 (0.25 = 25% 감속)
         public float[] slowDuration = { 0f, 0f, 0f, 0f, 0f };    // 초
 
+        [Header("Lightning 전용 - 체인 공격 (레벨별)")]
+        public int[] chainCount = { 0, 0, 0, 0, 0 };             // 체인 횟수 (0이면 체인 없음)
+        public float[] chainDamageDecay = { 0.3f, 0.3f, 0.3f, 0.3f, 0.3f }; // 체인 데미지 감소율
+        public float chainRange = 3f;                              // 체인 탐색 범위
+
         public float GetDamage(int level) => damage[Mathf.Clamp(level - 1, 0, damage.Length - 1)];
         public float GetAttackSpeed(int level) => attackSpeed[Mathf.Clamp(level - 1, 0, attackSpeed.Length - 1)];
         public float GetRange(int level) => range[Mathf.Clamp(level - 1, 0, range.Length - 1)];
         public float GetExplosionRadius(int level) => explosionRadius[Mathf.Clamp(level - 1, 0, explosionRadius.Length - 1)];
         public float GetSlowRate(int level) => slowRate[Mathf.Clamp(level - 1, 0, slowRate.Length - 1)];
         public float GetSlowDuration(int level) => slowDuration[Mathf.Clamp(level - 1, 0, slowDuration.Length - 1)];
+        public int GetChainCount(int level) => chainCount[Mathf.Clamp(level - 1, 0, chainCount.Length - 1)];
+        public float GetChainDamageDecay(int level) => chainDamageDecay[Mathf.Clamp(level - 1, 0, chainDamageDecay.Length - 1)];
 
         [Header("업그레이드 비용 (Soul, 레벨별: Lv1->2, Lv2->3, Lv3->4)")]
         public int[] upgradeCost = { 30, 60, 120 };

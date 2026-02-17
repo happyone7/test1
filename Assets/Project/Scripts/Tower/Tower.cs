@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Tesseract.Core;
 using Tesseract.ObjectPool;
 using UnityEngine;
@@ -119,6 +120,14 @@ namespace Soulspire.Tower
                     damage *= 2f;
             }
 
+            // Lightning Tower: 체인 공격 (투사체 없이 즉시 데미지)
+            int chainCount = data.GetChainCount(Level);
+            if (chainCount > 0)
+            {
+                ChainAttack(damage, chainCount);
+                return;
+            }
+
             if (data.projectilePrefab != null)
             {
                 var spawnPos = firePoint != null ? firePoint : transform;
@@ -148,6 +157,49 @@ namespace Soulspire.Tower
             else
             {
                 _currentTarget.TakeDamage(damage);
+            }
+        }
+
+        void ChainAttack(float baseDamage, int maxChains)
+        {
+            float decay = data.GetChainDamageDecay(Level);
+            float chainRange = data.chainRange;
+            var hitNodes = new List<Node.Node> { _currentTarget };
+
+            // 첫 번째 타격
+            _currentTarget.TakeDamage(baseDamage);
+
+            float currentDamage = baseDamage;
+            Node.Node lastHit = _currentTarget;
+
+            for (int i = 0; i < maxChains; i++)
+            {
+                currentDamage *= (1f - decay);
+
+                // 체인 범위 내 가장 가까운 미타격 적 탐색
+                var colliders = Physics2D.OverlapCircleAll(lastHit.transform.position, chainRange);
+                Node.Node nextTarget = null;
+                float minDist = float.MaxValue;
+
+                foreach (var col in colliders)
+                {
+                    var node = col.GetComponent<Node.Node>();
+                    if (node != null && node.IsAlive && !hitNodes.Contains(node))
+                    {
+                        float dist = Vector2.Distance(lastHit.transform.position, node.transform.position);
+                        if (dist < minDist)
+                        {
+                            minDist = dist;
+                            nextTarget = node;
+                        }
+                    }
+                }
+
+                if (nextTarget == null) break;
+
+                nextTarget.TakeDamage(currentDamage);
+                hitNodes.Add(nextTarget);
+                lastHit = nextTarget;
             }
         }
 

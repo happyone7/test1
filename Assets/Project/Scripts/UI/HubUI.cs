@@ -290,8 +290,10 @@ namespace Soulspire.UI
         {
             if (idleSoulPanel == null) return;
 
-            // TODO: MetaManager에 방치 보상 시스템 구현 시 연동
-            // 현재는 _pendingIdleSoul 필드로 외부에서 설정 가능
+            // MetaManager Idle Soul 수집기 연동
+            if (Singleton<Core.MetaManager>.HasInstance)
+                _pendingIdleSoul = Core.MetaManager.Instance.CalculateIdleSoul();
+
             if (_pendingIdleSoul > 0)
             {
                 idleSoulPanel.SetActive(true);
@@ -319,7 +321,7 @@ namespace Soulspire.UI
 
             if (Singleton<Core.MetaManager>.HasInstance)
             {
-                Core.MetaManager.Instance.AddRunRewards(_pendingIdleSoul, 0, false, 0);
+                Core.MetaManager.Instance.CollectIdleSoul();
             }
 
             _pendingIdleSoul = 0;

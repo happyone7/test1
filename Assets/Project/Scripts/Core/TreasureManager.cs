@@ -326,6 +326,19 @@ namespace Soulspire.Core
             return null;
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// 보물상자를 확률 무시하고 강제 드롭합니다 (디버그용).
+        /// Phase 2 타워 보물상자(OnBossKilled)를 트리거합니다.
+        /// </summary>
+        public void Debug_ForceDrop()
+        {
+            OnBossKilled();
+        }
+#endif
+
         void ApplyEffect(TreasureChoiceData choice)
         {
             switch (choice.choiceType)
