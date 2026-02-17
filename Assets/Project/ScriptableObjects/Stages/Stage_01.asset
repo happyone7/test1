@@ -21,4 +21,4 @@ MonoBehaviour:
   speedMultiplier: 1
   bitDropMultiplier: 1
   coreReward: 2
-  baseHp: 15
+  baseHp: 20

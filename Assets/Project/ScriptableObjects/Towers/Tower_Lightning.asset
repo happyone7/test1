@@ -19,24 +19,24 @@ MonoBehaviour:
   prefab: {fileID: 0}
   projectilePrefab: {fileID: 0}
   damage:
-  - 6
-  - 8
-  - 13
-  - 18
-  - 27
+  - 12
+  - 20
+  - 32
+  - 48
+  - 70
   attackSpeed:
-  - 1.1
+  - 0.833
+  - 1.0
+  - 1.111
   - 1.25
-  - 1.43
-  - 1.67
-  - 2
+  - 1.429
   range:
   - 2.8
   - 3
   - 3.2
   - 3.4
   - 3.6
-  placeCost: 40
+  placeCost: 80
   explosionRadius:
   - 0
   - 0
@@ -57,19 +57,19 @@ MonoBehaviour:
   - 0
   chainCount:
   - 2
-  - 2
-  - 3
   - 3
   - 4
+  - 5
+  - 6
   chainDamageDecay:
   - 0.3
-  - 0.3
-  - 0.3
+  - 0.25
   - 0.2
-  - 0.2
+  - 0.15
+  - 0.1
   chainRange: 3
   upgradeCost:
-  - 33
-  - 46
-  - 65
-  - 91
+  - 66
+  - 92
+  - 130
+  - 182
