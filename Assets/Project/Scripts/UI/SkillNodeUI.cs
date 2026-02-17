@@ -32,7 +32,7 @@ namespace Soulspire.UI
         [Header("UI 스프라이트")]
         public UISprites uiSprites;
 
-        // 색상 (HubUI 팔레트 참조)
+        // 색상 (HubUI 팔레트 참조) — Soul 노드
         private static readonly Color ColorPurchasableBg    = new Color32(0x1A, 0x30, 0x20, 0xFF); // 어두운 초록 배경
         private static readonly Color ColorPurchasableBorder = new Color32(0x2B, 0xFF, 0x88, 0xFF); // 네온 초록
         private static readonly Color ColorMaxedBg          = new Color32(0x20, 0x18, 0x30, 0xFF); // 어두운 보라 배경
@@ -43,6 +43,14 @@ namespace Soulspire.UI
         private static readonly Color ColorNormalBorder     = new Color32(0x5B, 0x6B, 0x8A, 0xFF); // 기본 테두리
         private static readonly Color ColorLockedIcon       = new Color32(0x50, 0x50, 0x50, 0xFF); // 잠금 시 아이콘 어둡게
         private static readonly Color ColorTextDisabled     = new Color32(0x60, 0x68, 0x80, 0xFF); // 비활성 텍스트
+
+        // 색상 — Core Fragment 노드 (금색 계열)
+        private static readonly Color ColorCorePurchasableBg     = new Color32(0x30, 0x28, 0x10, 0xFF); // 어두운 금색 배경
+        private static readonly Color ColorCorePurchasableBorder = new Color32(0xFF, 0xD8, 0x4D, 0xFF); // 금색 (#FFD84D)
+        private static readonly Color ColorCoreMaxedBg           = new Color32(0x30, 0x28, 0x10, 0xFF); // 해금 완료 배경
+        private static readonly Color ColorCoreMaxedBorder       = new Color32(0xFF, 0xD8, 0x4D, 0xFF); // 금색 테두리
+        private static readonly Color ColorCoreNormalBg          = new Color32(0x20, 0x1C, 0x10, 0xFF); // Core 기본 배경
+        private static readonly Color ColorCoreNormalBorder      = new Color32(0xB0, 0x98, 0x40, 0xFF); // 어두운 금색 테두리
 
         private Action<Data.SkillNodeData> _onSelected;
 
@@ -142,32 +150,58 @@ namespace Soulspire.UI
         }
 
         /// <summary>
-        /// 노드의 시각적 상태를 업데이트 (배경/테두리 색상)
+        /// 노드의 시각적 상태를 업데이트 (배경/테두리 색상).
+        /// Core Fragment 노드는 금색 계열, Soul 노드는 초록/보라 계열.
         /// </summary>
         private void ApplyVisualState(bool isLocked, bool isMaxLevel, bool canPurchase)
         {
             Color bgColor;
             Color borderColor;
+            bool isCoreNode = data != null && data.isCoreNode;
 
             if (isLocked)
             {
+                // 잠금 상태는 Core/Soul 동일
                 bgColor = ColorLockedBg;
                 borderColor = ColorLockedBorder;
             }
-            else if (isMaxLevel)
+            else if (isCoreNode)
             {
-                bgColor = ColorMaxedBg;
-                borderColor = ColorMaxedBorder;
-            }
-            else if (canPurchase)
-            {
-                bgColor = ColorPurchasableBg;
-                borderColor = ColorPurchasableBorder;
+                // Core Fragment 노드: 금색 계열
+                if (isMaxLevel)
+                {
+                    bgColor = ColorCoreMaxedBg;
+                    borderColor = ColorCoreMaxedBorder;
+                }
+                else if (canPurchase)
+                {
+                    bgColor = ColorCorePurchasableBg;
+                    borderColor = ColorCorePurchasableBorder;
+                }
+                else
+                {
+                    bgColor = ColorCoreNormalBg;
+                    borderColor = ColorCoreNormalBorder;
+                }
             }
             else
             {
-                bgColor = ColorNormalBg;
-                borderColor = ColorNormalBorder;
+                // Soul 노드: 기존 초록/보라 계열
+                if (isMaxLevel)
+                {
+                    bgColor = ColorMaxedBg;
+                    borderColor = ColorMaxedBorder;
+                }
+                else if (canPurchase)
+                {
+                    bgColor = ColorPurchasableBg;
+                    borderColor = ColorPurchasableBorder;
+                }
+                else
+                {
+                    bgColor = ColorNormalBg;
+                    borderColor = ColorNormalBorder;
+                }
             }
 
             if (backgroundImage != null)
