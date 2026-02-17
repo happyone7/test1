@@ -23,7 +23,7 @@ if not exist "%~dp0scripts\app_build.vdf" (
 )
 
 REM content 폴더 확인
-if not exist "%~dp0content\MyGame.exe" (
+if not exist "%~dp0content\Soulspire.exe" (
     echo [오류] content 폴더에 빌드 파일이 없습니다.
     echo Unity에서 먼저 빌드하세요: Tools ^> Build Windows
     pause
