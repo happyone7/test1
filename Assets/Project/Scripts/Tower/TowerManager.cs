@@ -18,11 +18,27 @@ namespace Soulspire.Tower
 
         public Tower PlaceTower(Data.TowerData towerData, Vector3 position, int level = 1)
         {
+            if (towerData == null)
+            {
+                Debug.LogError("[TowerManager] PlaceTower 실패: towerData가 null");
+                return null;
+            }
+
+            if (towerData.prefab == null)
+            {
+                Debug.LogError($"[TowerManager] PlaceTower 실패: {towerData.towerName}({towerData.towerId})의 prefab이 null — SO 참조를 확인하세요");
+                return null;
+            }
+
             var go = Instantiate(towerData.prefab, position, Quaternion.identity);
             var tower = go.GetComponent<Tower>();
             if (tower == null) tower = go.AddComponent<Tower>();
             tower.Initialize(towerData, level);
             _placedTowers.Add(tower);
+
+            if (towerData.icon == null)
+                Debug.LogWarning($"[TowerManager] {towerData.towerName}({towerData.towerId})의 icon 스프라이트가 null — SO에 아이콘을 할당하세요");
+
             return tower;
         }
 
@@ -34,6 +50,34 @@ namespace Soulspire.Tower
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 타워를 판매합니다. 70% Soul 환급 + 배치 해제.
+        /// </summary>
+        public bool SellTower(Tower tower)
+        {
+            if (tower == null || tower.data == null) return false;
+
+            int sellValue = tower.GetSellValue();
+
+            // Soul 환급
+            if (Singleton<Core.RunManager>.HasInstance)
+                Core.RunManager.Instance.AddSoul(sellValue);
+
+            // 배치 그리드 해제
+            if (Singleton<PlacementGrid>.HasInstance)
+            {
+                var cellPos = PlacementGrid.Instance.WorldToCell(tower.transform.position);
+                PlacementGrid.Instance.SetOccupied(cellPos, false);
+            }
+
+            // 목록에서 제거
+            _placedTowers.Remove(tower);
+
+            Debug.Log($"[TowerManager] 타워 판매: {tower.data.towerName} Lv{tower.Level}, +{sellValue} Soul");
+            Destroy(tower.gameObject);
+            return true;
         }
 
         public void ClearAllTowers()

@@ -138,6 +138,10 @@ namespace Soulspire.Core
                 Debug.LogError("[GameManager] StartRun: InGameUI를 찾을 수 없음!");
             }
 
+            // FTUE: 첫 출격 가이드
+            if (Singleton<UI.FTUEManager>.HasInstance)
+                UI.FTUEManager.Instance.TriggerInGame("FirstSortie", UI.FTUEManager.GuideFirstSortie);
+
             RunModifiers mods = MetaManager.Instance.CalculateModifiers();
             RunManager.Instance.StartRun(stages[stageIdx], mods);
         }
@@ -289,5 +293,18 @@ namespace Soulspire.Core
                     Tesseract.ObjectPool.Poolable.TryPool(node.gameObject);
             }
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// GameState를 강제 설정합니다 (디버그용).
+        /// UI 전환 없이 상태값만 변경합니다.
+        /// </summary>
+        public void Debug_SetState(GameState state)
+        {
+            State = state;
+        }
+#endif
     }
 }

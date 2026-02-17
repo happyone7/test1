@@ -35,11 +35,20 @@
 
 ### 2.3 위임 원칙
 1. 개발PD는 절대 직접 코딩/UI/빌드 작업하지 않음
-2. 실무자 자체 QA: 각 팀장은 작업 후 동작 확인
-3. QA 조기 착수: 각 팀장 작업 단위 완료 시 즉시 해당 부분 QA
-4. UI 작업은 반드시 UI팀장 경유
-5. TA↔UI 역할 분리: TA는 컨셉+이미지, UI팀장은 시스템 구현
-6. 기획팀장 적극 활용: 수치 밸런싱, 레벨 디자인, SO 관리
+2. **에이전트 실패 시에도 개발PD 직접 작업 금지** — 네트워크 오류/MCP 장애/API 에러 등으로 에이전트가 실패하면 원인 해결 후 에이전트를 재실행할 것. 어떤 예외 상황에서도 개발PD가 "직접 하겠다"고 판단해서는 안 됨
+3. 실무자 자체 QA: 각 팀장은 작업 후 동작 확인
+4. QA 조기 착수: 각 팀장 작업 단위 완료 시 즉시 해당 부분 QA
+5. UI 작업은 반드시 UI팀장 경유
+6. TA↔UI 역할 분리: TA는 컨셉+이미지, UI팀장은 시스템 구현
+7. 기획팀장 적극 활용: 수치 밸런싱, 레벨 디자인, SO 관리
+
+### 2.4 에이전트 실패 복구 절차
+에이전트가 실패(권한 오류, MCP 타임아웃, 네트워크 장애 등)할 경우:
+1. **에러 원인 진단**: 에러 메시지를 확인하고 원인 분류 (권한, MCP, 네트워크, 코드 오류)
+2. **원인 해결**: 설정 수정, 서버 재시작, 의존성 설치 등
+3. **에이전트 재실행**: 동일 업무를 에이전트에게 다시 위임
+4. **절대 개발PD가 직접 대행하지 않음**: 반복 실패 시에도 원인 해결 → 재실행 루프 유지
+5. **3회 이상 실패 시**: 총괄PD에게 보고하고 대응 방향 결정
 
 ---
 
@@ -48,18 +57,19 @@
 ### 3.1 브랜칭 전략 (QA 게이트 방식)
 
 ```
-feature/phase1-core-loop  ← 기존 (Sprint 1~4, 레거시)
-sprint/5                  ← 메인 작업 브랜치 (QA팀장만 머지 가능)
-  ├─ dev/programmer       ← 프로그래밍팀장 작업 브랜치
-  ├─ dev/ui               ← UI팀장 작업 브랜치
-  ├─ dev/ta               ← TA팀장 작업 브랜치
-  ├─ dev/game-designer    ← 기획팀장 작업 브랜치
-  ├─ dev/sound            ← 사운드 디렉터 작업 브랜치
-  └─ dev/build            ← 빌더 작업 브랜치
+main                      ← 릴리스/배포 (Steam 빌드 기준)
+ └── sprint/N             ← 메인 작업 브랜치 (QA팀장만 머지 가능)
+      ├── feature/*       ← 크로스팀 기능 통합 (2개+ 팀 협업 시)
+      ├─ dev/programmer   ← 프로그래밍팀장 작업 브랜치
+      ├─ dev/ui           ← UI팀장 작업 브랜치
+      ├─ dev/ta           ← TA팀장 작업 브랜치
+      ├─ dev/game-designer← 기획팀장 작업 브랜치
+      ├─ dev/sound        ← 사운드 디렉터 작업 브랜치
+      └─ dev/build        ← 빌더 작업 브랜치
 ```
 
 **핵심 규칙:**
-1. **메인 작업 브랜치 이름**: `sprint/2`, `sprint/3`, `sprint/4`, `sprint/5` 등 스프린트 단위
+1. **메인 작업 브랜치 이름**: `sprint/N` (N = 스프린트 번호)
 2. **각 팀장**: 자기 이름의 `dev/*` 브랜치에서 작업 → 자체 QA 후 커밋
 3. **sprint 브랜치 머지 권한**: **QA팀장만 가능** (동작 검증 통과 후 머지)
 4. **직접 sprint 브랜치 커밋 금지**: 모든 팀장은 반드시 `dev/*` 브랜치 경유
@@ -70,14 +80,14 @@ sprint/5                  ← 메인 작업 브랜치 (QA팀장만 머지 가능
     ↓
 QA팀장: dev/* 브랜치 동작 검증
     ↓ (통과)
-QA팀장: sprint* 메인 브랜치로 머지
+QA팀장: sprint/N 메인 브랜치로 머지
     ↓ (실패)
 QA팀장: 해당 팀장에게 수정 요청 → 팀장 수정 후 재검증
 ```
 
 **브랜치 생성 명령 (각 팀장이 작업 시작 전 실행):**
 ```bash
-git checkout sprint/5
+git checkout sprint/N
 git pull
 git checkout -b dev/programmer   # 프로그래밍팀장
 git checkout -b dev/ui           # UI팀장
@@ -87,7 +97,7 @@ git checkout -b dev/ta           # TA팀장
 
 **QA팀장 머지 명령:**
 ```bash
-git checkout sprint/5
+git checkout sprint/N
 git merge --no-ff dev/programmer -m "merge: 프로그래밍팀장 작업 머지 (QA 통과)"
 ```
 
@@ -141,22 +151,22 @@ git commit --author="DevPD <dev-pd@soulspire.dev>"
 ### 4.1 공유 문서 (모든 개발PD가 참조)
 | 문서 | 경로 | 용도 |
 |------|------|------|
-| 스프린트 진행 현황 | `Docs/Sprint1_Progress.md` | 작업 상태 추적 |
-| 스프린트 피드백 | `Docs/Design/Sprint1_Feedback.md` | 총괄PD 피드백 |
+| 스프린트 진행 현황 | `Docs/SprintN_Progress.md` | 작업 상태 추적 (N = 스프린트 번호) |
+| 스프린트 계획 | `Docs/SprintN_Plan.md` | 스프린트 목표 및 업무 배분 |
 | GDD | `Docs/Design/GDD.md` | 게임 디자인 문서 |
 | 아트 디렉션 | `Docs/Design/ArtDirection_v0.1.md` | 아트 가이드 |
 | 이 지침서 | `Docs/DevPD_Guidelines.md` | 개발PD 운영 기준 |
 | MEMORY.md | `.claude/projects/.../memory/MEMORY.md` | 영구 기억 (Claude Code 전용) |
 
 ### 4.2 작업 전 확인 사항
-1. `Docs/Sprint1_Progress.md`를 먼저 읽고 현재 진행 상황 파악
+1. 해당 스프린트의 `Docs/SprintN_Progress.md`를 먼저 읽고 현재 진행 상황 파악
 2. `git log --oneline -20`으로 최근 커밋 확인 (다른 PD가 작업한 내용)
 3. `git status`로 미커밋 변경사항 확인
 
 ### 4.3 작업 후 필수 사항
 1. 해당 팀장 이름으로 커밋
-2. PM 에이전트를 호출하여 Sprint1_Progress.md 갱신
-3. 다른 팀에 영향을 주는 변경이면 Sprint1_Progress.md에 메모
+2. PM 에이전트를 호출하여 SprintN_Progress.md 갱신
+3. 다른 팀에 영향을 주는 변경이면 SprintN_Progress.md에 메모
 
 ---
 
@@ -298,7 +308,7 @@ C:\UnityProjects\
 3. **Worktree 갱신**: sprint 브랜치에서 dev/*로 최신 변경 가져오기
    ```bash
    cd C:\UnityProjects\wt-dev-programmer
-   git merge sprint/5 --no-edit
+   git merge sprint/N --no-edit
    ```
 
 ### 9.4 브랜치 전환 프로토콜 (Unity MCP 작업 시)
@@ -351,43 +361,61 @@ GameScene.unity에 UI 오브젝트가 직접 배치되어 있어, 여러 팀이 
 
 ---
 
-## 11. 디자인 문서 관리 (Notion 중심)
+## 11. 디자인 문서 관리 (로컬 md 기준 + Notion 동기화)
 
 ### 11.1 원칙
-- 모든 디자인 문서는 **Notion**에서 관리 (브랜치 독립)
-- git의 Docs/Design/은 Notion 링크 README만 유지
-- 에이전트가 기획서 참조 시 Notion fetch 도구 사용
+- **에이전트 기준 문서**: `Docs/Design/` 로컬 md 파일 (항상 최신 상태 유지)
+- **총괄PD 확인 공간**: Notion (기획 확인, 피드백, 외부 공유용)
+- **에이전트는 Notion을 직접 참조하지 않음** — 로컬 md만 참조
 
-### 11.2 Notion 디자인 문서 위치
+### 11.2 동기화 흐름
+- 기획팀장이 로컬 md 수정 → Notion에도 최신화 → git 커밋
+- **동기화 책임**: 기획팀장 (game-designer)
+
+### 11.3 Notion 디자인 문서 위치
 - 부모 페이지: Soulspire 프로젝트 > 디자인 문서
 - 각 문서는 하위 페이지로 생성
 
-### 11.3 문서 업데이트 규칙
-- 기획팀장이 기획서 수정 시 Notion에서 직접 수정
-- 버전 히스토리는 Notion이 자동 관리
+### 11.4 문서 업데이트 규칙
+- 기획팀장이 로컬 md 수정 후 Notion에 동기화
 - 중요 변경은 커밋 메시지나 PM 보고에 언급
+- 총괄PD가 Notion에서 수시로 확인하고 기획팀장에게 피드백
 
 ---
 
-## 12. Sprint 2 계획 (1시간 축소판, 총괄PD 승인됨)
+## 12. 스프린트 종료 필수 체크리스트
 
-**계획서 전문**: `Docs/Sprint2_Plan.md`
+스프린트 코드 머지 완료 후, 아래 항목을 **모두 수행해야** 스프린트 종료로 인정:
 
-### 핵심 목표
-1. **기본 아트 Unity 적용** - 스타일 락 완료된 타워/몬스터/타일 스프라이트
-2. **밸런싱 수치 기획 의도 반영** - 기획팀장 SO 직접 입력
-3. **프리팹/Git 프로세스 정리** - 씬 오브젝트 프리팹화
+### 12.1 필수 프로세스 (순서대로)
+| # | 항목 | 담당 | 설명 |
+|---|------|------|------|
+| 1 | SprintN_Progress.md 작성 | PM | 모든 작업 항목 상태, 커밋 해시, 이슈 기록 |
+| 2 | DevPD 문서 리뷰 | 개발PD | 스프린트 중 발생 문제 분석 → 원인 문서 수정 적용 |
+| 3 | 팀 플레이테스트 + 리뷰 회의 | 전 팀장 | 빌드 플레이 → 현재 빌드 평가 + 개선 방향 공유 |
+| 4 | 각 팀장 개선점 보고서 | 각 팀장 | 게임 플레이 후 PPT 3페이지 이내 작성 |
+| 5 | Notion 동기화 | PM | 스프린트 계획서 + 진행 기록을 Notion에 동기화 |
+| 6 | 빌드 | 빌더 | 총괄PD 승인 후 Windows 빌드 + Steam 업로드 |
 
-### 팀별 업무 (병렬 진행)
-| 담당 | 태스크 | 예상 시간 |
-|------|--------|-----------|
-| 기획팀장 | SO 밸런싱 수치 입력 | ~15분 |
-| TA팀장 | Arrow Tower/몬스터3종/타일셋5종 스프라이트 적용 | ~20분 |
-| 프로그래밍팀장 | 씬 오브젝트 프리팹화 정리 | ~15분 |
-| QA팀장 | 위 작업 완료 후 통합 검증 | ~10분 |
+### 12.2 주의사항
+- **코드 머지 + 태그 = 완료가 아님**: 위 6개 항목까지 마쳐야 스프린트 종료
+- 스프린트 종료 프로세스 미수행 시, 다음 스프린트 착수 금지
+- DevPD 문서 리뷰 대상: CLAUDE.md, DevPD_Guidelines.md, 스킬, 에이전트, prefab-protocol 등
 
-### 제외 항목 (Sprint 3 이후)
-- 스킬트리 UI 기획서/구현, 추가 타워/몬스터 코드, 사운드 폴리싱, Steam 빌드
+---
+
+## 13. 서브에이전트 권한 관리
+
+### 13.1 settings.json vs settings.local.json
+| 파일 | 적용 범위 | 용도 |
+|------|-----------|------|
+| `.claude/settings.json` | **서브에이전트 포함 전체** | 프로젝트 수준 공통 권한 (git 커밋 대상) |
+| `.claude/settings.local.json` | 메인 세션만 | 개인 로컬 설정 (gitignore 대상) |
+
+### 13.2 주의사항
+- 서브에이전트는 `settings.json`만 상속받음 (`settings.local.json` 미상속)
+- 에이전트에게 필요한 Bash 권한은 반드시 `settings.json`에 추가
+- 권한 변경은 총괄PD 승인 후 적용 (에이전트/스킬 거버넌스 동일 기준)
 
 ---
 
@@ -398,3 +426,4 @@ GameScene.unity에 UI 오브젝트가 직접 배치되어 있어, 여러 팀이 
 | 2026-02-15 | 초안 작성 — 3인 개발PD 정보공유 체계, 팀장별 git author, QA 조기착수, 기획팀장 활용 |
 | 2026-02-15 | Sprint 2 계획 추가 (1시간 축소판, 총괄PD 승인) |
 | 2026-02-16 | 9~11절 추가: Git Worktree 운영, 씬 수정 규칙(프리팹 기반), 디자인 문서 Notion 이전 |
+| 2026-02-17 | Sprint 6 DevPD 문서 리뷰: 위임 원칙 2조 추가, 에이전트 실패 복구 절차, 브랜치 일반화(sprint/N), 문서 참조 일반화(SprintN), 디자인 문서 정책 CLAUDE.md 통일, Sprint 2 레거시 제거, 스프린트 종료 체크리스트 신설, 서브에이전트 권한 관리 절 신설 |

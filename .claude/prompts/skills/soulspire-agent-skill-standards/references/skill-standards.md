@@ -1,63 +1,40 @@
-# 스킬 작성 기준
+# Skill Writing Standards
 
-## 3단계 정보 구조 (Progressive Disclosure)
+## 3-Level Information Architecture (Progressive Disclosure)
 
 ```
-frontmatter (~100 단어)  →  에이전트가 스킬을 발견할 때 읽는 요약
-body (<5000 단어)         →  스킬 실행 시 읽는 절차/규칙
-references/ (무제한)      →  body에서 참조하는 상세 데이터
+frontmatter (~100 words)  →  summary loaded when agent discovers skill
+body (<500 lines)          →  procedures loaded when skill triggers
+references/ (unlimited)    →  detailed data referenced from body
 ```
 
 ## Frontmatter
 
 ```yaml
 ---
-name: soulspire-[기능명]
+name: soulspire-[feature-name]
 description: |
-  한줄 설명. (~100 단어 이내)
-  트리거: 키워드1, 키워드2
-  제외: 담당하지 않는 영역
+  One-line description. (~100 words max)
+  Triggers: keyword1, keyword2
+  Excludes: areas not covered
 ---
 ```
 
-- name: `soulspire-` 접두사 필수
-- description: 100 단어 이내, 트리거/제외 명시
+- name: `soulspire-` prefix required
+- description: ≤100 words, include triggers/exclusions
 
 ## Body
 
-```markdown
-# [스킬 한글명]
-
-한 문장 역할 설명.
-
-## 참조 파일
-- [파일명](references/파일명.md) — 설명
-
-## 핵심 규칙/절차 (요약)
-body에는 핵심만. 상세는 references/에 위임.
-```
-
-- body는 5000 단어 이내
-- 절차(Sequential)가 있으면 번호 매기기
-- references/ 파일을 마크다운 링크로 참조
+- ≤500 lines. Use numbered steps for sequential procedures.
+- Reference files via markdown links: `[filename](references/filename.md)`
+- Core rules/procedures only. Move detailed data to references/.
 
 ## References
 
-- 체크리스트, 설정값, 포맷 템플릿, 상세 절차 등
-- 파일당 하나의 주제
-- body에서 참조하지 않는 파일은 references/에 두지 않음 (미사용 리소스 경고 대상)
+- Checklists, config values, format templates, detailed procedures
+- One topic per file. Unreferenced files are flagged as unused.
+- For files >100 lines, include a table of contents at top.
 
-## 스킬 vs 에이전트 역할 분담
+## Skill vs Agent Responsibility
 
-| 구분 | 스킬 (SKILL.md) | 에이전트 (.md) |
-|------|-----------------|----------------|
-| 성격 | 절차/규칙/방법 | 역할/맥락/협업 |
-| 예시 | "빌드→업로드 5단계" | "빌더의 역할과 사전조건" |
-| 공유 | 여러 에이전트가 참조 가능 | 하나의 에이전트 전용 |
-| 변경 빈도 | 절차 변경 시 | 팀 구조 변경 시 |
-
-## 금지 사항
-
-- body에 일반 지식 넣지 않음 (에이전트와 동일 기준)
-- references/에 프로젝트와 무관한 튜토리얼 넣지 않음
-- 하나의 스킬이 너무 많은 역할을 담당하지 않음 (단일 책임)
+See CLAUDE.md section "Team Structure and Roles" for the full distinction. In short: skills define **procedures** ("how"), agents define **roles** ("who does what").

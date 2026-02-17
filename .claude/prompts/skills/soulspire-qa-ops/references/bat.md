@@ -1,37 +1,37 @@
 # BAT (Build Acceptance Test)
 
-빌드 전 필수 실행. 게임 기본 루프와 핵심 기능이 정상 동작하는지 확인한다.
+Required before every build. Verifies basic game loop and core features work correctly.
 
-## 실행 시점
-- **빌드 직전에만 실행** (단위 QA에서는 실행하지 않음)
-- 통합 QA 완료 후, 빌더에게 빌드 명령 전에 수행
+## When to Run
+- **Pre-build only** (not during unit QA)
+- After integration QA passes, before commanding builder to build
 
-## 기본 루프 검증
+## Basic Loop Verification
 
-### 타이틀 → Hub 진입
-- [ ] 게임 시작 시 타이틀 화면 표시
-- [ ] 시작 버튼 클릭 → Hub 화면 전환
-- [ ] Hub UI(재화, 스킬 노드, 출전 버튼) 정상 표시
+### Title -> Hub Entry
+- [ ] Title screen displays on game start
+- [ ] Start button click -> transitions to Hub
+- [ ] Hub UI (currency, skill nodes, deploy button) displays correctly
 
-### Hub → 인게임 진입
-- [ ] 출전 버튼 클릭 → 인게임 전환
-- [ ] InGameUI(TopHUD, BottomBar, InventoryBar) 화면에 표시
-- [ ] 웨이브 카운터, HP바, 재화 표시 정상
+### Hub -> InGame Entry
+- [ ] Deploy button click -> transitions to InGame
+- [ ] InGameUI (TopHUD, BottomBar, InventoryBar) visible on screen
+- [ ] Wave counter, HP bar, currency display correct
 
-### 인게임 전투
-- [ ] 타워 자동 배치 또는 수동 배치 동작
-- [ ] 몬스터 스폰 및 경로 이동
-- [ ] 타워 공격 → 몬스터 피격 → 처치 시 Bit 획득
+### InGame Combat
+- [ ] Tower auto-placement or manual placement works
+- [ ] Monsters spawn and follow path
+- [ ] Tower attacks -> monster hit -> Bit gained on kill
 
-### 런 종료 → Hub 복귀
-- [ ] 기지 HP 0 또는 웨이브 클리어 시 RunEnd 패널 표시
-- [ ] Hub 복귀 시 Bit 누적 반영
-- [ ] 재출전 가능
+### Run End -> Hub Return
+- [ ] RunEnd panel shows when base HP 0 or wave cleared
+- [ ] Bit accumulated correctly on Hub return
+- [ ] Re-deploy possible
 
-### 콘솔
-- [ ] Error 로그 0건 (NullReference, MissingReference 등)
-- [ ] 치명적 Warning 없음
+### Console
+- [ ] 0 Error logs (NullReference, MissingReference, etc.)
+- [ ] No critical Warnings
 
-## 판정 기준
-- **전체 항목 통과**: 빌드 진행
-- **1건이라도 실패**: 빌드 금지, 해당 항목 수정 후 재검증
+## Pass Criteria
+- **All items pass**: Proceed to build
+- **Any item fails**: Block build, fix and re-verify

@@ -16,6 +16,9 @@ namespace Soulspire.UI
         public static readonly string GuideFirstDeath = "성장하면 더 강해집니다 — Sanctum에서 업그레이드!";
         public static readonly string GuideHubFirstEntry = "스킬을 눌러 영구 강화를 구매하세요";
         public static readonly string GuideBossWave = "보스가 나타났습니다! 처치하면 클리어!";
+        public static readonly string GuideFirstTreasure = "보물상자에서 타워를 획득했습니다! 인벤토리에 추가됩니다";
+        public static readonly string GuideFirstSortie = "터치하여 타워를 배치할 위치를 선택하세요";
+        public static readonly string GuideTowerSell = "타워를 터치하면 판매할 수 있습니다 (70% Soul 환급)";
 
         /// <summary>
         /// 가이드 텍스트를 InGameUI에 표시합니다 (중복 표시 방지).

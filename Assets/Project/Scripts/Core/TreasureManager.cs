@@ -124,6 +124,10 @@ namespace Soulspire.Core
 
             _waitingForChoice = false;
 
+            // FTUE: 보물상자 첫 획득 가이드
+            if (Singleton<UI.FTUEManager>.HasInstance)
+                UI.FTUEManager.Instance.TriggerInGame("FirstTreasure", UI.FTUEManager.GuideFirstTreasure);
+
             // 인벤토리에 타워 추가
             if (Singleton<Tower.TowerInventory>.HasInstance)
             {
@@ -325,6 +329,19 @@ namespace Soulspire.Core
             if (byRarity[TreasureRarity.Epic].Count > 0) return byRarity[TreasureRarity.Epic];
             return null;
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// 보물상자를 확률 무시하고 강제 드롭합니다 (디버그용).
+        /// Phase 2 타워 보물상자(OnBossKilled)를 트리거합니다.
+        /// </summary>
+        public void Debug_ForceDrop()
+        {
+            OnBossKilled();
+        }
+#endif
 
         void ApplyEffect(TreasureChoiceData choice)
         {

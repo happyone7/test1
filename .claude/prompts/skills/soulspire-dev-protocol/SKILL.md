@@ -1,23 +1,23 @@
 ---
 name: soulspire-dev-protocol
 description: |
-  Soulspire 프로젝트 개발 규칙: Git 협업, 프리팹/씬 관리, 폴더 구조.
-  모든 에이전트가 코드/에셋 작업 전 반드시 참조.
-  트리거: 커밋, 프리팹, 씬 수정, 폴더 구조, 파일 소유권
-  제외: 게임 디자인, 밸런싱, 사운드 제작
+  Soulspire development rules: Git collaboration, prefab/scene management, folder structure.
+  All agents must read before code/asset work.
+  Triggers: commit, prefab, scene edit, folder structure, file ownership
+  Excludes: game design, balancing, sound production
 ---
 
-# Soulspire 개발 프로토콜
+# Soulspire Development Protocol
 
-코드/에셋 작업 시작 전 아래 references/를 읽고 규칙을 따른다.
+Read the references below before starting any code/asset work.
 
-## 참조 파일
+## Reference Files
 
-1. **references/git-rules.md** — Git 커밋 컨벤션, 팀장별 author, 파일 소유권, 충돌 방지
-2. **references/prefab-protocol.md** — 프리팹 vs 씬 구분, 명명 규칙, 폴더 구조, 씬 편집 절차
+1. **references/git-rules.md** — Pre/post-work checklists, scene conflict prevention
+2. **references/prefab-protocol.md** — Prefab vs scene objects, naming, folder structure, scene edit procedures
 
-## 핵심 3줄 요약
+## Key Rules (3-line summary)
 
-1. 작업 완료 즉시 커밋. 팀장별 `--author` 필수 사용.
-2. 씬 파일 직접 수정 최소화. 프리팹 우선. 한 시점에 한 사람만 씬 수정.
-3. 파일 소유권 확인 후 작업. 남의 담당 폴더 함부로 건드리지 않기.
+1. Commit immediately after work. Use team-specific `--author` tag (see CLAUDE.md).
+2. Minimize direct scene file edits. Prefer prefabs. Only one person edits a scene at a time.
+3. Check file ownership before editing. Do not modify another team's folders.
