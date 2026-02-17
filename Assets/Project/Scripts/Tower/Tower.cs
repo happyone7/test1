@@ -166,8 +166,13 @@ namespace Soulspire.Tower
             float chainRange = data.chainRange;
             var hitNodes = new List<Node.Node> { _currentTarget };
 
+            // VFX 경로 수집: 타워(발사 위치) → 첫 번째 타겟 → 체인 타겟들
+            var spawnPos = firePoint != null ? firePoint : transform;
+            var chainPath = new List<Vector3> { spawnPos.position };
+
             // 첫 번째 타격
             _currentTarget.TakeDamage(baseDamage);
+            chainPath.Add(_currentTarget.transform.position);
 
             float currentDamage = baseDamage;
             Node.Node lastHit = _currentTarget;
@@ -199,8 +204,24 @@ namespace Soulspire.Tower
 
                 nextTarget.TakeDamage(currentDamage);
                 hitNodes.Add(nextTarget);
+                chainPath.Add(nextTarget.transform.position);
                 lastHit = nextTarget;
             }
+
+            // 체인 번개 VFX 생성 (경로가 2개 이상일 때만)
+            if (chainPath.Count >= 2)
+                SpawnChainLightningVFX(chainPath);
+        }
+
+        /// <summary>
+        /// 체인 번개 VFX 오브젝트를 생성합니다.
+        /// 프로토타입 단계이므로 Instantiate + 자동 Destroy 방식 사용.
+        /// </summary>
+        void SpawnChainLightningVFX(List<Vector3> chainPath)
+        {
+            var vfxGo = new GameObject("ChainLightningVFX");
+            var vfx = vfxGo.AddComponent<ChainLightningVFX>();
+            vfx.Play(chainPath);
         }
 
         public bool TryMerge(Tower other)
