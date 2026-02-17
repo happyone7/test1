@@ -20,7 +20,7 @@ namespace Soulspire.UI
         private static readonly Color ColorTextMain = new Color32(0xD8, 0xE4, 0xFF, 0xFF);     // #D8E4FF
         private static readonly Color ColorTextSub = new Color32(0xAF, 0xC3, 0xE8, 0xFF);      // #AFC3E8
         private static readonly Color ColorBorder = new Color32(0x5B, 0x6B, 0x8A, 0xFF);       // #5B6B8A
-        private static readonly Color ColorOverlay = new Color32(0x05, 0x08, 0x12, 0xCC);       // #050812 80%
+        private static readonly Color ColorOverlay = new Color32(0x05, 0x08, 0x12, 0x99);       // #050812 60%
         private static readonly Color ColorHpGreen = new Color32(0x44, 0xCC, 0x44, 0xFF);      // #44CC44
         private static readonly Color ColorHpBg = new Color32(0x33, 0x11, 0x11, 0xFF);         // #331111
         private static readonly Color ColorSpeedActive = new Color32(0x15, 0x30, 0x20, 0xFF);  // #153020
