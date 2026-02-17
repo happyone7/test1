@@ -69,19 +69,19 @@ namespace Soulspire.Editor
                 topBarBg = topBarObj.AddComponent<Image>();
             topBarBg.color = new Color(0, 0, 0, 0.5f);
 
-            var bitText = CreateUIText(topBarObj.transform, "TotalBitText", "Bit: 0",
+            var bitText = CreateUIText(topBarObj.transform, "TotalSoulText", "Soul: 0",
                 new Vector2(0, 0), new Vector2(0.3f, 1),
                 Vector2.zero, Vector2.zero);
             bitText.alignment = TextAnchor.MiddleCenter;
             bitText.fontSize = 24;
-            hubUI.totalBitText = bitText;
+            hubUI.totalSoulText = bitText;
 
-            var coreText = CreateUIText(topBarObj.transform, "TotalCoreText", "Core: 0",
+            var coreText = CreateUIText(topBarObj.transform, "TotalCoreFragmentText", "Core Fragment: 0",
                 new Vector2(0.3f, 0), new Vector2(0.6f, 1),
                 Vector2.zero, Vector2.zero);
             coreText.alignment = TextAnchor.MiddleCenter;
             coreText.fontSize = 24;
-            hubUI.totalCoreText = coreText;
+            hubUI.totalCoreFragmentText = coreText;
 
             // 스테이지 드롭다운
             var stageDropdownObj = FindOrCreateChild(topBarObj.transform, "StageDropdown");
@@ -215,7 +215,7 @@ namespace Soulspire.Editor
             dEffectText.fontSize = 16;
             hubUI.detailEffectText = dEffectText;
 
-            var dCostText = CreateUIText(detailPanel.transform, "DetailCostText", "비용: 50 Bit",
+            var dCostText = CreateUIText(detailPanel.transform, "DetailCostText", "비용: 50 Soul",
                 new Vector2(0.5f, 0), new Vector2(1, 0.35f),
                 Vector2.zero, Vector2.zero);
             dCostText.fontSize = 16;
