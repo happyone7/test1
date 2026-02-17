@@ -200,7 +200,7 @@ namespace Soulspire.Editor
             data.prefab = prefab;
             data.hp = 30f;
             data.speed = 2f;
-            data.bitDrop = 5;
+            data.soulDrop = 5;
             data.damage = 1;
 
             AssetDatabase.CreateAsset(data, path);
@@ -263,8 +263,8 @@ namespace Soulspire.Editor
             data.waves = new WaveData[] { wave };
             data.hpMultiplier = 1f;
             data.speedMultiplier = 1f;
-            data.bitDropMultiplier = 1f;
-            data.coreReward = 2;
+            data.soulDropMultiplier = 1f;
+            data.coreFragmentReward = 2;
             data.baseHp = 10;
 
             AssetDatabase.CreateAsset(data, path);
