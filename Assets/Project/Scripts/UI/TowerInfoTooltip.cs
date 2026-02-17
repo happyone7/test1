@@ -120,7 +120,7 @@ namespace Soulspire.UI
             if (sellText != null)
             {
                 int sellValue = Mathf.RoundToInt(data.placeCost * 0.5f);
-                sellText.text = $"판매: +{sellValue} Bit";
+                sellText.text = $"판매: +{sellValue} Soul";
             }
 
             // 업그레이드 버튼 상태
@@ -166,7 +166,7 @@ namespace Soulspire.UI
                 if (upgradeCostText != null)
                 {
                     upgradeCostText.gameObject.SetActive(true);
-                    upgradeCostText.text = $"{cost} Bit";
+                    upgradeCostText.text = $"{cost} Soul";
                     upgradeCostText.color = canAfford ? ColorYellow : ColorRed;
                 }
             }
@@ -222,7 +222,7 @@ namespace Soulspire.UI
             if (_targetTower == null) return;
 
             int sellValue = Mathf.RoundToInt(_targetTower.data.placeCost * 0.5f);
-            Debug.Log($"[TowerInfoTooltip] 타워 판매: {_targetTower.data.towerName}, +{sellValue} Bit");
+            Debug.Log($"[TowerInfoTooltip] 타워 판매: {_targetTower.data.towerName}, +{sellValue} Soul");
 
             // RunManager에 Bit 추가
             if (Singleton<Core.RunManager>.HasInstance)
