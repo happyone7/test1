@@ -71,6 +71,11 @@ namespace Soulspire.UI
 
             foreach (var towerData in _towerDataList)
             {
+                // 미해금 타워는 구매 패널에 표시하지 않음
+                if (Singleton<Core.MetaManager>.HasInstance &&
+                    !Core.MetaManager.Instance.IsTowerUnlocked(towerData.towerId))
+                    continue;
+
                 CreateTowerRow(towerData);
             }
         }
