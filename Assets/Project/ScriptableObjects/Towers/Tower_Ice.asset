@@ -15,7 +15,7 @@ MonoBehaviour:
   towerId: ice
   towerName: Ice
   type: 2
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0cf4015fa6df47d29eb896428f234746, type: 3}
   prefab: {fileID: 2512156276385100319, guid: 5a82c656e58c14744974f45f41acac0b, type: 3}
   projectilePrefab: {fileID: 9134609243964192754, guid: 67cb5dc2fa5496f4c8edd4c66a127ad2, type: 3}
   damage:

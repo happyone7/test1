@@ -252,9 +252,14 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             _isPaused = false;
             UpdateSpeedButtonVisuals();
 
-            // 오버레이 활성화
+            // 오버레이 활성화 (raycastTarget=false로 버튼 클릭 차단 방지)
             if (runEndOverlay != null)
+            {
                 runEndOverlay.SetActive(true);
+                var overlayImage = runEndOverlay.GetComponent<Image>();
+                if (overlayImage != null)
+                    overlayImage.raycastTarget = false;
+            }
 
             // 패널 활성화
             if (runEndPanel != null)
