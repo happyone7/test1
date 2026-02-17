@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b1a935952cbef48b0b28749779b562, type: 3}
+  m_Name: Tower_Lightning
+  m_EditorClassIdentifier:
+  towerId: lightning
+  towerName: Lightning
+  type: 3
+  icon: {fileID: 0}
+  prefab: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  damage:
+  - 6
+  - 8
+  - 13
+  - 18
+  - 27
+  attackSpeed:
+  - 1.1
+  - 1.25
+  - 1.43
+  - 1.67
+  - 2
+  range:
+  - 2.8
+  - 3
+  - 3.2
+  - 3.4
+  - 3.6
+  placeCost: 40
+  explosionRadius:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  slowRate:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  slowDuration:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  chainCount:
+  - 2
+  - 2
+  - 3
+  - 3
+  - 4
+  chainDamageDecay:
+  - 0.3
+  - 0.3
+  - 0.3
+  - 0.2
+  - 0.2
+  chainRange: 3
+  upgradeCost:
+  - 33
+  - 46
+  - 65
+  - 91
