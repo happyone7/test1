@@ -47,7 +47,12 @@ namespace Soulspire.UI
         [Header("스킬 트리 영역")]
         public ScrollRect skillScrollRect;
 
-        [Header("스킬 노드")]
+        [Header("스킬 노드 — 동적 생성")]
+        public SkillNodeUI skillNodePrefab;       // 스킬 노드 프리팹 (동적 생성용)
+        public RectTransform skillTreeContent;    // ScrollRect.content (노드 배치 컨테이너)
+        public float gridSpacing = 150f;          // 노드 간 그리드 간격 (px)
+
+        [Header("스킬 노드 — 수동 할당 (레거시)")]
         public SkillNodeUI[] skillNodes;
 
         [Header("상세 패널")]
@@ -104,9 +109,13 @@ namespace Soulspire.UI
         private int _selectedStageIndex;
         private int _pendingIdleSoul;
         private Coroutine _guideTextCoroutine;
+        private List<SkillNodeUI> _dynamicNodes = new List<SkillNodeUI>();
+        private bool _nodesGenerated;
 
         /// <summary>
-        /// prerequisite 스킬들이 모두 1레벨 이상인지 확인
+        /// prerequisite 스킬 충족 여부 확인.
+        /// prerequisiteIsOr == true: 하나라도 충족하면 true (OR)
+        /// prerequisiteIsOr == false: 모두 충족해야 true (AND, 기본값)
         /// </summary>
         private bool ArePrerequisitesMet(Data.SkillNodeData skill)
         {
@@ -117,14 +126,28 @@ namespace Soulspire.UI
             if (!Singleton<Core.MetaManager>.HasInstance) return false;
             var meta = Core.MetaManager.Instance;
 
-            foreach (var prereqId in skill.prerequisiteIds)
+            if (skill.prerequisiteIsOr)
             {
-                if (string.IsNullOrEmpty(prereqId)) continue;
-                if (meta.GetSkillLevel(prereqId) <= 0)
-                    return false;
+                // OR: 하나라도 충족하면 true
+                foreach (var prereqId in skill.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    if (meta.GetSkillLevel(prereqId) > 0)
+                        return true;
+                }
+                return false;
             }
-
-            return true;
+            else
+            {
+                // AND: 모두 충족해야 true (기존 로직)
+                foreach (var prereqId in skill.prerequisiteIds)
+                {
+                    if (string.IsNullOrEmpty(prereqId)) continue;
+                    if (meta.GetSkillLevel(prereqId) <= 0)
+                        return false;
+                }
+                return true;
+            }
         }
 
         /// <summary>
@@ -155,6 +178,10 @@ namespace Soulspire.UI
             if (detailCloseButton != null)
                 detailCloseButton.onClick.AddListener(OnDetailClose);
 
+            // 동적 스킬 노드 생성 (MetaManager.allSkills 기반)
+            GenerateSkillNodes();
+
+            // 수동 할당된 노드 초기화 (레거시 호환)
             foreach (var node in skillNodes)
             {
                 if (node != null)
@@ -216,6 +243,97 @@ namespace Soulspire.UI
             uiSprites.ApplyBasicButton(idleSoulClaimButton);
         }
 
+        // =====================================================================
+        // 동적 스킬 노드 생성
+        // =====================================================================
+
+        /// <summary>
+        /// MetaManager.allSkills 배열을 순회하여 SkillNodeUI를 동적으로 생성/배치합니다.
+        /// skillNodePrefab 또는 skillTreeContent가 미할당이면 동적 생성을 건너뛰고
+        /// 기존 수동 할당(skillNodes 배열) 방식으로 동작합니다.
+        /// </summary>
+        private void GenerateSkillNodes()
+        {
+            if (skillNodePrefab == null || skillTreeContent == null)
+            {
+                Debug.Log("[HubUI] skillNodePrefab 또는 skillTreeContent 미할당 — 수동 할당 모드로 동작");
+                return;
+            }
+
+            if (!Singleton<Core.MetaManager>.HasInstance)
+            {
+                Debug.LogWarning("[HubUI] MetaManager 미초기화 — 동적 노드 생성 건너뜀");
+                return;
+            }
+
+            var meta = Core.MetaManager.Instance;
+            if (meta.allSkills == null || meta.allSkills.Length == 0)
+            {
+                Debug.LogWarning("[HubUI] MetaManager.allSkills 비어 있음");
+                return;
+            }
+
+            _dynamicNodes.Clear();
+
+            foreach (var skillData in meta.allSkills)
+            {
+                if (skillData == null) continue;
+
+                // 수동 할당 배열에 이미 존재하는 노드는 건너뜀 (중복 방지)
+                bool alreadyAssigned = false;
+                foreach (var existingNode in skillNodes)
+                {
+                    if (existingNode != null && existingNode.data != null
+                        && existingNode.data.skillId == skillData.skillId)
+                    {
+                        alreadyAssigned = true;
+                        break;
+                    }
+                }
+                if (alreadyAssigned) continue;
+
+                // 프리팹 인스턴스 생성
+                var nodeObj = Instantiate(skillNodePrefab, skillTreeContent);
+                nodeObj.data = skillData;
+
+                // UISprites 전달
+                if (uiSprites != null)
+                    nodeObj.uiSprites = uiSprites;
+
+                // 그리드 위치 배치 (position * gridSpacing, 중앙 기준)
+                var rt = nodeObj.GetComponent<RectTransform>();
+                if (rt != null)
+                {
+                    rt.anchoredPosition = new Vector2(
+                        skillData.position.x * gridSpacing,
+                        skillData.position.y * gridSpacing
+                    );
+                }
+
+                // 초기화
+                nodeObj.Initialize(OnSkillNodeSelected);
+                _dynamicNodes.Add(nodeObj);
+            }
+
+            // 수동 할당된 노드도 그리드 위치에 맞게 재배치
+            foreach (var node in skillNodes)
+            {
+                if (node == null || node.data == null) continue;
+
+                var rt = node.GetComponent<RectTransform>();
+                if (rt != null && node.transform.parent == skillTreeContent)
+                {
+                    rt.anchoredPosition = new Vector2(
+                        node.data.position.x * gridSpacing,
+                        node.data.position.y * gridSpacing
+                    );
+                }
+            }
+
+            _nodesGenerated = true;
+            Debug.Log($"[HubUI] 동적 스킬 노드 {_dynamicNodes.Count}개 생성 완료 (전체 {meta.allSkills.Length}개)");
+        }
+
         public virtual void Show()
         {
             // 부모 Canvas가 비활성일 수 있으므로 함께 활성화
@@ -248,7 +366,15 @@ namespace Soulspire.UI
                 RefreshIdleSoulNotification();
             }
 
+            // 수동 할당 노드 새로고침
             foreach (var node in skillNodes)
+            {
+                if (node != null)
+                    node.Refresh();
+            }
+
+            // 동적 생성 노드 새로고침
+            foreach (var node in _dynamicNodes)
             {
                 if (node != null)
                     node.Refresh();
@@ -358,7 +484,9 @@ namespace Soulspire.UI
             int level = 0;
             bool canPurchase = false;
             int totalSoul = 0;
+            int totalCoreFragment = 0;
             bool isLocked = !ArePrerequisitesMet(_selectedSkill);
+            bool isCoreNode = _selectedSkill.isCoreNode;
 
             if (Singleton<Core.MetaManager>.HasInstance)
             {
@@ -366,19 +494,34 @@ namespace Soulspire.UI
                 level = meta.GetSkillLevel(_selectedSkill.skillId);
                 canPurchase = !isLocked && meta.CanPurchaseSkill(_selectedSkill.skillId);
                 totalSoul = meta.TotalSoul;
+                totalCoreFragment = meta.TotalCoreFragment;
             }
 
             bool isMaxLevel = level >= _selectedSkill.maxLevel;
 
-            // 제목: "공격력 Lv3 -> Lv4" (PPT 명세)
+            // 제목
             if (detailNameText != null)
             {
                 if (isLocked)
+                {
                     detailNameText.text = $"{_selectedSkill.skillName} (잠금)";
-                else if (isMaxLevel)
-                    detailNameText.text = $"{_selectedSkill.skillName} Lv{level} (MAX)";
+                }
+                else if (isCoreNode)
+                {
+                    // Core 노드: maxLevel==1이므로 레벨 진행 표시 불필요
+                    if (isMaxLevel)
+                        detailNameText.text = $"{_selectedSkill.skillName} (해금됨)";
+                    else
+                        detailNameText.text = _selectedSkill.skillName;
+                }
                 else
-                    detailNameText.text = $"{_selectedSkill.skillName} Lv{level} -> Lv{level + 1}";
+                {
+                    // Soul 노드: 레벨 진행 표시
+                    if (isMaxLevel)
+                        detailNameText.text = $"{_selectedSkill.skillName} Lv{level} (MAX)";
+                    else
+                        detailNameText.text = $"{_selectedSkill.skillName} Lv{level} -> Lv{level + 1}";
+                }
             }
 
             if (detailDescText != null)
@@ -395,15 +538,26 @@ namespace Soulspire.UI
                 }
             }
 
+            // 레벨 텍스트
             if (detailLevelText != null)
-                detailLevelText.text = $"Lv.{level}/{_selectedSkill.maxLevel}";
+            {
+                if (isCoreNode)
+                    detailLevelText.text = isMaxLevel ? "해금 완료" : "미해금";
+                else
+                    detailLevelText.text = $"Lv.{level}/{_selectedSkill.maxLevel}";
+            }
 
-            // 효과 변경 전/후
+            // 효과 텍스트
             if (detailEffectText != null)
             {
                 if (isLocked)
                 {
                     detailEffectText.text = $"효과: {_selectedSkill.effectType} (잠금)";
+                }
+                else if (isCoreNode)
+                {
+                    // Core 노드: Before/After 대신 효과 설명만 표시
+                    detailEffectText.text = _selectedSkill.description;
                 }
                 else
                 {
@@ -418,19 +572,34 @@ namespace Soulspire.UI
                 }
             }
 
-            // 변경 전/후 텍스트 (새 필드)
+            // 변경 전/후 텍스트 — Core 노드는 숨김
             if (detailChangeBeforeText != null)
             {
-                float currentValue = _selectedSkill.GetTotalValue(level);
-                detailChangeBeforeText.text = isLocked ? "현재: -" : $"현재: +{currentValue}";
+                if (isCoreNode)
+                {
+                    detailChangeBeforeText.text = "";
+                }
+                else
+                {
+                    float currentValue = _selectedSkill.GetTotalValue(level);
+                    detailChangeBeforeText.text = isLocked ? "현재: -" : $"현재: +{currentValue}";
+                }
             }
 
             if (detailChangeAfterText != null)
             {
-                if (isLocked)
+                if (isCoreNode)
+                {
+                    detailChangeAfterText.text = "";
+                }
+                else if (isLocked)
+                {
                     detailChangeAfterText.text = "잠금 상태";
+                }
                 else if (isMaxLevel)
+                {
                     detailChangeAfterText.text = "최대 레벨";
+                }
                 else
                 {
                     float nextValue = _selectedSkill.GetTotalValue(level + 1);
@@ -438,7 +607,7 @@ namespace Soulspire.UI
                 }
             }
 
-            // 비용 텍스트 (자금 부족 시 빨간색, 잠금 시 회색)
+            // 비용 텍스트 — Core 노드는 Core Fragment 단위로 표시
             if (detailCostText != null)
             {
                 if (isLocked)
@@ -448,26 +617,34 @@ namespace Soulspire.UI
                 }
                 else if (isMaxLevel)
                 {
-                    detailCostText.text = "MAX";
+                    detailCostText.text = isCoreNode ? "해금됨" : "MAX";
                     detailCostText.color = ColorTextSecondary;
                 }
                 else
                 {
                     int cost = _selectedSkill.GetCost(level);
-                    detailCostText.text = $"{cost} Soul";
-                    detailCostText.color = totalSoul >= cost ? ColorYellowGold : ColorRed;
+                    if (isCoreNode)
+                    {
+                        detailCostText.text = $"{cost} Core Fragment";
+                        detailCostText.color = totalCoreFragment >= cost ? ColorYellowGold : ColorRed;
+                    }
+                    else
+                    {
+                        detailCostText.text = $"{cost} Soul";
+                        detailCostText.color = totalSoul >= cost ? ColorYellowGold : ColorRed;
+                    }
                 }
             }
 
-            // 구매 버튼 텍스트
+            // 구매 버튼 텍스트 — Core 노드는 "해금"
             if (purchaseButtonText != null)
             {
                 if (isLocked)
                     purchaseButtonText.text = "잠금";
                 else if (isMaxLevel)
-                    purchaseButtonText.text = "최대";
+                    purchaseButtonText.text = isCoreNode ? "해금됨" : "최대";
                 else
-                    purchaseButtonText.text = "구매";
+                    purchaseButtonText.text = isCoreNode ? "해금" : "구매";
             }
 
             if (purchaseButton != null)
