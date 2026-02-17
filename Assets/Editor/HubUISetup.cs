@@ -81,25 +81,25 @@ namespace Soulspire.Editor
             var topBarBorderImg = topBarBorderObj.AddComponent<Image>();
             topBarBorderImg.color = ColorBorder;
 
-            // Bit 카운터 (20,8) 200x35px
-            var bitTextObj = CreateChild(topBar.transform, "TotalBitText");
-            var bitRect = bitTextObj.GetComponent<RectTransform>();
-            bitRect.anchorMin = new Vector2(0, 0.5f);
-            bitRect.anchorMax = new Vector2(0, 0.5f);
-            bitRect.pivot = new Vector2(0, 0.5f);
-            bitRect.anchoredPosition = new Vector2(20, 0);
-            bitRect.sizeDelta = new Vector2(200, 35);
-            var bitText = bitTextObj.AddComponent<Text>();
-            bitText.text = "Bit: 1,250";
-            bitText.fontSize = 16;
-            bitText.fontStyle = FontStyle.Bold;
-            bitText.color = ColorNeonGreen;
-            bitText.alignment = TextAnchor.MiddleLeft;
-            bitText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            hubUI.totalBitText = bitText;
+            // Soul 카운터 (20,8) 200x35px
+            var soulTextObj = CreateChild(topBar.transform, "TotalSoulText");
+            var soulRect = soulTextObj.GetComponent<RectTransform>();
+            soulRect.anchorMin = new Vector2(0, 0.5f);
+            soulRect.anchorMax = new Vector2(0, 0.5f);
+            soulRect.pivot = new Vector2(0, 0.5f);
+            soulRect.anchoredPosition = new Vector2(20, 0);
+            soulRect.sizeDelta = new Vector2(200, 35);
+            var soulText = soulTextObj.AddComponent<Text>();
+            soulText.text = "Soul: 1,250";
+            soulText.fontSize = 16;
+            soulText.fontStyle = FontStyle.Bold;
+            soulText.color = ColorNeonGreen;
+            soulText.alignment = TextAnchor.MiddleLeft;
+            soulText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            hubUI.totalSoulText = soulText;
 
-            // Core 카운터 (240,8) 200x35px
-            var coreTextObj = CreateChild(topBar.transform, "TotalCoreText");
+            // Core Fragment 카운터 (240,8) 200x35px
+            var coreTextObj = CreateChild(topBar.transform, "TotalCoreFragmentText");
             var coreRect = coreTextObj.GetComponent<RectTransform>();
             coreRect.anchorMin = new Vector2(0, 0.5f);
             coreRect.anchorMax = new Vector2(0, 0.5f);
@@ -107,43 +107,43 @@ namespace Soulspire.Editor
             coreRect.anchoredPosition = new Vector2(240, 0);
             coreRect.sizeDelta = new Vector2(200, 35);
             var coreText = coreTextObj.AddComponent<Text>();
-            coreText.text = "Core: 5";
+            coreText.text = "Core Fragment: 5";
             coreText.fontSize = 16;
             coreText.fontStyle = FontStyle.Bold;
             coreText.color = ColorNeonPurple;
             coreText.alignment = TextAnchor.MiddleLeft;
             coreText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            hubUI.totalCoreText = coreText;
+            hubUI.totalCoreFragmentText = coreText;
 
-            // 방치 Bit 알림 (우측) (1500,6) 400x38px
-            var idleBitPanel = CreateChild(topBar.transform, "IdleBitPanel");
-            var idleBitRect = idleBitPanel.GetComponent<RectTransform>();
-            idleBitRect.anchorMin = new Vector2(1, 0.5f);
-            idleBitRect.anchorMax = new Vector2(1, 0.5f);
-            idleBitRect.pivot = new Vector2(1, 0.5f);
-            idleBitRect.anchoredPosition = new Vector2(-20, 0);
-            idleBitRect.sizeDelta = new Vector2(400, 38);
-            var idleBitBg = idleBitPanel.AddComponent<Image>();
-            idleBitBg.color = ColorBrightPanel;
+            // 방치 Soul 알림 (우측) (1500,6) 400x38px
+            var idleSoulPanel = CreateChild(topBar.transform, "IdleSoulPanel");
+            var idleSoulRect = idleSoulPanel.GetComponent<RectTransform>();
+            idleSoulRect.anchorMin = new Vector2(1, 0.5f);
+            idleSoulRect.anchorMax = new Vector2(1, 0.5f);
+            idleSoulRect.pivot = new Vector2(1, 0.5f);
+            idleSoulRect.anchoredPosition = new Vector2(-20, 0);
+            idleSoulRect.sizeDelta = new Vector2(400, 38);
+            var idleSoulBg = idleSoulPanel.AddComponent<Image>();
+            idleSoulBg.color = ColorBrightPanel;
             // 테두리 효과 (Outline 컴포넌트)
-            var idleBitOutline = idleBitPanel.AddComponent<Outline>();
-            idleBitOutline.effectColor = ColorYellowGold;
-            idleBitOutline.effectDistance = new Vector2(1, -1);
-            hubUI.idleBitPanel = idleBitPanel;
+            var idleSoulOutline = idleSoulPanel.AddComponent<Outline>();
+            idleSoulOutline.effectColor = ColorYellowGold;
+            idleSoulOutline.effectDistance = new Vector2(1, -1);
+            hubUI.idleSoulPanel = idleSoulPanel;
 
-            // 방치 Bit 텍스트
-            var idleBitTextObj = CreateChild(idleBitPanel.transform, "IdleBitText");
-            SetupRect(idleBitTextObj, new Vector2(0, 0), new Vector2(0.7f, 1), new Vector2(10, 0), new Vector2(-5, 0));
-            var idleBitText = idleBitTextObj.AddComponent<Text>();
-            idleBitText.text = "방치 Bit: 150";
-            idleBitText.fontSize = 14;
-            idleBitText.color = ColorYellowGold;
-            idleBitText.alignment = TextAnchor.MiddleLeft;
-            idleBitText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            hubUI.idleBitText = idleBitText;
+            // 방치 Soul 텍스트
+            var idleSoulTextObj = CreateChild(idleSoulPanel.transform, "IdleSoulText");
+            SetupRect(idleSoulTextObj, new Vector2(0, 0), new Vector2(0.7f, 1), new Vector2(10, 0), new Vector2(-5, 0));
+            var idleSoulText = idleSoulTextObj.AddComponent<Text>();
+            idleSoulText.text = "방치 Soul: 150";
+            idleSoulText.fontSize = 14;
+            idleSoulText.color = ColorYellowGold;
+            idleSoulText.alignment = TextAnchor.MiddleLeft;
+            idleSoulText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            hubUI.idleSoulText = idleSoulText;
 
             // 수령 버튼
-            var claimBtnObj = CreateChild(idleBitPanel.transform, "ClaimButton");
+            var claimBtnObj = CreateChild(idleSoulPanel.transform, "ClaimButton");
             var claimBtnRect = SetupRect(claimBtnObj, new Vector2(0.7f, 0.1f), new Vector2(0.95f, 0.9f), Vector2.zero, Vector2.zero);
             var claimBtnBg = claimBtnObj.AddComponent<Image>();
             claimBtnBg.color = ColorYellowGold;
@@ -157,9 +157,9 @@ namespace Soulspire.Editor
             claimBtnText.color = ColorMainBg;
             claimBtnText.alignment = TextAnchor.MiddleCenter;
             claimBtnText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            hubUI.idleBitClaimButton = claimBtn;
+            hubUI.idleSoulClaimButton = claimBtn;
 
-            idleBitPanel.SetActive(false); // 기본 비활성
+            idleSoulPanel.SetActive(false); // 기본 비활성
 
             // =========================================
             // 2. 스킬 트리 영역 (0,50) ~ (1920, 1080-55)
@@ -382,7 +382,7 @@ namespace Soulspire.Editor
             var dCostObj = CreateChild(detailPanel.transform, "DetailCostText");
             SetupRect(dCostObj, new Vector2(0, 0), new Vector2(0.5f, 0.15f), new Vector2(10, 5), new Vector2(-5, 0));
             var dCostText = dCostObj.AddComponent<Text>();
-            dCostText.text = "비용: 50 Bit";
+            dCostText.text = "비용: 50 Soul";
             dCostText.fontSize = 13;
             dCostText.color = ColorYellowGold;
             dCostText.alignment = TextAnchor.MiddleLeft;
@@ -585,7 +585,7 @@ namespace Soulspire.Editor
             EditorUtility.SetDirty(hubPanel);
 
             Debug.Log("[HubUISetup] Hub UI PPT 명세 기반 재구성 완료!");
-            Debug.Log("[HubUISetup] 상단 바: Bit/Core 카운터 + 방치 Bit 알림");
+            Debug.Log("[HubUISetup] 상단 바: Bit/Core 카운터 + 방치 Soul 알림");
             Debug.Log("[HubUISetup] 스킬 트리: ScrollRect + Core 노드 + 3 스킬 노드 + 연결선 + 범례 + 상세 패널");
             Debug.Log("[HubUISetup] 하단 바: 스테이지 드롭다운 + 출격 + 설정 + 종료");
         }

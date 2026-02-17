@@ -64,8 +64,8 @@ namespace Soulspire.Editor
             // 4. 타워 정보 툴팁
             SetupTowerInfoTooltip(canvas.transform);
 
-            // 5. 방치 Bit 수령 팝업
-            SetupIdleBitPopup(canvas.transform);
+            // 5. 방치 Soul 수령 팝업
+            SetupIdleSoulPopup(canvas.transform);
 
             // HubUI 참조 연결
             ConnectHubUIReferences(canvas.transform);
@@ -494,18 +494,18 @@ namespace Soulspire.Editor
         }
 
         // ============================================================
-        // 5. 방치 Bit 수령 팝업 (420x250, 테두리 #FFD84D)
+        // 5. 방치 Soul 수령 팝업 (420x250, 테두리 #FFD84D)
         // ============================================================
-        static void SetupIdleBitPopup(Transform canvasT)
+        static void SetupIdleSoulPopup(Transform canvasT)
         {
             // 오버레이
-            var overlay = FindOrCreate(canvasT, "IdleBitOverlay");
+            var overlay = FindOrCreate(canvasT, "IdleSoulOverlay");
             StretchFull(overlay);
             var overlayImg = EnsureComponent<Image>(overlay);
             overlayImg.color = ColOverlay;
             overlayImg.raycastTarget = true;
 
-            var panel = FindOrCreate(overlay.transform, "IdleBitPopup");
+            var panel = FindOrCreate(overlay.transform, "IdleSoulPopup");
             var panelRect = panel.GetComponent<RectTransform>();
             CenterAnchored(panelRect, 420, 250);
             var panelImg = EnsureComponent<Image>(panel);
@@ -514,7 +514,7 @@ namespace Soulspire.Editor
             panelOutline.effectColor = ColYellow;
             panelOutline.effectDistance = new Vector2(2, 2);
 
-            var script = EnsureComponent<UI.IdleBitPopup>(panel);
+            var script = EnsureComponent<UI.IdleSoulPopup>(panel);
 
             // 제목: "방치 보상" 20pt 굵게 #FFD84D
             var titleObj = FindOrCreate(panel.transform, "TitleText");
@@ -543,22 +543,22 @@ namespace Soulspire.Editor
             sepRect.sizeDelta = new Vector2(0, 1);
             EnsureComponent<Image>(sep).color = ColBorder;
 
-            // Bit 금액 (28pt 굵게 #2BFF88)
-            var bitObj = FindOrCreate(panel.transform, "BitAmountText");
-            var bitRect = bitObj.GetComponent<RectTransform>();
-            bitRect.anchorMin = new Vector2(0, 1);
-            bitRect.anchorMax = new Vector2(1, 1);
-            bitRect.pivot = new Vector2(0.5f, 1f);
-            bitRect.anchoredPosition = new Vector2(0, -75);
-            bitRect.sizeDelta = new Vector2(-20, 40);
-            var bitText = EnsureComponent<Text>(bitObj);
-            bitText.text = "+0 Bit";
-            bitText.fontSize = 28;
-            bitText.fontStyle = FontStyle.Bold;
-            bitText.color = ColNeonGreen;
-            bitText.alignment = TextAnchor.MiddleCenter;
-            bitText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            script.bitAmountText = bitText;
+            // Soul 금액 (28pt 굵게 #2BFF88)
+            var soulObj = FindOrCreate(panel.transform, "SoulAmountText");
+            var soulRect = soulObj.GetComponent<RectTransform>();
+            soulRect.anchorMin = new Vector2(0, 1);
+            soulRect.anchorMax = new Vector2(1, 1);
+            soulRect.pivot = new Vector2(0.5f, 1f);
+            soulRect.anchoredPosition = new Vector2(0, -75);
+            soulRect.sizeDelta = new Vector2(-20, 40);
+            var soulText = EnsureComponent<Text>(soulObj);
+            soulText.text = "+0 Soul";
+            soulText.fontSize = 28;
+            soulText.fontStyle = FontStyle.Bold;
+            soulText.color = ColNeonGreen;
+            soulText.alignment = TextAnchor.MiddleCenter;
+            soulText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            script.soulAmountText = soulText;
 
             // 부재 시간 (12pt #AFC3E8)
             var timeObj = FindOrCreate(panel.transform, "AbsenceTimeText");
@@ -608,12 +608,12 @@ namespace Soulspire.Editor
                 hubUI.settingsPopup = settingsPopup;
             }
 
-            // IdleBitPopup 참조
-            var idleBitOverlay = canvasT.Find("IdleBitOverlay");
-            if (idleBitOverlay != null)
+            // IdleSoulPopup 참조
+            var idleSoulOverlay = canvasT.Find("IdleSoulOverlay");
+            if (idleSoulOverlay != null)
             {
-                var idleBitPopup = idleBitOverlay.Find("IdleBitPopup")?.GetComponent<UI.IdleBitPopup>();
-                hubUI.idleBitPopup = idleBitPopup;
+                var idleSoulPopup = idleSoulOverlay.Find("IdleSoulPopup")?.GetComponent<UI.IdleSoulPopup>();
+                hubUI.idleSoulPopup = idleSoulPopup;
             }
 
             // DetailPanel 추가 참조
@@ -701,7 +701,7 @@ namespace Soulspire.Editor
         static void CleanupMisplacedPopups(Transform correctCanvas)
         {
             // TitleScreenCanvas 등 다른 Canvas에 잘못 생성된 팝업 제거
-            string[] popupNames = { "SettingsOverlay", "TowerPurchasePanel", "TowerInfoTooltip", "IdleBitOverlay", "TowerPurchaseButton" };
+            string[] popupNames = { "SettingsOverlay", "TowerPurchasePanel", "TowerInfoTooltip", "IdleSoulOverlay", "TowerPurchaseButton" };
             var allCanvases = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
             foreach (var canvas in allCanvases)

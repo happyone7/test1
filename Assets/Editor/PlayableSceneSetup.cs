@@ -103,8 +103,8 @@ namespace Soulspire.Editor
             var waveText = CreateText("WaveText", topPanel, "Wave 1/1",
                 new Vector2(20, -10), new Vector2(200, 40), TextAnchor.MiddleLeft);
 
-            // Bit 텍스트
-            var bitText = CreateText("BitText", topPanel, "Bit: 0",
+            // Soul 텍스트
+            var bitText = CreateText("SoulText", topPanel, "Soul: 0",
                 new Vector2(250, -10), new Vector2(200, 40), TextAnchor.MiddleLeft);
 
             // HP 텍스트
@@ -126,7 +126,7 @@ namespace Soulspire.Editor
                 new Vector2(0, 80), new Vector2(300, 50), TextAnchor.MiddleCenter);
             titleText.fontSize = 36;
 
-            var endBitText = CreateText("BitEarnedText", runEndPanel, "+0 Bit",
+            var endBitText = CreateText("SoulEarnedText", runEndPanel, "+0 Soul",
                 new Vector2(0, 20), new Vector2(300, 40), TextAnchor.MiddleCenter);
 
             var retryBtn = CreateButton("RetryButton", runEndPanel, "재시도",
@@ -149,7 +149,7 @@ namespace Soulspire.Editor
             SetSerializedField(so, "baseHpSlider", hpSlider);
             SetSerializedField(so, "runEndPanel", runEndPanel.gameObject);
             SetSerializedField(so, "runEndTitleText", titleText);
-            SetSerializedField(so, "runEndBitText", endBitText);
+            SetSerializedField(so, "runEndSoulText", endBitText);
             SetSerializedField(so, "hubButton", hubBtn);
             SetSerializedField(so, "retryButton", retryBtn);
             so.ApplyModifiedProperties();
