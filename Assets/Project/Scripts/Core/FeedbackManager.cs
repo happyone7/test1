@@ -180,12 +180,34 @@ namespace Soulspire.Core
             SpawnFloatingText(position, $"+{amount} Soul", soulColor);
         }
 
-        void SpawnFloatingText(Vector3 worldPosition, string text, Color color)
+        /// <summary>
+        /// 콤보 텍스트를 화면 중앙 상단에 표시합니다. 크기 1.2배, 노란색.
+        /// ComboSystem에서 5+ 콤보 시 호출됩니다.
+        /// </summary>
+        public void SpawnComboText(string text)
+        {
+            var cam = Camera.main;
+            if (cam == null) return;
+            Vector3 worldPos = cam.ViewportToWorldPoint(new Vector3(0.5f, 0.85f, 10f));
+            SpawnFloatingText(worldPos, text, Color.yellow, 1.2f);
+        }
+
+        /// <summary>
+        /// 플로팅 텍스트를 월드 좌표에 생성합니다. 내부 공용 메서드.
+        /// SpawnDamageText, SpawnSoulText, SpawnComboText가 공유합니다.
+        /// </summary>
+        /// <param name="worldPosition">텍스트가 표시될 월드 좌표</param>
+        /// <param name="text">표시할 텍스트</param>
+        /// <param name="color">텍스트 색상</param>
+        /// <param name="scale">텍스트 크기 배율 (기본 1.0)</param>
+        void SpawnFloatingText(Vector3 worldPosition, string text, Color color, float scale = 1f)
         {
             if (floatingTextPrefab != null)
             {
                 // 프리팹이 할당된 경우 프리팹에서 생성
                 var go = Instantiate(floatingTextPrefab, worldPosition, Quaternion.identity);
+                if (scale != 1f)
+                    go.transform.localScale *= scale;
                 var ft = go.GetComponent<FloatingText>();
                 if (ft != null)
                 {
@@ -195,7 +217,7 @@ namespace Soulspire.Core
             else
             {
                 // 프리팹이 없으면 런타임에서 동적으로 생성
-                CreateRuntimeFloatingText(worldPosition, text, color);
+                CreateRuntimeFloatingText(worldPosition, text, color, scale);
             }
         }
 
@@ -203,7 +225,7 @@ namespace Soulspire.Core
         /// 프리팹 없이 런타임에서 World Space Canvas + TextMesh를 생성합니다.
         /// 프로토타입/개발 단계에서 프리팹 없이도 동작하도록 합니다.
         /// </summary>
-        void CreateRuntimeFloatingText(Vector3 worldPosition, string text, Color color)
+        void CreateRuntimeFloatingText(Vector3 worldPosition, string text, Color color, float scale = 1f)
         {
             var go = new GameObject("[FloatingText]");
             go.transform.position = worldPosition;
@@ -211,7 +233,7 @@ namespace Soulspire.Core
             var textMesh = go.AddComponent<TextMesh>();
             textMesh.text = text;
             textMesh.color = color;
-            textMesh.characterSize = 0.15f;
+            textMesh.characterSize = 0.15f * scale;
             textMesh.fontSize = 48;
             textMesh.alignment = TextAlignment.Center;
             textMesh.anchor = TextAnchor.MiddleCenter;
