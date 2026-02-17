@@ -191,6 +191,14 @@ namespace Soulspire.Node
                 // 보물 SoulBonus 효과 적용
                 if (Tesseract.Core.Singleton<Core.TreasureManager>.HasInstance)
                     soulDrop += Core.TreasureManager.Instance.SoulBonusPerKill;
+
+                // 콤보 보너스 적용
+                if (Tesseract.Core.Singleton<Core.ComboSystem>.HasInstance)
+                {
+                    int comboBonus = Core.ComboSystem.Instance.OnNodeKilled(soulDrop);
+                    soulDrop += comboBonus;
+                }
+
                 Core.RunManager.Instance.AddSoul(soulDrop);
                 Core.RunManager.Instance.OnNodeKilled();
 

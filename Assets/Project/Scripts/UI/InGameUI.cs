@@ -456,7 +456,17 @@ private IEnumerator SlideUpAnimation()
                     int index = i;
                     float speed = SpeedValues[i];
                     if (speedButtons[i] != null)
+                    {
                         speedButtons[i].onClick.AddListener(() => SetSpeed(index, speed));
+
+                        // x2/x3은 배속 해금 노드 필요 (x1은 항상 활성)
+                        if (i > 0)
+                        {
+                            bool unlocked = Singleton<Core.MetaManager>.HasInstance
+                                && Core.MetaManager.Instance.IsTowerUnlocked("speed_mode");
+                            speedButtons[i].interactable = unlocked;
+                        }
+                    }
                 }
             }
 
