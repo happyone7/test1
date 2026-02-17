@@ -289,5 +289,18 @@ namespace Soulspire.Core
                     Tesseract.ObjectPool.Poolable.TryPool(node.gameObject);
             }
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// GameState를 강제 설정합니다 (디버그용).
+        /// UI 전환 없이 상태값만 변경합니다.
+        /// </summary>
+        public void Debug_SetState(GameState state)
+        {
+            State = state;
+        }
+#endif
     }
 }
