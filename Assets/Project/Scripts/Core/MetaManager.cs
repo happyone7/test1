@@ -22,7 +22,7 @@ namespace Soulspire.Core
         protected override void Awake()
         {
             base.Awake();
-            _saveManager = new SaveManager<PlayerSaveData>("nodebreaker_save.json");
+            _saveManager = new SaveManager<PlayerSaveData>("soulspire_save.json");
             Load();
         }
 
@@ -190,6 +190,77 @@ namespace Soulspire.Core
         /// 첫 플레이 여부 (ftueFlags[0]이 false이면 첫 플레이).
         /// </summary>
         public bool IsFirstPlay => !GetFtueFlag(0);
+
+
+        // ── FTUE 시스템 (string key 기반 — FTUEManager 가이드용) ──
+
+        /// <summary>
+        /// FTUE 가이드가 이미 표시되었는지 확인합니다.
+        /// </summary>
+        public bool HasFtueShown(string key)
+        {
+            if (_data.ftueShownKeys == null) return false;
+            return _data.ftueShownKeys.Contains(key);
+        }
+
+        /// <summary>
+        /// FTUE 가이드 표시 기록을 저장합니다.
+        /// </summary>
+        public void MarkFtueShown(string key)
+        {
+            if (_data.ftueShownKeys == null)
+                _data.ftueShownKeys = new System.Collections.Generic.List<string>();
+            if (!_data.ftueShownKeys.Contains(key))
+            {
+                _data.ftueShownKeys.Add(key);
+                Save();
+            }
+        }
+
+        /// <summary>
+        /// 모든 FTUE 플래그와 가이드 표시 기록을 초기화합니다 (디버그용).
+        /// </summary>
+        public void Debug_ResetAllFtueFlags()
+        {
+            if (_data.ftueFlags != null)
+            {
+                for (int i = 0; i < _data.ftueFlags.Length; i++)
+                    _data.ftueFlags[i] = false;
+            }
+            if (_data.ftueShownKeys != null)
+                _data.ftueShownKeys.Clear();
+            Save();
+        }
+
+        // ── 오디오 설정 ──
+
+        /// <summary>
+        /// 저장된 BGM 볼륨을 반환합니다 (0~1).
+        /// </summary>
+        public float GetSavedBgmVolume() => _data.bgmVolume;
+
+        /// <summary>
+        /// 저장된 SFX 볼륨을 반환합니다 (0~1).
+        /// </summary>
+        public float GetSavedSfxVolume() => _data.sfxVolume;
+
+        /// <summary>
+        /// BGM 볼륨을 세이브 데이터에 저장합니다.
+        /// </summary>
+        public void SetSavedBgmVolume(float value)
+        {
+            _data.bgmVolume = Mathf.Clamp01(value);
+            Save();
+        }
+
+        /// <summary>
+        /// SFX 볼륨을 세이브 데이터에 저장합니다.
+        /// </summary>
+        public void SetSavedSfxVolume(float value)
+        {
+            _data.sfxVolume = Mathf.Clamp01(value);
+            Save();
+        }
 
         Data.SkillNodeData FindSkillData(string skillId)
         {

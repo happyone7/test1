@@ -1,4 +1,4 @@
-using Tesseract.Core;
+﻿using Tesseract.Core;
 using UnityEngine;
 
 namespace Soulspire.UI
@@ -6,11 +6,10 @@ namespace Soulspire.UI
     /// <summary>
     /// FTUE (First-Time User Experience) 가이드 텍스트 트리거 관리.
     /// 5가지 가이드를 조건 충족 시 한 번씩만 표시합니다.
+    /// PlayerPrefs 대신 MetaManager(Tesseract Save)를 통해 세이브합니다.
     /// </summary>
     public class FTUEManager : Singleton<FTUEManager>
     {
-        private const string PrefKey = "FTUE_Shown_";
-
         // 가이드 텍스트 정의
         public static readonly string GuideFirstWave = "타워가 적을 자동으로 공격합니다";
         public static readonly string GuideFirstTowerDrop = "타워를 획득했습니다! 드래그하여 배치하세요";
@@ -46,23 +45,24 @@ namespace Soulspire.UI
 
         /// <summary>
         /// 모든 FTUE 기록을 초기화합니다 (디버그/테스트용).
+        /// MetaManager의 Debug_ResetAllFtueFlags를 통해 초기화합니다.
         /// </summary>
         public void ResetAll()
         {
-            PlayerPrefs.DeleteKey(PrefKey + "FirstWave");
-            PlayerPrefs.DeleteKey(PrefKey + "FirstTowerDrop");
-            PlayerPrefs.DeleteKey(PrefKey + "FirstDeath");
-            PlayerPrefs.DeleteKey(PrefKey + "HubFirstEntry");
-            PlayerPrefs.DeleteKey(PrefKey + "BossWave");
-            PlayerPrefs.Save();
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.Debug_ResetAllFtueFlags();
         }
 
-        private bool HasShown(string key) => PlayerPrefs.GetInt(PrefKey + key, 0) == 1;
+        private bool HasShown(string key)
+        {
+            if (!Singleton<Core.MetaManager>.HasInstance) return false;
+            return Core.MetaManager.Instance.HasFtueShown(key);
+        }
 
         private void MarkShown(string key)
         {
-            PlayerPrefs.SetInt(PrefKey + key, 1);
-            PlayerPrefs.Save();
+            if (!Singleton<Core.MetaManager>.HasInstance) return;
+            Core.MetaManager.Instance.MarkFtueShown(key);
         }
     }
 }

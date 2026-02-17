@@ -7,8 +7,6 @@ namespace Soulspire.Audio
 {
     public class SoundManager : Singleton<SoundManager>
     {
-        private const string BgmVolumeKey = "nb.audio.bgm";
-        private const string SfxVolumeKey = "nb.audio.sfx";
 
         private readonly Dictionary<string, AudioClip> _clips = new Dictionary<string, AudioClip>();
         private readonly Dictionary<string, float> _balanceMap = new Dictionary<string, float>();
@@ -44,8 +42,11 @@ namespace Soulspire.Audio
 
         private void LoadVolumes()
         {
-            _bgmVolume = Mathf.Clamp(PlayerPrefs.GetFloat(BgmVolumeKey, 1f), 0f, 1f);
-            _sfxVolume = Mathf.Clamp(PlayerPrefs.GetFloat(SfxVolumeKey, 1f), 0f, 1f);
+            if (Singleton<Core.MetaManager>.HasInstance)
+            {
+                _bgmVolume = Mathf.Clamp(Core.MetaManager.Instance.GetSavedBgmVolume(), 0f, 1f);
+                _sfxVolume = Mathf.Clamp(Core.MetaManager.Instance.GetSavedSfxVolume(), 0f, 1f);
+            }
             ApplyVolumes();
         }
 
@@ -182,7 +183,8 @@ namespace Soulspire.Audio
             _bgmVolume = Mathf.Clamp01(value);
             if (_bgmSource != null)
                 _bgmSource.volume = _bgmVolume * _currentBgmBalance;
-            PlayerPrefs.SetFloat(BgmVolumeKey, _bgmVolume);
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.SetSavedBgmVolume(_bgmVolume);
         }
 
         public void SetSfxVolume(float value)
@@ -190,7 +192,8 @@ namespace Soulspire.Audio
             _sfxVolume = Mathf.Clamp01(value);
             if (_sfxSource != null)
                 _sfxSource.volume = _sfxVolume;
-            PlayerPrefs.SetFloat(SfxVolumeKey, _sfxVolume);
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.SetSavedSfxVolume(_sfxVolume);
         }
 
         public float GetBgmVolume() => _bgmVolume;
