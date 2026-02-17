@@ -4,6 +4,19 @@ using System.Collections.Generic;
 
 namespace Soulspire.Core
 {
+    /// <summary>
+    /// 런 간 유지되는 타워 배치 정보.
+    /// 런 종료 시 저장, 다음 런 시작 시 복원.
+    /// </summary>
+    [Serializable]
+    public class TowerPlacement
+    {
+        public string towerId;
+        public int level;
+        public float posX;
+        public float posY;
+    }
+
     [Serializable]
     public class PlayerSaveData
     {
@@ -43,6 +56,14 @@ namespace Soulspire.Core
 
         /// <summary>SFX 볼륨 (0~1). 기본값 1.</summary>
         public float sfxVolume = 1f;
+
+        // ── 타워 배치 유지 ──
+
+        /// <summary>
+        /// 런 종료 시 저장된 타워 배치 목록.
+        /// 다음 런 시작 시 이 목록을 기반으로 타워를 복원한다.
+        /// </summary>
+        public List<TowerPlacement> savedTowerPlacements = new List<TowerPlacement>();
     }
 
     [Serializable]
