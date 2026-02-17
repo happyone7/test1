@@ -14,7 +14,7 @@ namespace Soulspire.UI
         // 가이드 텍스트 정의
         public static readonly string GuideFirstWave = "타워가 적을 자동으로 공격합니다";
         public static readonly string GuideFirstTowerDrop = "타워를 획득했습니다! 드래그하여 배치하세요";
-        public static readonly string GuideFirstDeath = "성장하면 더 강해집니다 — Hub에서 업그레이드!";
+        public static readonly string GuideFirstDeath = "성장하면 더 강해집니다 — Sanctum에서 업그레이드!";
         public static readonly string GuideHubFirstEntry = "스킬을 눌러 영구 강화를 구매하세요";
         public static readonly string GuideBossWave = "보스가 나타났습니다! 처치하면 클리어!";
 

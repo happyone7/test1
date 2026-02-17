@@ -84,7 +84,7 @@ namespace Soulspire.UI
         public GameObject runEndUnlockNotice;   // 새 스테이지 해금 알림
         public Text runEndUnlockText;           // 해금 알림 텍스트
         public Text hubButtonText;              // Hub 버튼 텍스트
-        public Text retryButtonText;            // 재도전/다음 스테이지 버튼 텍스트
+        public Text retryButtonText;            // 재도전/다음 Floor 버튼 텍스트
         public Outline hubButtonOutline;        // Hub 버튼 Outline
         public Outline retryButtonOutline;      // 재도전 버튼 Outline
 
@@ -203,12 +203,12 @@ namespace Soulspire.UI
             if (waveText != null)
             {
                 int total = run.CurrentStage != null ? run.CurrentStage.waves.Length : 0;
-                waveText.text = $"\uc6e8\uc774\ube0c: {run.CurrentWaveIndex + 1}/{total}";
+                waveText.text = $"Incursion: {run.CurrentWaveIndex + 1}/{total}";
             }
 
             // Bit 카운터
             if (soulText != null)
-                soulText.text = $"Bit: {run.SoulEarned}";
+                soulText.text = $"Soul: {run.SoulEarned}";
 
             // 기지 HP 라벨
             if (baseHpLabelText != null)
@@ -273,7 +273,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             // 제목 텍스트
             if (runEndTitleText != null)
             {
-                runEndTitleText.text = cleared ? "스테이지 클리어!" : "패배";
+                runEndTitleText.text = cleared ? "Floor 클리어!" : "패배";
                 runEndTitleText.color = themeColor;
                 runEndTitleText.fontSize = 36;
                 runEndTitleText.fontStyle = FontStyle.Bold;
@@ -298,7 +298,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             // Bit 획득 정보
             if (runEndSoulText != null)
             {
-                runEndSoulText.text = $"획득 Bit:  +{soulEarned}";
+                runEndSoulText.text = $"획득 Soul:  +{soulEarned}";
                 runEndSoulText.color = ColorTextMain;
             }
 
@@ -317,7 +317,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
                 else
                 {
                     runEndWaveText.gameObject.SetActive(true);
-                    runEndWaveText.text = $"도달 웨이브:  {reachedWave}/{totalWaves}";
+                    runEndWaveText.text = $"도달 Incursion:  {reachedWave}/{totalWaves}";
                     runEndWaveText.color = ColorTextMain;
                 }
             }
@@ -343,7 +343,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
                 if (coreFragmentEarned > 0)
                 {
                     runEndCoreFragmentText.gameObject.SetActive(true);
-                    runEndCoreFragmentText.text = $"획득 Core:  {coreFragmentEarned}";
+                    runEndCoreFragmentText.text = $"획득 Core Fragment:  {coreFragmentEarned}";
                     runEndCoreFragmentText.color = ColorNeonPurple;
                 }
                 else
@@ -358,7 +358,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
                 if (Singleton<Core.MetaManager>.HasInstance)
                 {
                     int totalSoul = Core.MetaManager.Instance.TotalSoul;
-                    runEndTotalSoulText.text = $"보유 Bit:  {totalSoul:N0}";
+                    runEndTotalSoulText.text = $"보유 Soul:  {totalSoul:N0}";
                     runEndTotalSoulText.color = ColorSoulGreen;
                     runEndTotalSoulText.gameObject.SetActive(true);
                 }
@@ -376,14 +376,14 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
                 {
                     int stageCount = Core.GameManager.Instance.stages.Length;
                     int unlockedIndex = Core.MetaManager.Instance.CurrentStageIndex;
-                    // 클리어로 새 스테이지가 해금되었고, 아직 갈 수 있는 다음 스테이지가 있으면
+                    // 클리어로 새 스테이지가 해금되었고, 아직 갈 수 있는 다음 Floor가 있으면
                     showUnlock = unlockedIndex < stageCount && unlockedIndex > 0;
                 }
 
                 runEndUnlockNotice.SetActive(showUnlock);
                 if (showUnlock && runEndUnlockText != null)
                 {
-                    runEndUnlockText.text = "새 스테이지 해금!";
+                    runEndUnlockText.text = "새 Floor 해금!";
                     runEndUnlockText.color = ColorYellow;
                     runEndUnlockText.fontStyle = FontStyle.Bold;
                 }
@@ -391,9 +391,9 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
 
             // 버튼 텍스트 및 스타일
             if (hubButtonText != null)
-                hubButtonText.text = cleared ? "[ Hub ]" : "[ Hub (스킬 트리) ]";
+                hubButtonText.text = cleared ? "[ Sanctum ]" : "[ Sanctum (스킬 트리) ]";
             if (retryButtonText != null)
-                retryButtonText.text = cleared ? "[ 다음 스테이지 ]" : "[ 즉시 재도전 ]";
+                retryButtonText.text = cleared ? "[ 다음 Floor ]" : "[ 즉시 재도전 ]";
 
             // 버튼 Outline 색상
             if (hubButtonOutline != null)
@@ -760,7 +760,7 @@ private IEnumerator SlideUpAnimation()
         private IEnumerator CorePopupRoutine(int coreAmount)
         {
             corePopupContainer.SetActive(true);
-            corePopupText.text = $"+{coreAmount} Core";
+            corePopupText.text = $"+{coreAmount} Core Fragment";
             corePopupText.color = ColorNeonPurple;
             corePopupText.fontSize = 32;
             corePopupText.fontStyle = FontStyle.Bold;

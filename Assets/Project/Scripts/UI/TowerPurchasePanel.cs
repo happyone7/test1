@@ -99,7 +99,7 @@ namespace Soulspire.UI
                 nameText.text = data.towerName;
 
             if (costText != null)
-                costText.text = $"{data.placeCost} Bit";
+                costText.text = $"{data.placeCost} Soul";
 
             if (costButton != null)
             {
@@ -179,7 +179,7 @@ namespace Soulspire.UI
             var costGo = new GameObject("CostText", typeof(RectTransform));
             costGo.transform.SetParent(btnGo.transform, false);
             var costText = costGo.AddComponent<Text>();
-            costText.text = $"{data.placeCost} Bit";
+            costText.text = $"{data.placeCost} Soul";
             costText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             costText.fontSize = 13;
             costText.fontStyle = FontStyle.Bold;
