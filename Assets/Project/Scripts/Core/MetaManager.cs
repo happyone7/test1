@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Tesseract.Core;
 using Tesseract.Save;
@@ -232,6 +233,81 @@ namespace Soulspire.Core
             Save();
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // ── 디버그 전용 메서드 ──
+
+        /// <summary>
+        /// CoreFragment 재화를 지정량만큼 추가합니다 (디버그용).
+        /// </summary>
+        public void Debug_AddCoreFragment(int amount)
+        {
+            _data.totalCoreFragment += amount;
+            Save();
+        }
+
+        /// <summary>
+        /// Soul 재화를 지정량만큼 추가합니다 (디버그용).
+        /// </summary>
+        public void Debug_AddSoul(int amount)
+        {
+            _data.totalSoul += amount;
+            Save();
+        }
+
+        /// <summary>
+        /// 지정 스킬의 레벨을 강제 설정합니다 (디버그용).
+        /// </summary>
+        public void Debug_SetSkillLevel(string skillId, int level)
+        {
+            if (string.IsNullOrEmpty(skillId)) return;
+            _skillLevelCache[skillId] = Mathf.Max(0, level);
+            Save();
+        }
+
+        /// <summary>
+        /// totalNodesKilled 값을 직접 설정합니다 (디버그용).
+        /// </summary>
+        public void Debug_SetNodesKilled(int count)
+        {
+            _data.totalNodesKilled = Mathf.Max(0, count);
+            Save();
+        }
+#endif
+
+        // ── Idle Soul 수집기 ──
+
+        const float IDLE_SOUL_PER_MINUTE = 0.5f;
+        const float MAX_IDLE_HOURS = 8f;
+
+        public int CalculateIdleSoul()
+        {
+            if (_data.lastPlayTimeTicks <= 0) return 0;
+
+            var lastPlay = new DateTime(_data.lastPlayTimeTicks, DateTimeKind.Utc);
+            var elapsed = DateTime.UtcNow - lastPlay;
+            if (elapsed.TotalMinutes < 1) return 0;
+
+            float minutes = (float)System.Math.Min(elapsed.TotalMinutes, MAX_IDLE_HOURS * 60f);
+            return Mathf.FloorToInt(minutes * IDLE_SOUL_PER_MINUTE);
+        }
+
+        public void CollectIdleSoul()
+        {
+            int amount = CalculateIdleSoul();
+            if (amount > 0)
+            {
+                _data.totalSoul += amount;
+                UpdateLastPlayTime();
+                Save();
+            }
+        }
+
+        public void UpdateLastPlayTime()
+        {
+            _data.lastPlayTimeTicks = DateTime.UtcNow.Ticks;
+            Save();
+        }
+
         // ── 오디오 설정 ──
 
         /// <summary>
@@ -277,7 +353,10 @@ namespace Soulspire.Core
         protected override void OnApplicationQuit()
         {
             if (_saveManager != null && _data != null)
+            {
+                UpdateLastPlayTime();
                 Save();
+            }
             _saveManager?.Dispose();
             base.OnApplicationQuit();
         }
@@ -285,7 +364,10 @@ namespace Soulspire.Core
         void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)
+            {
+                UpdateLastPlayTime();
                 Save();
+            }
         }
     }
 }

@@ -31,6 +31,11 @@ namespace Soulspire.Core
         /// </summary>
         public List<string> ftueShownKeys = new List<string>();
 
+        // ── Idle Soul ──
+
+        /// <summary>마지막 플레이 시각 (DateTime.UtcNow.Ticks).</summary>
+        public long lastPlayTimeTicks;
+
         // ── 오디오 설정 ──
 
         /// <summary>BGM 볼륨 (0~1). 기본값 1.</summary>
