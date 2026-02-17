@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b914a3378bfad14e8d6fb40866b2c15, type: 3}
+  m_Name: Skill_IceUnlock
+  m_EditorClassIdentifier:
+  skillId: ice_unlock
+  skillName: "\uBE59\uACB0\uC758 \uBC14\uB78C"
+  description: "Ice Tower\uB97C \uD574\uAE08\uD569\uB2C8\uB2E4. \uC801\uC744 \uAC10\uC18D\uC2DC\uD0A4\uB294 \uC720\uD2F8\uB9AC\uD2F0 \uD0C0\uC6CC."
+  icon: {fileID: 0}
+  effectType: 0
+  valuePerLevel: 0
+  maxLevel: 1
+  baseCost: 5
+  growthRate: 1
+  position: {x: 1, y: -2}
+  prerequisiteIds:
+  - atk_dmg
+  - start_soul
+  prerequisiteIsOr: 1
+  isCoreNode: 1
+  unlockTargetId: ice
