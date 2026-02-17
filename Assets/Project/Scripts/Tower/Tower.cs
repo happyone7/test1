@@ -249,6 +249,16 @@ namespace Soulspire.Tower
             return true;
         }
 
+        /// <summary>
+        /// 타워를 판매합니다. 배치 비용의 70%를 Soul로 환급합니다.
+        /// TowerManager.SellTower()를 통해 호출하세요.
+        /// </summary>
+        public int GetSellValue()
+        {
+            if (data == null) return 0;
+            return Mathf.RoundToInt(data.placeCost * 0.7f);
+        }
+
         void OnDrawGizmosSelected()
         {
             if (data == null) return;

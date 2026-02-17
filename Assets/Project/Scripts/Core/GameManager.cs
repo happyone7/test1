@@ -138,6 +138,10 @@ namespace Soulspire.Core
                 Debug.LogError("[GameManager] StartRun: InGameUI를 찾을 수 없음!");
             }
 
+            // FTUE: 첫 출격 가이드
+            if (Singleton<UI.FTUEManager>.HasInstance)
+                UI.FTUEManager.Instance.TriggerInGame("FirstSortie", UI.FTUEManager.GuideFirstSortie);
+
             RunModifiers mods = MetaManager.Instance.CalculateModifiers();
             RunManager.Instance.StartRun(stages[stageIdx], mods);
         }
