@@ -379,6 +379,47 @@ namespace Soulspire.Core
             Save();
         }
 
+        // ── 타워 배치 유지 ──
+
+        /// <summary>
+        /// 현재 배치된 타워 목록을 세이브 데이터에 저장합니다.
+        /// 해금된 타워만 저장하며, 미해금 타워는 제외합니다.
+        /// </summary>
+        public void SaveTowerPlacements()
+        {
+            _data.savedTowerPlacements.Clear();
+
+            if (!Singleton<Tower.TowerManager>.HasInstance) return;
+
+            var placedTowers = Tower.TowerManager.Instance.PlacedTowers;
+            foreach (var tower in placedTowers)
+            {
+                if (tower == null || tower.data == null) continue;
+
+                // 해금 여부 확인 (미해금 타워는 저장하지 않음)
+                if (!IsTowerUnlocked(tower.data.towerId)) continue;
+
+                _data.savedTowerPlacements.Add(new TowerPlacement
+                {
+                    towerId = tower.data.towerId,
+                    level = tower.Level,
+                    posX = tower.transform.position.x,
+                    posY = tower.transform.position.y
+                });
+            }
+
+            Save();
+            Debug.Log($"[MetaManager] 타워 배치 저장 완료: {_data.savedTowerPlacements.Count}개");
+        }
+
+        /// <summary>
+        /// 저장된 타워 배치 목록을 반환합니다 (읽기 전용).
+        /// </summary>
+        public IReadOnlyList<TowerPlacement> GetSavedTowerPlacements()
+        {
+            return _data.savedTowerPlacements;
+        }
+
         Data.SkillNodeData FindSkillData(string skillId)
         {
             if (allSkills == null) return null;
