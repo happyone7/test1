@@ -252,18 +252,22 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             _isPaused = false;
             UpdateSpeedButtonVisuals();
 
-            // 오버레이 활성화 (raycastTarget=false로 버튼 클릭 차단 방지)
+            // 오버레이 활성화 (패널보다 뒤에 렌더링되도록 먼저 SetAsLastSibling)
             if (runEndOverlay != null)
             {
                 runEndOverlay.SetActive(true);
+                runEndOverlay.transform.SetAsLastSibling();
                 var overlayImage = runEndOverlay.GetComponent<Image>();
                 if (overlayImage != null)
                     overlayImage.raycastTarget = false;
             }
 
-            // 패널 활성화
+            // 패널 활성화 (오버레이 위에 표시되도록 마지막에 SetAsLastSibling)
             if (runEndPanel != null)
+            {
                 runEndPanel.SetActive(true);
+                runEndPanel.transform.SetAsLastSibling();
+            }
 
             // === 테마 색상 적용 (클리어=초록, 패배=빨강) ===
             Color themeColor = cleared ? ColorNeonGreen : ColorRed;
