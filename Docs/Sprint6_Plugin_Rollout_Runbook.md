@@ -1,0 +1,1 @@
+﻿- 비교 결과 작성 직후 `Tools/telegram-bridge/notify-comparison-report.ps1`로 PM/리드에게 공유

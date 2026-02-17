@@ -1,0 +1,1 @@
+﻿- [ ] 완료 시 Telegram 자동 알림 (`Tools/telegram-bridge/notify-comparison-report.ps1`)
