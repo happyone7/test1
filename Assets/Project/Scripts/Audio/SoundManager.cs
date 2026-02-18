@@ -76,8 +76,13 @@ namespace Soulspire.Audio
             Register(SoundKeys.BgmBoss, "Audio/BGM/BGM_Boss_01");
 
             Register(SoundKeys.TowerAttack, "Audio/SFX/Combat/SFX_Tower_Attack_01");
+            Register(SoundKeys.TowerArrow, "Audio/SFX/Combat/SFX_Tower_Arrow_01");
+            Register(SoundKeys.TowerCannon, "Audio/SFX/Combat/SFX_Tower_Cannon_01");
+            Register(SoundKeys.TowerIce, "Audio/SFX/Combat/SFX_Tower_Ice_01");
+            Register(SoundKeys.TowerLightning, "Audio/SFX/Combat/SFX_Tower_Lightning_01");
             Register(SoundKeys.ProjectileHit, "Audio/SFX/Combat/SFX_Projectile_Hit_01");
             Register(SoundKeys.NodeDie, "Audio/SFX/Combat/SFX_Node_Die_01");
+            Register(SoundKeys.BossDeath, "Audio/SFX/Combat/SFX_Boss_Death_01");
             Register(SoundKeys.TowerPlace, "Audio/SFX/Combat/SFX_Tower_Place_01");
             Register(SoundKeys.TowerMerge, "Audio/SFX/Combat/SFX_Tower_Merge_01");
             Register(SoundKeys.CritHit, "Audio/SFX/Combat/SFX_Crit_Hit_01");
@@ -119,10 +124,15 @@ namespace Soulspire.Audio
         {
             // === 고빈도 전투 SFX: 피로도 감소를 위해 낮게 ===
             _balanceMap[SoundKeys.TowerAttack] = 0.75f;
+            _balanceMap[SoundKeys.TowerArrow] = 0.75f;
+            _balanceMap[SoundKeys.TowerCannon] = 0.8f;
+            _balanceMap[SoundKeys.TowerIce] = 0.75f;
+            _balanceMap[SoundKeys.TowerLightning] = 0.75f;
             _balanceMap[SoundKeys.ProjectileHit] = 0.7f;
 
             // === 중빈도 전투 SFX: 적당한 피드백 유지 ===
             _balanceMap[SoundKeys.NodeDie] = 0.85f;
+            _balanceMap[SoundKeys.BossDeath] = 1.0f;
             _balanceMap[SoundKeys.TowerPlace] = 0.9f;
             _balanceMap[SoundKeys.TowerMerge] = 0.9f;
             _balanceMap[SoundKeys.CritHit] = 0.9f;

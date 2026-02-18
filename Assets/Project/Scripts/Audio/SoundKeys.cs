@@ -7,8 +7,13 @@ namespace Soulspire.Audio
         public const string BgmBoss = "BGM_Boss_01";
 
         public const string TowerAttack = "SFX_Tower_Attack_01";
+        public const string TowerArrow = "SFX_Tower_Arrow_01";
+        public const string TowerCannon = "SFX_Tower_Cannon_01";
+        public const string TowerIce = "SFX_Tower_Ice_01";
+        public const string TowerLightning = "SFX_Tower_Lightning_01";
         public const string ProjectileHit = "SFX_Projectile_Hit_01";
         public const string NodeDie = "SFX_Node_Die_01";
+        public const string BossDeath = "SFX_Boss_Death_01";
         public const string TowerPlace = "SFX_Tower_Place_01";
         public const string TowerMerge = "SFX_Tower_Merge_01";
         public const string CritHit = "SFX_Crit_Hit_01";
