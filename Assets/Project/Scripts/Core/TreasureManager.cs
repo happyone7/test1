@@ -8,7 +8,7 @@ namespace Soulspire.Core
 {
     /// <summary>
     /// 보물상자 시스템 매니저.
-    /// Phase 2: 보스 처치 시 보물상자 드롭 → 타워 3택 → 인벤토리 추가.
+    /// 보스 처치 시 보물상자 획득 → Sanctum에서 오픈 → 타워 3택 → 인벤토리 추가.
     /// 기존 버프 효과 시스템도 API 호환을 위해 유지.
     /// </summary>
     public class TreasureManager : Singleton<TreasureManager>
@@ -17,7 +17,7 @@ namespace Soulspire.Core
         public TreasureConfig treasureConfig;
 
         [Header("타워 보물상자 설정")]
-        [Tooltip("보스 처치 시 제시할 타워 후보 수")]
+        [Tooltip("보물상자 오픈 시 제시할 타워 후보 수")]
         public int towerChoiceCount = 3;
 
         // ── UI 이벤트 ──
@@ -33,9 +33,16 @@ namespace Soulspire.Core
         /// </summary>
         public event Action<TreasureChoiceData> OnTreasureChosen;
 
-        // ── UI 이벤트 (타워 보물상자 - Phase 2) ──
+        // ── UI 이벤트 (타워 보물상자) ──
+
         /// <summary>
-        /// 보스 처치 시 타워 보물상자가 드롭되었을 때 발행.
+        /// 인게임 중 보물상자를 획득했을 때 발행.
+        /// UI가 구독하여 "보물상자 +1" 알림을 표시한다.
+        /// </summary>
+        public event Action<int> OnTreasureChestAcquired;
+
+        /// <summary>
+        /// Sanctum에서 보물상자를 열어 타워 후보가 생성되었을 때 발행.
         /// UI가 구독하여 타워 3택 패널을 표시한다.
         /// </summary>
         public event Action<List<TowerData>> OnTowerTreasureDropped;
@@ -75,54 +82,113 @@ namespace Soulspire.Core
         public bool IsWaitingForChoice => _waitingForChoice;
 
         // ═══════════════════════════════════════
-        // 타워 보물상자 API (Phase 2)
+        // 타워 보물상자 API
         // ═══════════════════════════════════════
+
+        // ── 현재 오픈 중인 보물상자 후보 (UI가 표시 중) ──
+        List<TowerData> _currentChoices;
+
+        /// <summary>현재 3택으로 제시된 타워 후보 (읽기 전용). 선택 대기 중이 아니면 null.</summary>
+        public IReadOnlyList<TowerData> CurrentChoices => _currentChoices;
 
         /// <summary>
         /// 보스 처치 시 WaveSpawner에서 호출.
-        /// TowerManager.availableTowers에서 랜덤으로 타워 후보를 뽑아 UI에 제시한다.
+        /// 보물상자 보유 수를 +1 증가시키고 저장한다.
+        /// GDD 3.5.2: 보물상자는 인게임 중에는 열 수 없으며, Sanctum에서만 오픈 가능.
         /// </summary>
         public void OnBossKilled()
         {
+            if (!Singleton<MetaManager>.HasInstance)
+            {
+                Debug.LogWarning("[TreasureManager] OnBossKilled: MetaManager 인스턴스 없음");
+                return;
+            }
+
+            MetaManager.Instance.AddTreasureChest(1);
+            int chestCount = MetaManager.Instance.TreasureChestCount;
+
+            Debug.Log($"[TreasureManager] 보스 처치! 보물상자 +1 (보유: {chestCount})");
+            OnTreasureChestAcquired?.Invoke(chestCount);
+        }
+
+        /// <summary>
+        /// Sanctum에서 보물상자를 오픈한다.
+        /// 보물상자 보유 수가 0이면 false를 반환하고 아무 일도 하지 않는다.
+        /// 성공 시 해금된 타워 풀에서 towerChoiceCount개의 후보를 뽑아
+        /// OnTowerTreasureDropped 이벤트를 발행한다.
+        /// </summary>
+        /// <returns>보물상자를 소비하고 후보를 제시했으면 true, 실패하면 false.</returns>
+        public bool OpenTreasureChest()
+        {
+            if (!Singleton<MetaManager>.HasInstance)
+            {
+                Debug.LogWarning("[TreasureManager] OpenTreasureChest: MetaManager 인스턴스 없음");
+                return false;
+            }
+
+            if (MetaManager.Instance.TreasureChestCount <= 0)
+            {
+                Debug.Log("[TreasureManager] OpenTreasureChest: 보물상자 없음");
+                return false;
+            }
+
+            var choices = GetTreasureChoices(towerChoiceCount);
+            if (choices == null || choices.Count == 0)
+            {
+                Debug.LogWarning("[TreasureManager] OpenTreasureChest: 타워 후보를 생성할 수 없음");
+                return false;
+            }
+
+            // 보물상자 1개 소비
+            MetaManager.Instance.SpendTreasureChest();
+
+            _currentChoices = choices;
+            _waitingForChoice = true;
+
+            Debug.Log($"[TreasureManager] 보물상자 오픈! 타워 후보 {choices.Count}개 (남은 상자: {MetaManager.Instance.TreasureChestCount})");
+            OnTowerTreasureDropped?.Invoke(choices);
+            return true;
+        }
+
+        /// <summary>
+        /// 해금된 타워 풀에서 count개의 타워 후보를 랜덤 추출한다.
+        /// 보물상자를 소비하지 않으며 이벤트도 발행하지 않는 순수 데이터 메서드.
+        /// GDD 3.5.3: 같은 종류의 타워가 중복으로 등장할 수 있음.
+        /// </summary>
+        public List<TowerData> GetTreasureChoices(int count = 3)
+        {
             if (!Singleton<Tower.TowerManager>.HasInstance)
             {
-                Debug.LogWarning("[TreasureManager] OnBossKilled: TowerManager 인스턴스 없음");
-                return;
+                Debug.LogWarning("[TreasureManager] GetTreasureChoices: TowerManager 인스턴스 없음");
+                return new List<TowerData>();
             }
 
             var available = Tower.TowerManager.Instance.availableTowers;
             if (available == null || available.Length == 0)
             {
-                Debug.LogWarning("[TreasureManager] OnBossKilled: 사용 가능한 타워가 없음");
-                return;
+                Debug.LogWarning("[TreasureManager] GetTreasureChoices: 사용 가능한 타워가 없음");
+                return new List<TowerData>();
             }
 
-            var candidates = PickRandomTowers(towerChoiceCount, available);
-            if (candidates.Count == 0)
-            {
-                Debug.LogWarning("[TreasureManager] OnBossKilled: 타워 후보를 생성할 수 없음");
-                return;
-            }
-
-            Debug.Log($"[TreasureManager] 보스 처치! 타워 보물상자 드롭 — 후보 {candidates.Count}개");
-            _waitingForChoice = true;
-            OnTowerTreasureDropped?.Invoke(candidates);
+            return PickRandomTowers(count, available);
         }
 
         /// <summary>
         /// 플레이어가 타워 3택 중 하나를 선택했을 때 UI에서 호출.
         /// 선택된 타워를 인벤토리에 추가한다.
         /// </summary>
-        public void ApplyTowerChoice(TowerData towerData)
+        public void ConfirmTreasureChoice(TowerData towerData)
         {
             if (towerData == null)
             {
-                Debug.LogWarning("[TreasureManager] ApplyTowerChoice: null towerData");
+                Debug.LogWarning("[TreasureManager] ConfirmTreasureChoice: null towerData");
                 _waitingForChoice = false;
+                _currentChoices = null;
                 return;
             }
 
             _waitingForChoice = false;
+            _currentChoices = null;
 
             // FTUE: 보물상자 첫 획득 가이드
             if (Singleton<UI.FTUEManager>.HasInstance)
@@ -139,14 +205,38 @@ namespace Soulspire.Core
             }
             else
             {
-                Debug.LogWarning("[TreasureManager] ApplyTowerChoice: TowerInventory 인스턴스 없음");
+                Debug.LogWarning("[TreasureManager] ConfirmTreasureChoice: TowerInventory 인스턴스 없음");
             }
 
             OnTowerTreasureChosen?.Invoke(towerData);
         }
 
         /// <summary>
-        /// availableTowers에서 해금된 타워만 대상으로 중복 없이 count개를 랜덤 추출한다.
+        /// 인덱스(0~2)로 타워를 선택한다. UI에서 버튼 인덱스를 전달할 때 사용.
+        /// CurrentChoices가 null이거나 인덱스가 범위 밖이면 무시한다.
+        /// </summary>
+        public void ConfirmTreasureChoiceByIndex(int index)
+        {
+            if (_currentChoices == null || index < 0 || index >= _currentChoices.Count)
+            {
+                Debug.LogWarning($"[TreasureManager] ConfirmTreasureChoiceByIndex: 유효하지 않은 인덱스 {index}");
+                return;
+            }
+
+            ConfirmTreasureChoice(_currentChoices[index]);
+        }
+
+        /// <summary>
+        /// [하위 호환] 기존 ApplyTowerChoice 호출을 ConfirmTreasureChoice로 전달.
+        /// </summary>
+        public void ApplyTowerChoice(TowerData towerData)
+        {
+            ConfirmTreasureChoice(towerData);
+        }
+
+        /// <summary>
+        /// availableTowers에서 해금된 타워만 대상으로 count개를 랜덤 추출한다.
+        /// GDD 3.5.3: 같은 종류의 타워가 중복 등장 가능 (Arrow 2 + Cannon 1 등).
         /// </summary>
         List<TowerData> PickRandomTowers(int count, TowerData[] available)
         {
@@ -162,21 +252,13 @@ namespace Soulspire.Core
             }
 
             var result = new List<TowerData>();
-            var usedIndices = new HashSet<int>();
-            int maxAttempts = count * 10;
-            int attempts = 0;
+            if (unlocked.Count == 0) return result;
 
-            int actualCount = Mathf.Min(count, unlocked.Count);
-
-            while (result.Count < actualCount && attempts < maxAttempts)
+            // GDD 3.5.3: 같은 종류 중복 허용 — 단순 랜덤 추출
+            for (int i = 0; i < count; i++)
             {
-                attempts++;
                 int idx = UnityEngine.Random.Range(0, unlocked.Count);
-                if (!usedIndices.Contains(idx))
-                {
-                    usedIndices.Add(idx);
-                    result.Add(unlocked[idx]);
-                }
+                result.Add(unlocked[idx]);
             }
 
             return result;
@@ -345,12 +427,22 @@ namespace Soulspire.Core
         // ── 디버그 전용 메서드 ──
 
         /// <summary>
-        /// 보물상자를 확률 무시하고 강제 드롭합니다 (디버그용).
-        /// Phase 2 타워 보물상자(OnBossKilled)를 트리거합니다.
+        /// 보물상자를 1개 강제 추가합니다 (디버그용).
+        /// </summary>
+        public void Debug_AddChest()
+        {
+            OnBossKilled();
+        }
+
+        /// <summary>
+        /// 보물상자를 즉시 오픈합니다 (디버그용).
+        /// 보유 수가 0이면 먼저 1개를 추가한 후 오픈합니다.
         /// </summary>
         public void Debug_ForceDrop()
         {
-            OnBossKilled();
+            if (Singleton<MetaManager>.HasInstance && MetaManager.Instance.TreasureChestCount <= 0)
+                MetaManager.Instance.AddTreasureChest(1);
+            OpenTreasureChest();
         }
 #endif
 
