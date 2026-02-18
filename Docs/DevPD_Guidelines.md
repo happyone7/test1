@@ -419,6 +419,34 @@ GameScene.unity에 UI 오브젝트가 직접 배치되어 있어, 여러 팀이 
 
 ---
 
+## 14. Task tool 에이전트 호출 규칙
+
+### 14.1 subagent_type 이모지 필수
+Task tool로 에이전트를 호출할 때 `subagent_type`에 **이모지 포함 전체 이름** 사용 필수:
+
+| 역할 | subagent_type (정확한 값) |
+|------|--------------------------|
+| 기획팀장 | `🎲 game-designer` |
+| 프로그래밍팀장 | `⚔️ unity-gameplay-programmer` |
+| QA팀장 | `🔍 unity-qa-engineer` |
+| QA테스터 1 | `🔍 unity-qa-tester` |
+| QA테스터 2 | `🔍 unity-qa-tester-2` |
+| UI팀장 | `🎨 unity-ui-developer` |
+| TA | `🎨 unity-technical-artist` |
+| 사운드 디렉터 | `🎵 unity-sound-director` |
+| 빌더 | `🚀 unity-build-engineer` |
+| PM | `📋 project-manager` |
+| 개발PD | `📋 dev-pd` |
+
+**주의**: 이모지 없이 `game-designer`처럼 입력하면 에이전트를 찾지 못해 실패함.
+
+### 14.2 민감 파일 gitignore 관리
+아래 파일은 `.gitignore`에 등록되어 있어 git 커밋 대상 아님:
+- `.claude/MEMORY.md` — 민감 정보 포함 가능 (환경변수, API 키 등)
+- `.claude/settings.local.json` — 개인 로컬 설정
+
+---
+
 ## 변경 이력
 
 | 날짜 | 변경 내용 |
@@ -427,3 +455,4 @@ GameScene.unity에 UI 오브젝트가 직접 배치되어 있어, 여러 팀이 
 | 2026-02-15 | Sprint 2 계획 추가 (1시간 축소판, 총괄PD 승인) |
 | 2026-02-16 | 9~11절 추가: Git Worktree 운영, 씬 수정 규칙(프리팹 기반), 디자인 문서 Notion 이전 |
 | 2026-02-17 | Sprint 6 DevPD 문서 리뷰: 위임 원칙 2조 추가, 에이전트 실패 복구 절차, 브랜치 일반화(sprint/N), 문서 참조 일반화(SprintN), 디자인 문서 정책 CLAUDE.md 통일, Sprint 2 레거시 제거, 스프린트 종료 체크리스트 신설, 서브에이전트 권한 관리 절 신설 |
+| 2026-02-18 | Sprint 6 DevPD 문서 리뷰: Task tool subagent_type 이모지 필수 규칙 추가(14절), 민감 파일 gitignore 정책 명시, .gitignore에 .claude/MEMORY.md + settings.local.json 추가 |

@@ -32,6 +32,8 @@ Thumbs.db
 .env
 .env.*
 .claude/telegram-notify.sh
+.claude/MEMORY.md
+.claude/settings.local.json
 
 # Unity asset meta backup
 *.pidb.meta
