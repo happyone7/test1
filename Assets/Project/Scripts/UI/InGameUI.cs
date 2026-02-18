@@ -3,7 +3,7 @@ using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nodebreaker.UI
+namespace Soulspire.UI
 {
     public class InGameUI : MonoBehaviour
     {
