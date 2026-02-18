@@ -14,18 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   spawnGroups:
   - nodeData: {fileID: 11400000, guid: 5d84841be54ffef45bc293bd0775dfc6, type: 2}
-    count: 12
-    spawnInterval: 0.4
-  - nodeData: {fileID: 11400000, guid: 7ed4db1bf5a15374898fa5a6f645cdf5, type: 2}
-    count: 8
-    spawnInterval: 0.4
-  - nodeData: {fileID: 11400000, guid: 5db5c4185a80138449cbaed758a02530, type: 2}
-    count: 5
-    spawnInterval: 0.4
+    count: 10
+    spawnInterval: 0.6
   - nodeData: {fileID: 11400000, guid: 4983b5502135461aaaea73610ab6699c, type: 2}
     count: 4
-    spawnInterval: 0.4
+    spawnInterval: 0.6
   - nodeData: {fileID: 11400000, guid: b6219b99d0bc430cb8d17b31224528eb, type: 2}
     count: 1
-    spawnInterval: 0.4
-  delayBeforeWave: 3
+    spawnInterval: 0.6
+  delayBeforeWave: 5

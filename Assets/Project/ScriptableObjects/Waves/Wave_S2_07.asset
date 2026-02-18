@@ -15,14 +15,11 @@ MonoBehaviour:
   spawnGroups:
   - nodeData: {fileID: 11400000, guid: 5d84841be54ffef45bc293bd0775dfc6, type: 2}
     count: 10
-    spawnInterval: 0.5
+    spawnInterval: 0.6
   - nodeData: {fileID: 11400000, guid: 7ed4db1bf5a15374898fa5a6f645cdf5, type: 2}
     count: 6
-    spawnInterval: 0.5
-  - nodeData: {fileID: 11400000, guid: 5db5c4185a80138449cbaed758a02530, type: 2}
-    count: 4
-    spawnInterval: 0.5
+    spawnInterval: 0.6
   - nodeData: {fileID: 11400000, guid: 922f7cc411af43e7afdc7bd2afc55c44, type: 2}
     count: 1
-    spawnInterval: 0.5
-  delayBeforeWave: 3
+    spawnInterval: 0.6
+  delayBeforeWave: 5

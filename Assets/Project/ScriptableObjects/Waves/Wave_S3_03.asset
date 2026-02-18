@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Wave_S3_03
   m_EditorClassIdentifier:
   spawnGroups:
-  - nodeData: {fileID: 11400000, guid: 5d84841be54ffef45bc293bd0775dfc6, type: 2}
-    count: 12
-    spawnInterval: 0.7
-  - nodeData: {fileID: 11400000, guid: 4983b5502135461aaaea73610ab6699c, type: 2}
-    count: 3
-    spawnInterval: 0.7
+  - nodeData: {fileID: 11400000, guid: 7ed4db1bf5a15374898fa5a6f645cdf5, type: 2}
+    count: 10
+    spawnInterval: 0.8
+  - nodeData: {fileID: 11400000, guid: 5db5c4185a80138449cbaed758a02530, type: 2}
+    count: 4
+    spawnInterval: 0.8
   delayBeforeWave: 3

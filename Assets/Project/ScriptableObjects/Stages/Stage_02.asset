@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stage_02
   m_EditorClassIdentifier:
   stageId: stage_02
-  stageName: Memory Block
+  stageName: Crossroads
   stageIndex: 1
   waves:
   - {fileID: 11400000, guid: f3c48b352b084f0c863821d40da014b8, type: 2}
@@ -24,7 +24,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 14d76b837ede4d03b5742752e777f232, type: 2}
   - {fileID: 11400000, guid: 81ffdc2a874d4a8caa37256d0c7aa4c3, type: 2}
   hpMultiplier: 1.8
-  speedMultiplier: 1
-  bitDropMultiplier: 1.5
+  speedMultiplier: 1.1
+  bitDropMultiplier: 1.6
   coreReward: 3
   baseHp: 25
