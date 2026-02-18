@@ -15,12 +15,13 @@ Implement core gameplay C# code for Soulspire. Responsible for managers, towers,
 
 ## Project Code Structure
 
-- **Scripts path**: `Assets/Scripts/`
-- **Core**: `Core/` — GameManager, RunManager, MetaManager, WaveManager
+- **Scripts path**: `Assets/Project/Scripts/`
+- **Core**: `Core/` — GameManager, RunManager, MetaManager, WaveSpawner
 - **Tower**: `Tower/` — Tower.cs, TowerData(SO), Projectile
-- **Monster**: `Monster/` — Node.cs, NodeData(SO), NodeSpawner
-- **Data**: `Data/` — StageData(SO), SkillNodeData(SO)
-- **UI**: `Scripts/UI/` — UI lead's responsibility (programmer provides data interfaces only)
+- **Node**: `Node/` — Node.cs, NodeData(SO)
+- **Data**: `Data/` — StageData(SO), SkillNodeData(SO), TowerData(SO)
+- **UI**: `UI/` — UI lead's responsibility (programmer provides data interfaces only)
+- **Debug**: `Debug/` — DebugManager, DebugPanel, DebugCommands (DEVELOPMENT_BUILD only)
 
 ## Design Doc Reference
 - Design docs are local md files in `Docs/Design/` (no direct Notion access needed)

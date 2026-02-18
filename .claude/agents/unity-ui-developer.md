@@ -18,7 +18,7 @@ Design and implement all Soulspire UI using Unity Canvas (uGUI). Responsible fro
 - **UI method**: Canvas UI (uGUI) — UI Toolkit not used during prototype phase
 - **Reference resolution**: 1920x1080 (CanvasScaler, Scale With Screen Size)
 - **UI prefab path**: `Assets/Project/Prefabs/UI/`
-- **UI script path**: `Assets/Scripts/UI/`
+- **UI script path**: `Assets/Project/Scripts/UI/`
 - **Existing UI scripts**: InGameUI.cs, HubUI.cs, SkillNodeUI.cs (added in Phase 2)
 
 ## Current UI Panel Status

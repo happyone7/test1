@@ -82,19 +82,20 @@
 
 ## 이슈 및 교훈
 
-### 1. 서브에이전트 전면 실패
+### 1. 서브에이전트 전면 실패 → **해결됨**
 - **원인**: `.claude/settings.json`에 `Bash(git pull:*)`, `Bash(powershell:*)` 만 허용
 - **증상**: 모든 에이전트 타입(game-designer, programmer, ta, sound)이 Read/Bash 도구 거부
 - **대응**: 개발PD가 직접 워크트리에서 작업 수행 (CLAUDE.md 위임 원칙 위반)
-- **필요 조치**: `settings.json`에 서브에이전트용 권한 추가 또는 로컬 설정 상속 구조 개선
+- **해결**: settings.json에 포괄적 Bash 권한 추가 (git 전 명령어, python, ls, mkdir, cp, mv, rm, node, npm, npx 등). DevPD_Guidelines 13절(서브에이전트 권한 관리) 신설
 
 ### 2. 미완료 항목
 - **TA-2 Lightning VFX**: 체인 라인렌더러 이펙트 미구현 (기능은 동작하나 시각 피드백 없음)
 - **스프라이트 품질**: PIL 생성 플레이스홀더. ComfyUI 재생성 권장
 - **SFX 품질**: numpy 수학 합성. ComfyUI 또는 전문 도구로 교체 권장
 
-### 3. 스프린트 종료 프로세스 미수행
-- Progress.md 미작성 (본 문서로 해결)
-- DevPD 문서 리뷰 미수행
-- 팀 플레이테스트/리뷰 회의 미수행
-- Notion 동기화 미수행
+### 3. 스프린트 종료 프로세스 → **소급 수행 완료 (2026-02-17)**
+- ~~Progress.md 미작성~~ → 본 문서로 해결
+- ~~DevPD 문서 리뷰 미수행~~ → 5+1개 이슈 식별 + 전체 해결
+  - settings.json 권한, 위임 원칙 강화, 종료 체크리스트 신설, 디자인 문서 정책 통일, Sprint N 일반화, 에이전트 코드 경로 수정
+- ~~팀 플레이테스트/리뷰 회의 미수행~~ → `Docs/Design/Sprint6_Feedback.md` 작성 완료 (45% 프로토타입 진행률, P0 밸런스 이슈 3건 식별)
+- Notion 동기화 미수행 → 다음 스프린트 착수 시 PM에게 위임 예정
