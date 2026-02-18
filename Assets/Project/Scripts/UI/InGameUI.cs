@@ -575,5 +575,51 @@ private IEnumerator SlideUpAnimation()
                     gm.RetryStage();
             }
         }
+
+        // ── Stub 메서드: 보스 HP바 ──
+
+        /// <summary>
+        /// 보스 HP바를 표시합니다 (TODO: UI 구현 필요).
+        /// </summary>
+        public void ShowBossHpBar(string bossName, float maxHp)
+        {
+            Debug.Log($"[InGameUI] ShowBossHpBar: {bossName}, maxHp={maxHp}");
+        }
+
+        /// <summary>
+        /// 보스 HP바를 숨깁니다 (TODO: UI 구현 필요).
+        /// </summary>
+        public void HideBossHpBar()
+        {
+            Debug.Log("[InGameUI] HideBossHpBar");
+        }
+
+        /// <summary>
+        /// 보스 HP바를 갱신합니다 (TODO: UI 구현 필요).
+        /// </summary>
+        public void UpdateBossHp(float currentHp)
+        {
+            // Node.cs에서 단일 float 인자로 호출
+        }
+
+        // ── Stub 메서드: 가이드 텍스트 ──
+
+        /// <summary>
+        /// FTUE 가이드 텍스트를 화면에 표시합니다 (TODO: UI 구현 필요).
+        /// </summary>
+        public void ShowGuideText(string message)
+        {
+            Debug.Log($"[InGameUI] ShowGuideText: {message}");
+        }
+
+        // ── Stub 메서드: Core Fragment 팝업 ──
+
+        /// <summary>
+        /// Core Fragment 획득 팝업을 표시합니다 (TODO: UI 구현 필요).
+        /// </summary>
+        public void ShowCoreFragmentPopup(int amount)
+        {
+            Debug.Log($"[InGameUI] ShowCoreFragmentPopup: +{amount}");
+        }
     }
 }

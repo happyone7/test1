@@ -32,6 +32,9 @@ namespace Soulspire.Core
         public int TotalCoreFragment => MetaManager.Instance.TotalCoreFragment;
         public int CurrentStageIndex => MetaManager.Instance.CurrentStageIndex;
 
+        /// <summary>마지막 런 클리어 여부 (OnRunEnd에서 설정)</summary>
+        public bool LastRunCleared { get; private set; }
+
         // UI 캐시 참조 (FindFirstObjectByType 반복 호출 방지)
         private UI.InGameUI _cachedInGameUI;
         private UI.HubUI _cachedHubUI;
@@ -165,6 +168,7 @@ namespace Soulspire.Core
                 nodesKilled = RunManager.Instance.NodesKilled;
 
             MetaManager.Instance.AddRunRewards(soulEarned, coreFragmentEarned, cleared, stageIdx, nodesKilled);
+            LastRunCleared = cleared;
 
             // FTUE: 첫 스테이지 클리어 시 보너스 Soul 100 지급
             if (cleared && !MetaManager.Instance.GetFtueFlag(3))
@@ -175,6 +179,26 @@ namespace Soulspire.Core
             }
 
             State = GameState.RunEnd;
+        }
+
+        /// <summary>
+        /// 현재 스테이지를 재시도합니다 (패배 후 즉시 재도전).
+        /// </summary>
+        public void RetryStage()
+        {
+            int stageIdx = MetaManager.Instance.CurrentStageIndex;
+            Debug.Log($"[GameManager] RetryStage: stageIdx={stageIdx}");
+            StartRun(stageIdx);
+        }
+
+        /// <summary>
+        /// 다음 스테이지를 시작합니다 (클리어 후).
+        /// </summary>
+        public void StartNextStage()
+        {
+            int nextIdx = MetaManager.Instance.CurrentStageIndex;
+            Debug.Log($"[GameManager] StartNextStage: nextIdx={nextIdx}");
+            StartRun(nextIdx);
         }
 
         public void GoToHub()

@@ -11,7 +11,8 @@ namespace Soulspire.Data
         SoulGain,       // 4 - Soul 획득량 +15%/lv
         StartSoul,      // 5 - 런 시작 Soul +30/lv
         SpawnRate,      // 6 - Node 스폰율 +10%/lv
-        HpRegen         // 7 - 기지 HP 초당 +0.5/lv
+        HpRegen,        // 7 - 기지 HP 초당 +0.5/lv
+        SpeedControl    // 8 - 배속 해금 (x2/x3)
     }
 
     [CreateAssetMenu(fileName = "Skill_", menuName = "Soulspire/Skill Node Data")]
