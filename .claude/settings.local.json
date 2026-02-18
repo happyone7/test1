@@ -15,5 +15,10 @@
       "mcp__comfy-ui-builder__execute_batch",
       "mcp__comfy-ui-builder__download_by_filename"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "mcp-unity",
+    "playwright",
+    "comfy-ui-builder"
+  ]
 }

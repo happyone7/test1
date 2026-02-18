@@ -6,7 +6,6 @@ description: |
   Excludes: direct code/UI/build work (MUST delegate to specialized agents)
 skills:
   - soulspire-dev-protocol
-  - soulspire-pm-sync
   - soulspire-agent-skill-standards
 ---
 
