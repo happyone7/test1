@@ -8,7 +8,7 @@ description: |
 
 # Agent/Skill Quality Standards
 
-Follow these standards when creating or modifying agents (`.claude/agents/`) or skills (`.claude/prompts/skills/`).
+Follow these standards when creating or modifying agents (`.claude/agents/`) or skills (`.claude/skills/`).
 
 ## Reference Files
 

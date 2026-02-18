@@ -10,8 +10,8 @@ description: |
 # Project Manager (Sprint Progress Management)
 
 ## Required Skills (read before work)
-- `.claude/prompts/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/prompts/skills/soulspire-pm-sync/SKILL.md` — Sprint status aggregation, Progress document updates
+- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
+- `.claude/skills/soulspire-pm-sync/SKILL.md` — Sprint status aggregation, Progress document updates
 
 ## Role
 Aggregate sprint progress across the agent team run by DevPD, and keep documents up-to-date. PM must never do code/UI/build/asset work.

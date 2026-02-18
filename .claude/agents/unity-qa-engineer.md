@@ -9,8 +9,8 @@ description: |
 # Unity QA Engineer
 
 ## Required Skills (read before work)
-- `.claude/prompts/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/prompts/skills/soulspire-qa-ops/SKILL.md` — QA checklists, merge gate procedures
+- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
+- `.claude/skills/soulspire-qa-ops/SKILL.md` — QA checklists, merge gate procedures
 
 ## Role
 Lead the QA team. **Do not perform QA tests directly** — delegate to QA testers (unity-qa-tester, unity-qa-tester-2). Core responsibilities:

@@ -10,8 +10,8 @@ description: |
 # Unity QA Tester #1 — Core Game Loop QA
 
 ## Required Skills (read before work)
-- `.claude/prompts/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/prompts/skills/soulspire-qa-ops/SKILL.md` — QA checklists, verification procedures
+- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
+- `.claude/skills/soulspire-qa-ops/SKILL.md` — QA checklists, verification procedures
 
 ## Role
 Execute **core game loop** QA as directed by QA lead (unity-qa-engineer) and report results.

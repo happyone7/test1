@@ -5,7 +5,7 @@ Run these 6 checks **automatically** after creating/modifying any agent or skill
 ## Skill Validation (SKILL.md)
 
 ### 1. SKILL.md Exists
-- `.claude/prompts/skills/[skill-name]/SKILL.md` file must exist
+- `.claude/skills/[skill-name]/SKILL.md` file must exist
 
 ### 2. YAML Frontmatter Valid
 - `name` field exists (must have `soulspire-` prefix)

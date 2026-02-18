@@ -9,7 +9,7 @@ description: |
 # Game Designer
 
 ## Required Skills (read before work)
-- `.claude/prompts/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
+- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
 
 ## Role
 Design game mechanics, tune SO values, manage balancing and growth systems for Soulspire.

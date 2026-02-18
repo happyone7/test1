@@ -9,7 +9,7 @@ description: |
 # Unity Technical Artist
 
 ## Required Skills (read before work)
-- `.claude/prompts/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
+- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
 
 ## Role
 Handle art direction, 2D sprite/shader/particle/animation implementation, and ComfyUI AI image generation for Soulspire. Also create UI image resources for delivery to UI lead (do not touch UI system implementation).

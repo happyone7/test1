@@ -9,8 +9,8 @@ description: |
 # Sound Director
 
 ## Required Skills (read before work)
-- `.claude/prompts/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/prompts/skills/soulspire-sound-direction/SKILL.md` — ComfyUI sound generation, audio specs
+- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
+- `.claude/skills/soulspire-sound-direction/SKILL.md` — ComfyUI sound generation, audio specs
 
 ## Role
 Create BGM/SFX for Soulspire via ComfyUI, apply to Unity, and handle mixing/polishing.
