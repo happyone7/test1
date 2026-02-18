@@ -74,8 +74,12 @@ namespace Soulspire.UI
         {
             if (Singleton<Core.TreasureManager>.HasInstance)
             {
-                Core.TreasureManager.Instance.OnTreasureDropped -= OnTreasureDropped;
-                Core.TreasureManager.Instance.OnTowerTreasureDropped -= OnTowerTreasureDropped;
+                var tm = Core.TreasureManager.Instance;
+                if (tm != null)
+                {
+                    tm.OnTreasureDropped -= OnTreasureDropped;
+                    tm.OnTowerTreasureDropped -= OnTowerTreasureDropped;
+                }
             }
         }
 
