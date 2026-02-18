@@ -22,4 +22,7 @@ MonoBehaviour:
   - nodeData: {fileID: 11400000, guid: 5db5c4185a80138449cbaed758a02530, type: 2}
     count: 2
     spawnInterval: 0.6
+  - nodeData: {fileID: 11400000, guid: 39b4ca15b68c4bda85e6e33f69754a77, type: 2}
+    count: 1
+    spawnInterval: 0.6
   delayBeforeWave: 3
