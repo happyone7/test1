@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stage_01
   m_EditorClassIdentifier: 
   stageId: stage_01
-  stageName: Data Stream
+  stageName: "\uC78A\uD600\uC9C4 \uCD08\uC6D0"
   stageIndex: 0
   waves:
   - {fileID: 11400000, guid: 16764519f83b4034ab746f2b9651dd1a, type: 2}

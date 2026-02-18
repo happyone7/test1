@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stage_03
   m_EditorClassIdentifier:
   stageId: stage_03
-  stageName: Cache Layer
+  stageName: "\uC218\uC815 \uB3D9\uAD74"
   stageIndex: 2
   waves:
   - {fileID: 11400000, guid: 659e23b75a0e4b31851a28050e3c5e2a, type: 2}

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stage_02
   m_EditorClassIdentifier:
   stageId: stage_02
-  stageName: Memory Block
+  stageName: "\uBB34\uB108\uC9C4 \uC131\uCC44"
   stageIndex: 1
   waves:
   - {fileID: 11400000, guid: 7b53fb957c924709a0fd6fd1c9fae3fe, type: 2}
