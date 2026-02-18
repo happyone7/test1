@@ -372,6 +372,10 @@ private IEnumerator SlideUpAnimation()
                 Core.SpeedController.Instance.OnPauseChanged += OnPauseChanged;
             }
 
+            // MetaManager 스킬 구매 이벤트 구독 — 런 도중 speed_mode 해금 시 즉시 버튼 갱신
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.OnSkillPurchased += OnSkillPurchased;
+
             // 개별 배속 버튼 (x1, x2, x3)
             if (speedButtons != null)
             {
@@ -418,11 +422,33 @@ private IEnumerator SlideUpAnimation()
             UpdateSpeedButtonVisuals();
         }
 
+        private void OnSkillPurchased(string skillId)
+        {
+            // speed_mode(hasSpeedControl) 관련 스킬 구매 시 버튼 interactable 즉시 갱신
+            UpdateSpeedButtonVisuals();
+        }
+
+        private void OnDestroy()
+        {
+            if (Singleton<Core.SpeedController>.HasInstance)
+            {
+                Core.SpeedController.Instance.OnSpeedChanged -= OnSpeedChanged;
+                Core.SpeedController.Instance.OnPauseChanged -= OnPauseChanged;
+            }
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.OnSkillPurchased -= OnSkillPurchased;
+        }
+
         private void UpdateSpeedButtonVisuals()
         {
             int currentSpeed = Singleton<Core.SpeedController>.HasInstance ? Core.SpeedController.Instance.CurrentSpeed : 1;
             bool isPaused = Singleton<Core.SpeedController>.HasInstance && Core.SpeedController.Instance.IsPaused;
             int speedIndex = currentSpeed - 1; // 0=x1, 1=x2, 2=x3
+
+            // speed_mode(hasSpeedControl) 해금 여부 — SpeedControl 스킬 구매 여부로 판단
+            bool speedUnlocked = Singleton<Core.MetaManager>.HasInstance
+                && Core.MetaManager.Instance.HasSpeedControl();
 
             // 개별 배속 버튼 (x1, x2, x3)
             if (speedButtons != null)
@@ -430,6 +456,10 @@ private IEnumerator SlideUpAnimation()
                 for (int i = 0; i < speedButtons.Length; i++)
                 {
                     if (speedButtons[i] == null) continue;
+
+                    // x2(i=1), x3(i=2)는 speed_mode 해금 필요. x1(i=0)은 항상 활성
+                    bool canUse = (i == 0) || speedUnlocked;
+                    speedButtons[i].interactable = canUse;
 
                     bool isActive = (i == speedIndex) && !isPaused;
 
