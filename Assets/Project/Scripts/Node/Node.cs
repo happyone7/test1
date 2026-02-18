@@ -1,4 +1,3 @@
-using System.Collections;
 using Tesseract.ObjectPool;
 using UnityEngine;
 using Soulspire.Audio;
@@ -170,14 +169,19 @@ namespace Soulspire.Node
         {
             CurrentHp = 0f;
 
-            // 보스 처치 슬로우모션 연출
             bool isBoss = Data != null && Data.type == Soulspire.Data.NodeType.Boss;
-            if (isBoss)
+
+            // FeedbackManager 도파민 연출
+            if (Tesseract.Core.Singleton<Core.FeedbackManager>.HasInstance)
             {
-                Time.timeScale = 0.2f;
-                // 코루틴 대신 정적 헬퍼 사용 (풀링 후에도 동작하도록)
-                var helper = new GameObject("[BossSlowMo]").AddComponent<BossSlowMotionHelper>();
-                helper.StartRestore(1f); // 실시간 1초 후 복귀
+                var feedback = Core.FeedbackManager.Instance;
+
+                if (isBoss)
+                {
+                    // 보스 처치: 슬로우모션 + 카메라 셰이크
+                    feedback.SlowMotion(0.2f, 0.5f);
+                    feedback.ShakeCamera(0.2f, 0.3f);
+                }
             }
 
             SoundManager.Instance.PlaySfx(SoundKeys.NodeDie, 0.85f);
@@ -187,8 +191,20 @@ namespace Soulspire.Node
                 // 보물 SoulBonus 효과 적용
                 if (Tesseract.Core.Singleton<Core.TreasureManager>.HasInstance)
                     soulDrop += Core.TreasureManager.Instance.SoulBonusPerKill;
+
+                // 콤보 보너스 적용
+                if (Tesseract.Core.Singleton<Core.ComboSystem>.HasInstance)
+                {
+                    int comboBonus = Core.ComboSystem.Instance.OnNodeKilled(soulDrop);
+                    soulDrop += comboBonus;
+                }
+
                 Core.RunManager.Instance.AddSoul(soulDrop);
                 Core.RunManager.Instance.OnNodeKilled();
+
+                // Soul 획득 텍스트 팝업
+                if (Tesseract.Core.Singleton<Core.FeedbackManager>.HasInstance)
+                    Core.FeedbackManager.Instance.SpawnSoulText(transform.position, soulDrop);
             }
             RemoveFromWave();
             Poolable.TryPool(gameObject);
@@ -213,25 +229,6 @@ namespace Soulspire.Node
         {
             base.OnPop();
             _waypointIndex = 0;
-        }
-    }
-
-    /// <summary>
-    /// 보스 처치 슬로우모션 복귀를 위한 일회용 헬퍼.
-    /// Node가 풀에 반환된 후에도 timeScale 복귀가 보장됩니다.
-    /// </summary>
-    public class BossSlowMotionHelper : MonoBehaviour
-    {
-        public void StartRestore(float realTimeDelay)
-        {
-            StartCoroutine(RestoreTimeScale(realTimeDelay));
-        }
-
-        IEnumerator RestoreTimeScale(float realTimeDelay)
-        {
-            yield return new WaitForSecondsRealtime(realTimeDelay);
-            Time.timeScale = 1f;
-            Destroy(gameObject);
         }
     }
 }

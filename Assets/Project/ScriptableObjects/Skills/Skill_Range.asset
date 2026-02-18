@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b914a3378bfad14e8d6fb40866b2c15, type: 3}
+  m_Name: Skill_Range
+  m_EditorClassIdentifier:
+  skillId: range
+  skillName: "\uB0A0\uCE74\uB85C\uC6B4 \uC2DC\uC57C"
+  description: "\uD0C0\uC6CC\uC758 \uC0AC\uAC70\uB9AC\uB97C \uC99D\uAC00\uC2DC\uD0B5\uB2C8\uB2E4."
+  icon: {fileID: 0}
+  effectType: 3
+  valuePerLevel: 0.2
+  maxLevel: 10
+  baseCost: 60
+  growthRate: 1.3
+  position: {x: 0, y: 1}
+  prerequisiteIds: []

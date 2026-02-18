@@ -21,6 +21,7 @@ namespace Soulspire.Core
 
         public int BaseHp => _baseHp;
         public int BaseMaxHp => _baseMaxHp;
+        public int BitEarned => SoulEarned;
 
         public void StartRun(Data.StageData stage, RunModifiers modifiers)
         {

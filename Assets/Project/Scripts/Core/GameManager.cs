@@ -32,6 +32,9 @@ namespace Soulspire.Core
         public int TotalCoreFragment => MetaManager.Instance.TotalCoreFragment;
         public int CurrentStageIndex => MetaManager.Instance.CurrentStageIndex;
 
+        /// <summary>마지막 런 클리어 여부 (OnRunEnd에서 설정)</summary>
+        public bool LastRunCleared { get; private set; }
+
         // UI 캐시 참조 (FindFirstObjectByType 반복 호출 방지)
         private UI.InGameUI _cachedInGameUI;
         private UI.HubUI _cachedHubUI;
@@ -121,8 +124,13 @@ namespace Soulspire.Core
             if (Singleton<Tower.PlacementGrid>.HasInstance)
                 Tower.PlacementGrid.Instance.ClearOccupied();
 
-            // 초기 타워 자동 배치 (Early Game Flow: 타워 1기로 시작)
-            AutoPlaceStarterTowers(starterTowerCount);
+            // 타워 배치 복원 또는 초기 자동 배치
+            // 저장된 배치가 있으면 복원, 없으면 기본 타워 자동 배치
+            if (!RestoreSavedTowers())
+            {
+                // 저장된 배치가 없을 때만 기본 타워 자동 배치 (Early Game Flow)
+                AutoPlaceStarterTowers(starterTowerCount);
+            }
 
             // InGameUI 활성화 (Hub에서 비활성화되었을 수 있음)
             if (_cachedInGameUI == null)
@@ -148,6 +156,9 @@ namespace Soulspire.Core
 
         public void OnRunEnd(bool cleared, int soulEarned)
         {
+            // 타워 배치 저장 (타워가 정리되기 전에 수행)
+            MetaManager.Instance.SaveTowerPlacements();
+
             int stageIdx = MetaManager.Instance.CurrentStageIndex;
             int coreFragmentEarned = cleared ? stages[Mathf.Min(stageIdx, stages.Length - 1)].coreFragmentReward : 0;
 
@@ -157,6 +168,7 @@ namespace Soulspire.Core
                 nodesKilled = RunManager.Instance.NodesKilled;
 
             MetaManager.Instance.AddRunRewards(soulEarned, coreFragmentEarned, cleared, stageIdx, nodesKilled);
+            LastRunCleared = cleared;
 
             // FTUE: 첫 스테이지 클리어 시 보너스 Soul 100 지급
             if (cleared && !MetaManager.Instance.GetFtueFlag(3))
@@ -167,6 +179,26 @@ namespace Soulspire.Core
             }
 
             State = GameState.RunEnd;
+        }
+
+        /// <summary>
+        /// 현재 스테이지를 재시도합니다 (패배 후 즉시 재도전).
+        /// </summary>
+        public void RetryStage()
+        {
+            int stageIdx = MetaManager.Instance.CurrentStageIndex;
+            Debug.Log($"[GameManager] RetryStage: stageIdx={stageIdx}");
+            StartRun(stageIdx);
+        }
+
+        /// <summary>
+        /// 다음 스테이지를 시작합니다 (클리어 후).
+        /// </summary>
+        public void StartNextStage()
+        {
+            int nextIdx = MetaManager.Instance.CurrentStageIndex;
+            Debug.Log($"[GameManager] StartNextStage: nextIdx={nextIdx}");
+            StartRun(nextIdx);
         }
 
         public void GoToHub()
@@ -282,6 +314,112 @@ namespace Soulspire.Core
             }
 
             Debug.Log($"[GameManager] 타워 자동 배치 완료: {placed}/{count}개 배치됨");
+        }
+
+        /// <summary>
+        /// 이전 런에서 저장된 타워 배치를 복원합니다.
+        /// 해금된 타워만 복원하며, Soul 비용 없이 무료로 배치합니다.
+        /// 복원 성공 시 true, 저장된 배치가 없으면 false 반환.
+        /// </summary>
+        private bool RestoreSavedTowers()
+        {
+            var savedPlacements = MetaManager.Instance.GetSavedTowerPlacements();
+            if (savedPlacements == null || savedPlacements.Count == 0)
+                return false;
+
+            if (!Singleton<Tower.TowerManager>.HasInstance)
+            {
+                Debug.LogWarning("[GameManager] RestoreSavedTowers: TowerManager 인스턴스 없음");
+                return false;
+            }
+
+            var towerManager = Tower.TowerManager.Instance;
+            int restored = 0;
+            int skipped = 0;
+
+            foreach (var placement in savedPlacements)
+            {
+                if (string.IsNullOrEmpty(placement.towerId))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                // 해금 여부 확인 (미해금 타워는 복원 스킵)
+                if (!MetaManager.Instance.IsTowerUnlocked(placement.towerId))
+                {
+                    Debug.Log($"[GameManager] 타워 복원 스킵 (미해금): {placement.towerId}");
+                    skipped++;
+                    continue;
+                }
+
+                // availableTowers에서 towerId에 해당하는 TowerData 찾기
+                Data.TowerData towerData = FindTowerDataById(placement.towerId, towerManager);
+                if (towerData == null)
+                {
+                    Debug.LogWarning($"[GameManager] 타워 복원 스킵 (데이터 없음): {placement.towerId}");
+                    skipped++;
+                    continue;
+                }
+
+                // 프리팹 null 안전장치
+                if (towerData.prefab == null)
+                {
+                    Debug.LogWarning($"[GameManager] 타워 복원 스킵 (프리팹 null): {placement.towerId}");
+                    skipped++;
+                    continue;
+                }
+
+                Vector3 worldPos = new Vector3(placement.posX, placement.posY, 0f);
+
+                // 배치 가능 여부 확인 (그리드 셀 점유 체크)
+                if (Singleton<Tower.PlacementGrid>.HasInstance)
+                {
+                    var grid = Tower.PlacementGrid.Instance;
+                    var cellPos = grid.WorldToCell(worldPos);
+
+                    if (!grid.CanPlace(cellPos))
+                    {
+                        Debug.LogWarning($"[GameManager] 타워 복원 스킵 (배치 불가 셀): {placement.towerId} at ({placement.posX}, {placement.posY})");
+                        skipped++;
+                        continue;
+                    }
+
+                    // Fallback 그리드인 경우 점유 상태 동기화
+                    grid.SetOccupied(cellPos, true);
+                }
+
+                // Soul 비용 없이 무료로 배치 (이미 구매한 타워)
+                towerManager.PlaceTower(towerData, worldPos, placement.level);
+                restored++;
+                Debug.Log($"[GameManager] 타워 복원: {towerData.towerName} Lv{placement.level} at ({placement.posX:F1}, {placement.posY:F1})");
+            }
+
+            Debug.Log($"[GameManager] 타워 배치 복원 완료: {restored}개 복원, {skipped}개 스킵");
+            return restored > 0;
+        }
+
+        /// <summary>
+        /// towerId로 TowerData SO를 찾습니다.
+        /// TowerManager.availableTowers와 starterTowerData를 모두 검색합니다.
+        /// </summary>
+        private Data.TowerData FindTowerDataById(string towerId, Tower.TowerManager towerManager)
+        {
+            // starterTowerData 먼저 확인
+            if (starterTowerData != null && starterTowerData.towerId == towerId)
+                return starterTowerData;
+
+            // availableTowers 검색
+            if (towerManager.availableTowers != null)
+            {
+                foreach (var td in towerManager.availableTowers)
+                {
+                    if (td != null && td.towerId == towerId)
+                        return td;
+                }
+            }
+
+            return null;
         }
 
         private void CleanupNodes()

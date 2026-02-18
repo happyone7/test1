@@ -22,7 +22,7 @@ namespace Soulspire.Data
         public GameObject prefab;
         public GameObject projectilePrefab;
 
-        [Header("레벨별 스탯 (Lv1~4, 5번째는 미사용)")]
+        [Header("레벨별 스탯 (Lv1~5)")]
         public float[] damage = { 10f, 15f, 22f, 33f, 50f };
         public float[] attackSpeed = { 1f, 1.1f, 1.2f, 1.35f, 1.5f };
         public float[] range = { 3f, 3f, 3.5f, 3.5f, 4f };
@@ -51,8 +51,8 @@ namespace Soulspire.Data
         public int GetChainCount(int level) => chainCount[Mathf.Clamp(level - 1, 0, chainCount.Length - 1)];
         public float GetChainDamageDecay(int level) => chainDamageDecay[Mathf.Clamp(level - 1, 0, chainDamageDecay.Length - 1)];
 
-        [Header("업그레이드 비용 (Soul, 레벨별: Lv1->2, Lv2->3, Lv3->4)")]
-        public int[] upgradeCost = { 30, 60, 120 };
+        [Header("업그레이드 비용 (Soul, 레벨별: Lv1->2, Lv2->3, Lv3->4, Lv4->5)")]
+        public int[] upgradeCost = { 30, 60, 120, 240 };
 
         /// <summary>
         /// 현재 레벨에서 다음 레벨로 업그레이드하는 비용. 최대 레벨이면 -1 반환.

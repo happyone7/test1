@@ -146,25 +146,36 @@ namespace Soulspire.Core
         }
 
         /// <summary>
-        /// availableTowers에서 중복 없이 count개의 타워를 랜덤 추출한다.
+        /// availableTowers에서 해금된 타워만 대상으로 중복 없이 count개를 랜덤 추출한다.
         /// </summary>
         List<TowerData> PickRandomTowers(int count, TowerData[] available)
         {
+            // 해금된 타워만 필터링
+            var unlocked = new List<TowerData>();
+            bool hasMetaManager = Singleton<MetaManager>.HasInstance;
+            foreach (var tower in available)
+            {
+                if (tower == null) continue;
+                if (hasMetaManager && !MetaManager.Instance.IsTowerUnlocked(tower.towerId))
+                    continue;
+                unlocked.Add(tower);
+            }
+
             var result = new List<TowerData>();
             var usedIndices = new HashSet<int>();
             int maxAttempts = count * 10;
             int attempts = 0;
 
-            int actualCount = Mathf.Min(count, available.Length);
+            int actualCount = Mathf.Min(count, unlocked.Count);
 
             while (result.Count < actualCount && attempts < maxAttempts)
             {
                 attempts++;
-                int idx = UnityEngine.Random.Range(0, available.Length);
-                if (!usedIndices.Contains(idx) && available[idx] != null)
+                int idx = UnityEngine.Random.Range(0, unlocked.Count);
+                if (!usedIndices.Contains(idx))
                 {
                     usedIndices.Add(idx);
-                    result.Add(available[idx]);
+                    result.Add(unlocked[idx]);
                 }
             }
 

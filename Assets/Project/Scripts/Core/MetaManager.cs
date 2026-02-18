@@ -11,6 +11,9 @@ namespace Soulspire.Core
         [Header("스킬 데이터")]
         public Data.SkillNodeData[] allSkills;
 
+        /// <summary>스킬 구매 완료 시 발생. 인자: 구매된 skillId</summary>
+        public event Action<string> OnSkillPurchased;
+
         SaveManager<PlayerSaveData> _saveManager;
         PlayerSaveData _data;
         Dictionary<string, int> _skillLevelCache = new Dictionary<string, int>();
@@ -55,7 +58,11 @@ namespace Soulspire.Core
             if (currentLevel >= skillData.maxLevel) return false;
 
             int cost = skillData.GetCost(currentLevel);
-            return _data.totalSoul >= cost;
+
+            if (skillData.isCoreNode)
+                return _data.totalCoreFragment >= cost;
+            else
+                return _data.totalSoul >= cost;
         }
 
         public bool TryPurchaseSkill(string skillId)
@@ -66,9 +73,14 @@ namespace Soulspire.Core
             int currentLevel = GetSkillLevel(skillId);
             int cost = skillData.GetCost(currentLevel);
 
-            _data.totalSoul -= cost;
+            if (skillData.isCoreNode)
+                _data.totalCoreFragment -= cost;
+            else
+                _data.totalSoul -= cost;
+
             _skillLevelCache[skillId] = currentLevel + 1;
             Save();
+            OnSkillPurchased?.Invoke(skillId);
             return true;
         }
 
@@ -80,6 +92,24 @@ namespace Soulspire.Core
             if (cleared)
                 _data.currentStageIndex = Mathf.Max(_data.currentStageIndex, stageIdx + 1);
             Save();
+        }
+
+        /// <summary>
+        /// 특정 타워가 해금되었는지 확인합니다.
+        /// Arrow는 항상 해금. 다른 타워는 스킬트리에서 해당 해금 노드를 구매해야 합니다.
+        /// </summary>
+        public bool IsTowerUnlocked(string towerId)
+        {
+            if (towerId == "arrow") return true; // Arrow는 항상 사용 가능
+
+            if (allSkills == null) return false;
+            foreach (var skill in allSkills)
+            {
+                if (skill == null || !skill.isCoreNode) continue;
+                if (skill.unlockTargetId == towerId && GetSkillLevel(skill.skillId) > 0)
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -108,6 +138,24 @@ namespace Soulspire.Core
             _data.currentStageIndex = index;
         }
 
+        /// <summary>
+        /// speed_mode(SpeedControl 효과) 스킬이 하나라도 구매되어 있는지 확인.
+        /// UI에서 x2/x3 버튼 interactable 여부 판단에 사용.
+        /// CalculateModifiers()보다 가볍게 단일 여부만 반환.
+        /// </summary>
+        public bool HasSpeedControl()
+        {
+            if (allSkills == null) return false;
+
+            foreach (var skill in allSkills)
+            {
+                if (skill == null) continue;
+                if (skill.effectType != Data.SkillEffectType.SpeedControl) continue;
+                if (GetSkillLevel(skill.skillId) > 0) return true;
+            }
+            return false;
+        }
+
         public RunModifiers CalculateModifiers()
         {
             var mods = RunModifiers.Default;
@@ -132,6 +180,21 @@ namespace Soulspire.Core
                         break;
                     case Data.SkillEffectType.BaseHp:
                         mods.bonusBaseHp += Mathf.RoundToInt(value);
+                        break;
+                    case Data.SkillEffectType.Range:
+                        mods.rangeBonus += value;
+                        break;
+                    case Data.SkillEffectType.SoulGain:
+                        mods.soulGainMultiplier += value;
+                        break;
+                    case Data.SkillEffectType.StartSoul:
+                        mods.startSoul += Mathf.RoundToInt(value);
+                        break;
+                    case Data.SkillEffectType.SpawnRate:
+                        mods.spawnRateMultiplier += value;
+                        break;
+                    case Data.SkillEffectType.HpRegen:
+                        mods.hpRegenPerSecond += value;
                         break;
                 }
             }
@@ -336,6 +399,47 @@ namespace Soulspire.Core
         {
             _data.sfxVolume = Mathf.Clamp01(value);
             Save();
+        }
+
+        // ── 타워 배치 유지 ──
+
+        /// <summary>
+        /// 현재 배치된 타워 목록을 세이브 데이터에 저장합니다.
+        /// 해금된 타워만 저장하며, 미해금 타워는 제외합니다.
+        /// </summary>
+        public void SaveTowerPlacements()
+        {
+            _data.savedTowerPlacements.Clear();
+
+            if (!Singleton<Tower.TowerManager>.HasInstance) return;
+
+            var placedTowers = Tower.TowerManager.Instance.PlacedTowers;
+            foreach (var tower in placedTowers)
+            {
+                if (tower == null || tower.data == null) continue;
+
+                // 해금 여부 확인 (미해금 타워는 저장하지 않음)
+                if (!IsTowerUnlocked(tower.data.towerId)) continue;
+
+                _data.savedTowerPlacements.Add(new TowerPlacement
+                {
+                    towerId = tower.data.towerId,
+                    level = tower.Level,
+                    posX = tower.transform.position.x,
+                    posY = tower.transform.position.y
+                });
+            }
+
+            Save();
+            Debug.Log($"[MetaManager] 타워 배치 저장 완료: {_data.savedTowerPlacements.Count}개");
+        }
+
+        /// <summary>
+        /// 저장된 타워 배치 목록을 반환합니다 (읽기 전용).
+        /// </summary>
+        public IReadOnlyList<TowerPlacement> GetSavedTowerPlacements()
+        {
+            return _data.savedTowerPlacements;
         }
 
         Data.SkillNodeData FindSkillData(string skillId)
