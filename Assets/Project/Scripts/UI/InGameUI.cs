@@ -1,10 +1,9 @@
 using System.Collections;
-using UnityEngine.Serialization;
 using Tesseract.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Soulspire.UI
+namespace Nodebreaker.UI
 {
     public class InGameUI : MonoBehaviour
     {
@@ -20,18 +19,17 @@ namespace Soulspire.UI
         private static readonly Color ColorTextMain = new Color32(0xD8, 0xE4, 0xFF, 0xFF);     // #D8E4FF
         private static readonly Color ColorTextSub = new Color32(0xAF, 0xC3, 0xE8, 0xFF);      // #AFC3E8
         private static readonly Color ColorBorder = new Color32(0x5B, 0x6B, 0x8A, 0xFF);       // #5B6B8A
-        private static readonly Color ColorOverlay = new Color32(0x05, 0x08, 0x12, 0x99);       // #050812 60%
+        private static readonly Color ColorOverlay = new Color32(0x05, 0x08, 0x12, 0xCC);       // #050812 80%
         private static readonly Color ColorHpGreen = new Color32(0x44, 0xCC, 0x44, 0xFF);      // #44CC44
         private static readonly Color ColorHpBg = new Color32(0x33, 0x11, 0x11, 0xFF);         // #331111
         private static readonly Color ColorSpeedActive = new Color32(0x15, 0x30, 0x20, 0xFF);  // #153020
         private static readonly Color ColorSpeedInactive = new Color32(0x1A, 0x24, 0x3A, 0xFF);// #1A243A
-        private static readonly Color ColorSoulGreen = new Color32(0x2B, 0xFF, 0x88, 0xFF);     // #2BFF88
+        private static readonly Color ColorBitGreen = new Color32(0x2B, 0xFF, 0x88, 0xFF);     // #2BFF88
         private static readonly Color ColorWarningRed = new Color32(0xFF, 0x4D, 0x5A, 0x80);   // #FF4D5A 반투명
 
         [Header("상단 HUD")]
         public Text waveText;
-        [FormerlySerializedAs("bitText")]
-        public Text soulText;
+        public Text bitText;
         public Text baseHpLabelText;   // "기지 HP:" 라벨
         public Image hpBarBackground;   // HP 바 배경 (#331111)
         public Image hpBarFill;          // HP 바 채우기 (#44CC44, fillAmount)
@@ -53,16 +51,14 @@ namespace Soulspire.UI
         [Header("런 종료 패널")]
         public GameObject runEndPanel;
         public Text runEndTitleText;
-        [FormerlySerializedAs("runEndBitText")]
-        public Text runEndSoulText;
+        public Text runEndBitText;
         public Button hubButton;
         public Button retryButton;
 
         [Header("런 종료 패널 - 추가 정보")]
         public Text runEndWaveText;
         public Text runEndNodesText;
-        [FormerlySerializedAs("runEndCoreText")]
-        public Text runEndCoreFragmentText;
+        public Text runEndCoreText;
 
         [Header("타워 구매/정보 패널")]
         public TowerPurchasePanel towerPurchasePanel;
@@ -84,45 +80,21 @@ namespace Soulspire.UI
         public GameObject runEndUnlockNotice;   // 새 스테이지 해금 알림
         public Text runEndUnlockText;           // 해금 알림 텍스트
         public Text hubButtonText;              // Hub 버튼 텍스트
-        public Text retryButtonText;            // 재도전/다음 Floor 버튼 텍스트
+        public Text retryButtonText;            // 재도전/다음 스테이지 버튼 텍스트
         public Outline hubButtonOutline;        // Hub 버튼 Outline
         public Outline retryButtonOutline;      // 재도전 버튼 Outline
 
-        [Header("런 종료 패널 - 보유 Bit 총액")]
-        [FormerlySerializedAs("runEndTotalBitText")]
-        public Text runEndTotalSoulText;         // "보유 Bit: 1,234" 텍스트
-
-        [Header("보스 HP 바")]
-        public GameObject bossHpBarContainer;   // 보스 HP 바 전체 컨테이너
-        public Text bossNameText;               // 보스 이름 텍스트
-        public Image bossHpBarFill;             // 보스 HP 게이지 (fillAmount)
-        public Text bossHpValueText;            // 보스 HP 수치 텍스트
-
-        [Header("가이드 텍스트 오버레이")]
-        public GameObject guideTextContainer;   // 하단 중앙 가이드 텍스트 컨테이너
-        public Text guideText;                  // 가이드 텍스트
-        public Image guideTextBackground;       // 반투명 배경
-
-        [Header("보스 처치 Core 보상 팝업")]
-        public GameObject corePopupContainer;   // Core 팝업 컨테이너
-        public Text corePopupText;              // "+N Core" 텍스트
-
-        [Header("보물상자 3택 선택")]
-        public TreasureChoiceUI treasureChoiceUI;  // 보물상자 3택 패널 (독립 이벤트 구독)
+        [Header("배속 토글 버튼 (단일 순환)")]
+        public Button speedToggleButton;        // 단일 배속 토글 버튼
+        public Text speedToggleText;            // 배속 텍스트 (x1, x2, x3)
+        public Image speedToggleImage;          // 배속 버튼 배경
 
         // === Slider 하위호환 (기존 참조 유지) ===
         [HideInInspector] public Slider baseHpSlider;
         [HideInInspector] public Text baseHpText;
 
-        private static readonly float[] SpeedValues = { 1f, 2f, 3f };
-        private int _currentSpeedIndex;
-        private float _savedTimeScale = 1f;
-        private bool _isPaused;
+        private static readonly string[] SpeedLabels = { "x1", "x2", "x3" };
         private Coroutine _slideUpCoroutine;
-        private Coroutine _guideTextCoroutine;
-        private Coroutine _corePopupCoroutine;
-        private float _bossMaxHp;
-        private bool _bossHpBarVisible;
 
 
         void Start()
@@ -146,19 +118,6 @@ namespace Soulspire.UI
                 towerPurchasePanel.gameObject.SetActive(false);
             if (towerPurchaseButton != null)
                 towerPurchaseButton.gameObject.SetActive(false);
-
-            // 보스 HP 바 초기 숨김
-            if (bossHpBarContainer != null)
-                bossHpBarContainer.SetActive(false);
-            _bossHpBarVisible = false;
-
-            // 가이드 텍스트 초기 숨김
-            if (guideTextContainer != null)
-                guideTextContainer.SetActive(false);
-
-            // Core 팝업 초기 숨김
-            if (corePopupContainer != null)
-                corePopupContainer.SetActive(false);
 
             // UI 스프라이트 적용
             ApplyUISprites();
@@ -203,12 +162,12 @@ namespace Soulspire.UI
             if (waveText != null)
             {
                 int total = run.CurrentStage != null ? run.CurrentStage.waves.Length : 0;
-                waveText.text = $"Incursion: {run.CurrentWaveIndex + 1}/{total}";
+                waveText.text = $"\uc6e8\uc774\ube0c: {run.CurrentWaveIndex + 1}/{total}";
             }
 
             // Bit 카운터
-            if (soulText != null)
-                soulText.text = $"Soul: {run.SoulEarned}";
+            if (bitText != null)
+                bitText.text = $"Bit: {run.BitEarned}";
 
             // 기지 HP 라벨
             if (baseHpLabelText != null)
@@ -244,30 +203,20 @@ namespace Soulspire.UI
                 baseHpText.text = $"HP: {run.BaseHp}/{run.BaseMaxHp}";
         }
 
-public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFragmentEarned)
+public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEarned)
         {
-            // 런 종료 시 배속을 x1로 리셋
-            Time.timeScale = 1f;
-            _currentSpeedIndex = 0;
-            _isPaused = false;
+            // 런 종료 시 배속을 x1로 리셋 (SpeedController 경유)
+            if (Singleton<Core.SpeedController>.HasInstance)
+                Core.SpeedController.Instance.ResetToDefault();
             UpdateSpeedButtonVisuals();
 
-            // 오버레이 활성화 (패널보다 뒤에 렌더링되도록 먼저 SetAsLastSibling)
+            // 오버레이 활성화
             if (runEndOverlay != null)
-            {
                 runEndOverlay.SetActive(true);
-                runEndOverlay.transform.SetAsLastSibling();
-                var overlayImage = runEndOverlay.GetComponent<Image>();
-                if (overlayImage != null)
-                    overlayImage.raycastTarget = false;
-            }
 
-            // 패널 활성화 (오버레이 위에 표시되도록 마지막에 SetAsLastSibling)
+            // 패널 활성화
             if (runEndPanel != null)
-            {
                 runEndPanel.SetActive(true);
-                runEndPanel.transform.SetAsLastSibling();
-            }
 
             // === 테마 색상 적용 (클리어=초록, 패배=빨강) ===
             Color themeColor = cleared ? ColorNeonGreen : ColorRed;
@@ -282,7 +231,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             // 제목 텍스트
             if (runEndTitleText != null)
             {
-                runEndTitleText.text = cleared ? "Floor 클리어!" : "패배";
+                runEndTitleText.text = cleared ? "스테이지 클리어!" : "패배";
                 runEndTitleText.color = themeColor;
                 runEndTitleText.fontSize = 36;
                 runEndTitleText.fontStyle = FontStyle.Bold;
@@ -305,10 +254,10 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             }
 
             // Bit 획득 정보
-            if (runEndSoulText != null)
+            if (runEndBitText != null)
             {
-                runEndSoulText.text = $"획득 Soul:  +{soulEarned}";
-                runEndSoulText.color = ColorTextMain;
+                runEndBitText.text = $"획득 Bit:  +{bitEarned}";
+                runEndBitText.color = ColorTextMain;
             }
 
             // 웨이브 도달 정보 (패배 시만)
@@ -326,7 +275,7 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
                 else
                 {
                     runEndWaveText.gameObject.SetActive(true);
-                    runEndWaveText.text = $"도달 Incursion:  {reachedWave}/{totalWaves}";
+                    runEndWaveText.text = $"도달 웨이브:  {reachedWave}/{totalWaves}";
                     runEndWaveText.color = ColorTextMain;
                 }
             }
@@ -347,62 +296,29 @@ public void ShowRunEnd(bool cleared, int soulEarned, int nodesKilled, int coreFr
             }
 
             // Core 획득 (클리어 시만, 보라색)
-            if (runEndCoreFragmentText != null)
+            if (runEndCoreText != null)
             {
-                if (coreFragmentEarned > 0)
+                if (coreEarned > 0)
                 {
-                    runEndCoreFragmentText.gameObject.SetActive(true);
-                    runEndCoreFragmentText.text = $"획득 Core Fragment:  {coreFragmentEarned}";
-                    runEndCoreFragmentText.color = ColorNeonPurple;
+                    runEndCoreText.gameObject.SetActive(true);
+                    runEndCoreText.text = $"획득 Core:  {coreEarned}";
+                    runEndCoreText.color = ColorNeonPurple;
                 }
                 else
                 {
-                    runEndCoreFragmentText.gameObject.SetActive(false);
+                    runEndCoreText.gameObject.SetActive(false);
                 }
             }
 
-            // 보유 Bit 총액 표시 (런 보상 적립 후)
-            if (runEndTotalSoulText != null)
-            {
-                if (Singleton<Core.MetaManager>.HasInstance)
-                {
-                    int totalSoul = Core.MetaManager.Instance.TotalSoul;
-                    runEndTotalSoulText.text = $"보유 Soul:  {totalSoul:N0}";
-                    runEndTotalSoulText.color = ColorSoulGreen;
-                    runEndTotalSoulText.gameObject.SetActive(true);
-                }
-                else
-                {
-                    runEndTotalSoulText.gameObject.SetActive(false);
-                }
-            }
-
-            // 새 스테이지 해금 알림
+            // 새 스테이지 해금 알림 (향후 연동)
             if (runEndUnlockNotice != null)
-            {
-                bool showUnlock = false;
-                if (cleared && Singleton<Core.MetaManager>.HasInstance && Singleton<Core.GameManager>.HasInstance)
-                {
-                    int stageCount = Core.GameManager.Instance.stages.Length;
-                    int unlockedIndex = Core.MetaManager.Instance.CurrentStageIndex;
-                    // 클리어로 새 스테이지가 해금되었고, 아직 갈 수 있는 다음 Floor가 있으면
-                    showUnlock = unlockedIndex < stageCount && unlockedIndex > 0;
-                }
-
-                runEndUnlockNotice.SetActive(showUnlock);
-                if (showUnlock && runEndUnlockText != null)
-                {
-                    runEndUnlockText.text = "새 Floor 해금!";
-                    runEndUnlockText.color = ColorYellow;
-                    runEndUnlockText.fontStyle = FontStyle.Bold;
-                }
-            }
+                runEndUnlockNotice.SetActive(false);
 
             // 버튼 텍스트 및 스타일
             if (hubButtonText != null)
-                hubButtonText.text = cleared ? "[ Sanctum ]" : "[ Sanctum (스킬 트리) ]";
+                hubButtonText.text = cleared ? "[ Hub ]" : "[ Hub (스킬 트리) ]";
             if (retryButtonText != null)
-                retryButtonText.text = cleared ? "[ 다음 Floor ]" : "[ 즉시 재도전 ]";
+                retryButtonText.text = cleared ? "[ 다음 스테이지 ]" : "[ 즉시 재도전 ]";
 
             // 버튼 Outline 색상
             if (hubButtonOutline != null)
@@ -449,85 +365,111 @@ private IEnumerator SlideUpAnimation()
 
         private void InitSpeedButtons()
         {
+            // SpeedController 이벤트 구독
+            if (Singleton<Core.SpeedController>.HasInstance)
+            {
+                Core.SpeedController.Instance.OnSpeedChanged += OnSpeedChanged;
+                Core.SpeedController.Instance.OnPauseChanged += OnPauseChanged;
+            }
+
+            // MetaManager 스킬 구매 이벤트 구독 — 런 도중 speed_mode 해금 시 즉시 버튼 갱신
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.OnSkillPurchased += OnSkillPurchased;
+
+            // 개별 배속 버튼 (x1, x2, x3)
             if (speedButtons != null)
             {
-                for (int i = 0; i < speedButtons.Length && i < SpeedValues.Length; i++)
+                int[] speeds = { 1, 2, 3 };
+                for (int i = 0; i < speedButtons.Length && i < speeds.Length; i++)
                 {
-                    int index = i;
-                    float speed = SpeedValues[i];
+                    int speed = speeds[i];
                     if (speedButtons[i] != null)
-                    {
-                        speedButtons[i].onClick.AddListener(() => SetSpeed(index, speed));
-
-                        // x2/x3은 배속 해금 노드 필요 (x1은 항상 활성)
-                        if (i > 0)
+                        speedButtons[i].onClick.AddListener(() =>
                         {
-                            bool unlocked = Singleton<Core.MetaManager>.HasInstance
-                                && Core.MetaManager.Instance.IsTowerUnlocked("speed_mode");
-                            speedButtons[i].interactable = unlocked;
-                        }
-                    }
+                            if (Singleton<Core.SpeedController>.HasInstance)
+                                Core.SpeedController.Instance.SetSpeed(speed);
+                        });
                 }
             }
 
+            // 단일 순환 토글 버튼
+            if (speedToggleButton != null)
+            {
+                speedToggleButton.onClick.AddListener(() =>
+                {
+                    if (Singleton<Core.SpeedController>.HasInstance)
+                        Core.SpeedController.Instance.ToggleSpeed();
+                });
+            }
+
             if (pauseButton != null)
-                pauseButton.onClick.AddListener(TogglePause);
+                pauseButton.onClick.AddListener(() =>
+                {
+                    if (Singleton<Core.SpeedController>.HasInstance)
+                        Core.SpeedController.Instance.TogglePause();
+                });
 
-            _currentSpeedIndex = 0;
-            _isPaused = false;
             UpdateSpeedButtonVisuals();
         }
 
-        private void SetSpeed(int index, float speed)
+        private void OnSpeedChanged(int newSpeed)
         {
-            _currentSpeedIndex = index;
-            _isPaused = false;
-            Time.timeScale = speed;
             UpdateSpeedButtonVisuals();
         }
 
-        private void TogglePause()
+        private void OnPauseChanged(bool isPaused)
         {
-            if (_isPaused)
-            {
-                // 일시정지 해제 - 이전 배속으로 복원
-                _isPaused = false;
-                Time.timeScale = SpeedValues[_currentSpeedIndex];
-            }
-            else
-            {
-                // 일시정지
-                _isPaused = true;
-                Time.timeScale = 0f;
-            }
             UpdateSpeedButtonVisuals();
+        }
+
+        private void OnSkillPurchased(string skillId)
+        {
+            // speed_mode(hasSpeedControl) 관련 스킬 구매 시 버튼 interactable 즉시 갱신
+            UpdateSpeedButtonVisuals();
+        }
+
+        private void OnDestroy()
+        {
+            if (Singleton<Core.SpeedController>.HasInstance)
+            {
+                Core.SpeedController.Instance.OnSpeedChanged -= OnSpeedChanged;
+                Core.SpeedController.Instance.OnPauseChanged -= OnPauseChanged;
+            }
+
+            if (Singleton<Core.MetaManager>.HasInstance)
+                Core.MetaManager.Instance.OnSkillPurchased -= OnSkillPurchased;
         }
 
         private void UpdateSpeedButtonVisuals()
         {
-            // 속도 버튼 스타일: 활성=#153020+#2BFF88 테두리, 비활성=#1A243A+#5B6B8A 테두리
+            int currentSpeed = Singleton<Core.SpeedController>.HasInstance ? Core.SpeedController.Instance.CurrentSpeed : 1;
+            bool isPaused = Singleton<Core.SpeedController>.HasInstance && Core.SpeedController.Instance.IsPaused;
+            int speedIndex = currentSpeed - 1; // 0=x1, 1=x2, 2=x3
+
+            // speed_mode(hasSpeedControl) 해금 여부 — SpeedControl 스킬 구매 여부로 판단
+            bool speedUnlocked = Singleton<Core.MetaManager>.HasInstance
+                && Core.MetaManager.Instance.HasSpeedControl();
+
+            // 개별 배속 버튼 (x1, x2, x3)
             if (speedButtons != null)
             {
                 for (int i = 0; i < speedButtons.Length; i++)
                 {
                     if (speedButtons[i] == null) continue;
 
-                    bool isActive = (i == _currentSpeedIndex) && !_isPaused;
+                    // x2(i=1), x3(i=2)는 speed_mode 해금 필요. x1(i=0)은 항상 활성
+                    bool canUse = (i == 0) || speedUnlocked;
+                    speedButtons[i].interactable = canUse;
 
-                    // 배경 이미지 색상
+                    bool isActive = (i == speedIndex) && !isPaused;
+
                     if (speedButtonImages != null && i < speedButtonImages.Length && speedButtonImages[i] != null)
-                    {
                         speedButtonImages[i].color = isActive ? ColorSpeedActive : ColorSpeedInactive;
-                    }
 
-                    // Outline 색상은 코드로 직접 변경 (Outline 컴포넌트가 있다면)
                     var outline = speedButtons[i].GetComponent<Outline>();
                     if (outline != null)
-                    {
                         outline.effectColor = isActive ? ColorNeonGreen : ColorBorder;
-                    }
 
-                    // ColorBlock 방식 대체 (Outline 없을 경우)
                     var colors = speedButtons[i].colors;
                     colors.normalColor = isActive ? ColorSpeedActive : ColorSpeedInactive;
                     colors.highlightedColor = isActive ? ColorSpeedActive : ColorSpeedInactive;
@@ -537,32 +479,34 @@ private IEnumerator SlideUpAnimation()
                 }
             }
 
+            // 단일 순환 토글 버튼 텍스트
+            if (speedToggleText != null && speedIndex >= 0 && speedIndex < SpeedLabels.Length)
+                speedToggleText.text = SpeedLabels[speedIndex];
+
+            if (speedToggleImage != null)
+                speedToggleImage.color = isPaused ? ColorSpeedInactive : ColorSpeedActive;
+
             // 일시정지 버튼
             if (pauseButton != null)
             {
                 if (pauseButtonImage != null)
-                {
-                    pauseButtonImage.color = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                }
+                    pauseButtonImage.color = isPaused ? ColorSpeedActive : ColorSpeedInactive;
 
                 var outline = pauseButton.GetComponent<Outline>();
                 if (outline != null)
-                {
-                    outline.effectColor = _isPaused ? ColorOrange : ColorBorder;
-                }
+                    outline.effectColor = isPaused ? ColorOrange : ColorBorder;
 
                 var pauseColors = pauseButton.colors;
-                pauseColors.normalColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                pauseColors.highlightedColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                pauseColors.pressedColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
-                pauseColors.selectedColor = _isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.normalColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.highlightedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.pressedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
+                pauseColors.selectedColor = isPaused ? ColorSpeedActive : ColorSpeedInactive;
                 pauseButton.colors = pauseColors;
             }
         }
 
         public void HideAll()
         {
-            Debug.Log("[InGameUI] HideAll 호출");
             // Canvas 루트를 비활성화하지 않음! InGame 전용 요소만 숨기기
             SetInGameElementsActive(false);
 
@@ -574,44 +518,16 @@ private IEnumerator SlideUpAnimation()
                 towerPurchasePanel.Hide();
             if (towerInfoTooltip != null)
                 towerInfoTooltip.Hide();
-
-            // 보스 HP 바 숨김
-            HideBossHpBar();
-
-            // 가이드 텍스트 숨김
-            if (_guideTextCoroutine != null)
-            {
-                StopCoroutine(_guideTextCoroutine);
-                _guideTextCoroutine = null;
-            }
-            if (guideTextContainer != null)
-                guideTextContainer.SetActive(false);
-
-            // Core 팝업 숨김
-            if (_corePopupCoroutine != null)
-            {
-                StopCoroutine(_corePopupCoroutine);
-                _corePopupCoroutine = null;
-            }
-            if (corePopupContainer != null)
-                corePopupContainer.SetActive(false);
-
-            // 보물상자 3택 패널 숨김
-            if (treasureChoiceUI != null)
-                treasureChoiceUI.Hide();
         }
 
         public void ShowAll()
         {
-            // 안전장치: 부모 Canvas가 비활성이면 활성화
-            var parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null && !parentCanvas.gameObject.activeSelf)
-            {
-                Debug.LogWarning($"[InGameUI] ShowAll: 부모 Canvas '{parentCanvas.name}'가 비활성 상태 — 강제 활성화");
-                parentCanvas.gameObject.SetActive(true);
-            }
+            // 런 종료 패널/오버레이 확실히 숨기기 (재시도/직접 StartRun 호출 시 안전망)
+            if (runEndPanel != null)
+                runEndPanel.SetActive(false);
+            if (runEndOverlay != null)
+                runEndOverlay.SetActive(false);
 
-            Debug.Log($"[InGameUI] ShowAll 호출: topHud={topHudContainer != null}, bottomBar={bottomBarContainer != null}, inventoryBar={inventoryBar != null}");
             SetInGameElementsActive(true);
         }
 
@@ -641,6 +557,7 @@ private IEnumerator SlideUpAnimation()
         void OnGoToHub()
         {
             if (runEndPanel != null) runEndPanel.SetActive(false);
+            if (runEndOverlay != null) runEndOverlay.SetActive(false);
             if (Singleton<Core.GameManager>.HasInstance)
                 Core.GameManager.Instance.GoToHub();
         }
@@ -648,164 +565,15 @@ private IEnumerator SlideUpAnimation()
         void OnRetry()
         {
             if (runEndPanel != null) runEndPanel.SetActive(false);
+            if (runEndOverlay != null) runEndOverlay.SetActive(false);
             if (Singleton<Core.GameManager>.HasInstance)
-                Core.GameManager.Instance.StartRun();
-        }
-
-        // =====================================================================
-        // 보스 HP 바
-        // =====================================================================
-
-        /// <summary>
-        /// 보스 HP 바를 표시합니다. 보스 웨이브 시작 시 호출.
-        /// </summary>
-        public void ShowBossHpBar(string bossName, float maxHp)
-        {
-            _bossMaxHp = maxHp;
-            _bossHpBarVisible = true;
-
-            if (bossHpBarContainer != null)
-                bossHpBarContainer.SetActive(true);
-
-            if (bossNameText != null)
             {
-                bossNameText.text = bossName;
-                bossNameText.color = ColorRed;
-                bossNameText.fontStyle = FontStyle.Bold;
+                var gm = Core.GameManager.Instance;
+                if (gm.LastRunCleared)
+                    gm.StartNextStage();
+                else
+                    gm.RetryStage();
             }
-
-            if (bossHpBarFill != null)
-                bossHpBarFill.fillAmount = 1f;
-
-            if (bossHpValueText != null)
-                bossHpValueText.text = $"{maxHp:F0}/{maxHp:F0}";
-        }
-
-        /// <summary>
-        /// 보스 HP 갱신.
-        /// </summary>
-        public void UpdateBossHp(float currentHp)
-        {
-            if (!_bossHpBarVisible) return;
-
-            float ratio = _bossMaxHp > 0 ? Mathf.Clamp01(currentHp / _bossMaxHp) : 0f;
-
-            if (bossHpBarFill != null)
-                bossHpBarFill.fillAmount = ratio;
-
-            if (bossHpValueText != null)
-                bossHpValueText.text = $"{Mathf.Max(0f, currentHp):F0}/{_bossMaxHp:F0}";
-        }
-
-        /// <summary>
-        /// 보스 HP 바를 숨깁니다. 보스 처치 시 호출.
-        /// </summary>
-        public void HideBossHpBar()
-        {
-            _bossHpBarVisible = false;
-
-            if (bossHpBarContainer != null)
-                bossHpBarContainer.SetActive(false);
-        }
-
-        // =====================================================================
-        // FTUE 가이드 텍스트 오버레이
-        // =====================================================================
-
-        /// <summary>
-        /// 화면 하단 중앙에 가이드 텍스트를 2초 표시 후 페이드아웃합니다.
-        /// </summary>
-        public void ShowGuideText(string text)
-        {
-            if (guideTextContainer == null || guideText == null) return;
-
-            if (_guideTextCoroutine != null)
-                StopCoroutine(_guideTextCoroutine);
-
-            _guideTextCoroutine = StartCoroutine(GuideTextRoutine(text));
-        }
-
-        private IEnumerator GuideTextRoutine(string text)
-        {
-            guideTextContainer.SetActive(true);
-            guideText.text = text;
-            guideText.color = ColorTextMain;
-
-            // 배경 반투명 리셋
-            if (guideTextBackground != null)
-                guideTextBackground.color = ColorOverlay;
-
-            var canvasGroup = guideTextContainer.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-                canvasGroup = guideTextContainer.AddComponent<CanvasGroup>();
-
-            canvasGroup.alpha = 1f;
-
-            // 2초 표시
-            yield return new WaitForSecondsRealtime(2f);
-
-            // 0.5초 페이드아웃
-            float fadeTime = 0.5f;
-            float elapsed = 0f;
-            while (elapsed < fadeTime)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                canvasGroup.alpha = 1f - (elapsed / fadeTime);
-                yield return null;
-            }
-
-            canvasGroup.alpha = 0f;
-            guideTextContainer.SetActive(false);
-            _guideTextCoroutine = null;
-        }
-
-        // =====================================================================
-        // 보스 처치 Core 보상 팝업
-        // =====================================================================
-
-        /// <summary>
-        /// "+N Core" 팝업을 1초 표시 후 페이드아웃합니다.
-        /// </summary>
-        public void ShowCoreFragmentPopup(int coreAmount)
-        {
-            if (corePopupContainer == null || corePopupText == null) return;
-
-            if (_corePopupCoroutine != null)
-                StopCoroutine(_corePopupCoroutine);
-
-            _corePopupCoroutine = StartCoroutine(CorePopupRoutine(coreAmount));
-        }
-
-        private IEnumerator CorePopupRoutine(int coreAmount)
-        {
-            corePopupContainer.SetActive(true);
-            corePopupText.text = $"+{coreAmount} Core Fragment";
-            corePopupText.color = ColorNeonPurple;
-            corePopupText.fontSize = 32;
-            corePopupText.fontStyle = FontStyle.Bold;
-
-            var canvasGroup = corePopupContainer.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-                canvasGroup = corePopupContainer.AddComponent<CanvasGroup>();
-
-            canvasGroup.alpha = 1f;
-
-            // 1초 표시
-            yield return new WaitForSecondsRealtime(1f);
-
-            // 0.5초 페이드아웃
-            float fadeTime = 0.5f;
-            float elapsed = 0f;
-            while (elapsed < fadeTime)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                canvasGroup.alpha = 1f - (elapsed / fadeTime);
-                yield return null;
-            }
-
-            canvasGroup.alpha = 0f;
-            corePopupContainer.SetActive(false);
-            _corePopupCoroutine = null;
         }
     }
 }
