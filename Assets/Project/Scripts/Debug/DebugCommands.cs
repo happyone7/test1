@@ -166,31 +166,53 @@ namespace Soulspire.Debugging
         }
 
         // ═══════════════════════════════════════
-        // 4. 보물상자 강제 드롭/오픈 (Force Treasure Chest)
+        // 4. 보물상자 강제 획득/오픈 (Treasure Chest)
         // ═══════════════════════════════════════
 
         /// <summary>
-        /// 보물상자 드롭을 강제 발동한다.
-        /// TreasureManager가 있으면 OnWaveCleared를 확률 무시하고 직접 호출.
+        /// 보물상자를 1개 강제 추가한다 (보스 처치 시뮬레이션).
+        /// </summary>
+        public static void AddTreasureChest()
+        {
+            if (!Singleton<TreasureManager>.HasInstance)
+            {
+                Debug.LogWarning("[DebugCmd] AddTreasureChest: TreasureManager 인스턴스 없음");
+                return;
+            }
+
+            TreasureManager.Instance.Debug_AddChest();
+            int count = Singleton<MetaManager>.HasInstance ? MetaManager.Instance.TreasureChestCount : -1;
+            Debug.Log($"[DebugCmd] AddTreasureChest: 보물상자 +1 (보유: {count})");
+        }
+
+        /// <summary>
+        /// 보물상자를 즉시 오픈한다 (보유 수가 0이면 자동 추가 후 오픈).
         /// </summary>
         public static void ForceTreasureDrop()
         {
             if (!Singleton<TreasureManager>.HasInstance)
             {
-                Debug.LogWarning("[DebugCmd] ForceTreasureDrop: TreasureManager 인스턴스 없음 (보물상자 시스템 미구현 또는 씬에 없음)");
+                Debug.LogWarning("[DebugCmd] ForceTreasureDrop: TreasureManager 인스턴스 없음");
                 return;
             }
 
-            var tm = TreasureManager.Instance;
-            if (tm.treasureConfig == null)
+            TreasureManager.Instance.Debug_ForceDrop();
+            Debug.Log("[DebugCmd] ForceTreasureDrop: 보물상자 강제 오픈 완료");
+        }
+
+        /// <summary>
+        /// 보물상자 보유 수를 강제 설정한다.
+        /// </summary>
+        public static void SetTreasureChestCount(int count)
+        {
+            if (!Singleton<MetaManager>.HasInstance)
             {
-                Debug.LogWarning("[DebugCmd] ForceTreasureDrop: TreasureConfig가 할당되지 않음");
+                Debug.LogWarning("[DebugCmd] SetTreasureChestCount: MetaManager 인스턴스 없음");
                 return;
             }
 
-            // 강제 드롭: TreasureManager의 OnWaveCleared 대신 직접 이벤트 발동
-            tm.Debug_ForceDrop();
-            Debug.Log("[DebugCmd] ForceTreasureDrop: 보물상자 강제 드롭 완료");
+            MetaManager.Instance.Debug_SetTreasureChestCount(count);
+            Debug.Log($"[DebugCmd] SetTreasureChestCount: treasureChestCount = {count}");
         }
 
         // ═══════════════════════════════════════

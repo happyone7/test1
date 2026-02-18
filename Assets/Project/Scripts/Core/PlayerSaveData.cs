@@ -57,6 +57,11 @@ namespace Soulspire.Core
         /// <summary>SFX 볼륨 (0~1). 기본값 1.</summary>
         public float sfxVolume = 1f;
 
+        // ── 보물상자 ──
+
+        /// <summary>보유 중인 보물상자 수 (보스 처치 시 획득, Sanctum에서 오픈).</summary>
+        public int treasureChestCount;
+
         // ── 타워 배치 유지 ──
 
         /// <summary>

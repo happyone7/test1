@@ -64,13 +64,19 @@ namespace Soulspire.UI
         void OnEnable()
         {
             if (Singleton<Core.TreasureManager>.HasInstance)
+            {
                 Core.TreasureManager.Instance.OnTreasureDropped += OnTreasureDropped;
+                Core.TreasureManager.Instance.OnTowerTreasureDropped += OnTowerTreasureDropped;
+            }
         }
 
         void OnDisable()
         {
             if (Singleton<Core.TreasureManager>.HasInstance)
+            {
                 Core.TreasureManager.Instance.OnTreasureDropped -= OnTreasureDropped;
+                Core.TreasureManager.Instance.OnTowerTreasureDropped -= OnTowerTreasureDropped;
+            }
         }
 
         // =====================================================================
@@ -81,6 +87,12 @@ namespace Soulspire.UI
         {
             if (choices == null || choices.Count == 0) return;
             Show(choices);
+        }
+
+        private void OnTowerTreasureDropped(List<TowerData> towerChoices)
+        {
+            if (towerChoices == null || towerChoices.Count == 0) return;
+            ShowTowerChoice(towerChoices);
         }
 
         // =====================================================================
@@ -681,6 +693,10 @@ namespace Soulspire.UI
 
             if (Singleton<SoundManager>.HasInstance)
                 SoundManager.Instance.PlaySfx(SoundKeys.TreasureSelect);
+
+            // TreasureManager에 선택 적용 (인벤토리 추가 + 저장)
+            if (Singleton<Core.TreasureManager>.HasInstance)
+                Core.TreasureManager.Instance.ConfirmTreasureChoice(towerData);
 
             OnTowerChosen?.Invoke(towerData);
             Hide();

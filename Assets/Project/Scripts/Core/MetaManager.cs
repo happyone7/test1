@@ -22,6 +22,7 @@ namespace Soulspire.Core
         public int TotalCoreFragment => _data.totalCoreFragment;
         public int CurrentStageIndex => _data.currentStageIndex;
         public int TotalNodesKilled => _data.totalNodesKilled;
+        public int TreasureChestCount => _data.treasureChestCount;
 
         protected override void Awake()
         {
@@ -333,6 +334,42 @@ namespace Soulspire.Core
         public void Debug_SetNodesKilled(int count)
         {
             _data.totalNodesKilled = Mathf.Max(0, count);
+            Save();
+        }
+#endif
+
+        // ── 보물상자 ──
+
+        /// <summary>
+        /// 보물상자를 count개 추가하고 저장합니다.
+        /// 보스 처치 시 TreasureManager.OnBossKilled()에서 호출.
+        /// </summary>
+        public void AddTreasureChest(int count = 1)
+        {
+            _data.treasureChestCount += count;
+            Save();
+            Debug.Log($"[MetaManager] 보물상자 +{count} (보유: {_data.treasureChestCount})");
+        }
+
+        /// <summary>
+        /// 보물상자를 1개 소비합니다. 보유 수가 0이면 false 반환.
+        /// Sanctum에서 보물상자 오픈 시 TreasureManager.OpenTreasureChest()에서 호출.
+        /// </summary>
+        public bool SpendTreasureChest()
+        {
+            if (_data.treasureChestCount <= 0) return false;
+            _data.treasureChestCount--;
+            Save();
+            return true;
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// 보물상자 보유 수를 강제 설정합니다 (디버그용).
+        /// </summary>
+        public void Debug_SetTreasureChestCount(int count)
+        {
+            _data.treasureChestCount = Mathf.Max(0, count);
             Save();
         }
 #endif

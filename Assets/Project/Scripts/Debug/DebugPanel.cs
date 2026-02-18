@@ -237,12 +237,17 @@ namespace Soulspire.Debugging
 
         void DrawTreasureSection()
         {
-            _foldTreasure = GUILayout.Toggle(_foldTreasure, "4. Force Treasure Chest", "button");
+            _foldTreasure = GUILayout.Toggle(_foldTreasure, "4. Treasure Chest", "button");
             if (!_foldTreasure) return;
 
             GUILayout.BeginVertical("box");
 
-            if (GUILayout.Button("Force Treasure Drop", GUILayout.Height(30)))
+            if (GUILayout.Button("Add Chest (+1)", GUILayout.Height(30)))
+            {
+                DebugCommands.AddTreasureChest();
+            }
+
+            if (GUILayout.Button("Force Open Chest", GUILayout.Height(30)))
             {
                 DebugCommands.ForceTreasureDrop();
             }
@@ -250,7 +255,8 @@ namespace Soulspire.Debugging
             if (Singleton<TreasureManager>.HasInstance)
             {
                 var tm = TreasureManager.Instance;
-                GUILayout.Label($"  Active Effects: {tm.ActiveEffects.Count}  |  Waiting: {tm.IsWaitingForChoice}");
+                int chestCount = Singleton<MetaManager>.HasInstance ? MetaManager.Instance.TreasureChestCount : 0;
+                GUILayout.Label($"  Chests: {chestCount}  |  Effects: {tm.ActiveEffects.Count}  |  Waiting: {tm.IsWaitingForChoice}");
             }
             else
             {
