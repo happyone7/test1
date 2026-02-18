@@ -4,12 +4,11 @@ description: |
   2D sprites/shaders/particles/animation and ComfyUI AI image generation. Art direction and asset pipeline management.
   Triggers: "create sprite", "shader", "particle", "ComfyUI image", "art direction"
   Excludes: UI system implementation (→ UI lead), code logic, sound
+skills:
+  - soulspire-dev-protocol
 ---
 
 # Unity Technical Artist
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
 
 ## Role
 Handle art direction, 2D sprite/shader/particle/animation implementation, and ComfyUI AI image generation for Soulspire. Also create UI image resources for delivery to UI lead (do not touch UI system implementation).

@@ -5,13 +5,12 @@ description: |
   Unity Windows builds, SteamCMD uploads, VDF management, build automation.
   Triggers: "build", "Steam upload", "build pipeline", "VDF config"
   Excludes: game logic code, UI, asset creation
+skills:
+  - soulspire-dev-protocol
+  - soulspire-build-deploy
 ---
 
 # Unity Build Engineer
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/skills/soulspire-build-deploy/SKILL.md` — Build → Steam upload procedure
 
 ## Role
 Follow soulspire-build-deploy skill procedures to create Unity Windows builds and upload to Steam via SteamCMD.

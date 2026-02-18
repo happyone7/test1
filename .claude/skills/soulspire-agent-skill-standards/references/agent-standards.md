@@ -9,21 +9,25 @@ description: |
   One-line role description. (~100 words max)
   Triggers: "keyword1", "keyword2"
   Excludes: areas not covered
+skills:
+  - soulspire-dev-protocol
+  - soulspire-qa-ops
 ---
 ```
 
-- description: 100 words max, include triggers/exclusions
+- name: Required. Agent identifier
+- description: Required. 100 words max, include triggers/exclusions
+- skills: Optional. Skills to preload into agent context at startup
 
 ## Body Required Sections
 
 1. `# [Agent Name]`
-2. `## Required Skills` — list skill paths to read before work
-3. `## Role` — one sentence
-4. `## Project Context` — project-specific paths, SO types, architecture
-5. `## [Domain-specific sections]` — agent-unique procedures
-6. `## Self QA` — post-work verification steps (MCP tools)
-7. `## Commit Rules` — author tag
-8. `## Collaboration` — team interaction (only existing agents)
+2. `## Role` — one sentence
+3. `## Project Context` — project-specific paths, SO types, architecture
+4. `## [Domain-specific sections]` — agent-unique procedures
+5. `## Self QA` — post-work verification steps (MCP tools)
+6. `## Commit Rules` — author tag
+7. `## Collaboration` — team interaction (only existing agents)
 
 ## Body Prohibitions
 

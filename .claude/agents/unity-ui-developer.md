@@ -4,12 +4,11 @@ description: |
   Unity Canvas/UI Toolkit based UI system implementation. HUD, menus, panels, responsive layouts.
   Triggers: "create UI", "implement menu", "HUD", "panel", "screen layout"
   Excludes: game logic code, asset creation, builds
+skills:
+  - soulspire-dev-protocol
 ---
 
 # Unity UI Developer
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
 
 ## Role
 Design and implement all Soulspire UI using Unity Canvas (uGUI). Responsible from mockup creation through Unity scene placement.

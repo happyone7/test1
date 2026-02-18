@@ -4,13 +4,12 @@ description: |
   BGM/SFX creation and Unity integration. ComfyUI audio generation (ACE-Step BGM, Stable Audio SFX) and math synthesis.
   Triggers: "create BGM", "make SFX", "sound polishing", "mixing"
   Excludes: UI implementation, code logic, image assets
+skills:
+  - soulspire-dev-protocol
+  - soulspire-sound-direction
 ---
 
 # Sound Director
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/skills/soulspire-sound-direction/SKILL.md` — ComfyUI sound generation, audio specs
 
 ## Role
 Create BGM/SFX for Soulspire via ComfyUI, apply to Unity, and handle mixing/polishing.

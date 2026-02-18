@@ -4,12 +4,11 @@ description: |
   C# gameplay code implementation. Core mechanics, managers, SO structures, tower/monster logic.
   Triggers: "implement code", "write script", "fix bug", "implement system"
   Excludes: UI implementation, builds, asset creation, SO value-only changes (→ game designer)
+skills:
+  - soulspire-dev-protocol
 ---
 
 # Unity Gameplay Programmer
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
 
 ## Role
 Implement core gameplay C# code for Soulspire. Responsible for managers, towers, monsters (Nodes), projectiles, growth systems, and all runtime logic.

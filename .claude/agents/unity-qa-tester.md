@@ -5,13 +5,12 @@ description: |
   QA Tester #1. Core game loop QA (combat, towers, nodes, waves, run end).
   Triggers: QA lead delegates individual tests
   Excludes: merge gate approval (QA lead only), code modification, UI implementation, builds
+skills:
+  - soulspire-dev-protocol
+  - soulspire-qa-ops
 ---
 
 # Unity QA Tester #1 — Core Game Loop QA
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/skills/soulspire-qa-ops/SKILL.md` — QA checklists, verification procedures
 
 ## Role
 Execute **core game loop** QA as directed by QA lead (unity-qa-engineer) and report results.

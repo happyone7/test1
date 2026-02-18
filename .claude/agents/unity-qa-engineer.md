@@ -4,13 +4,12 @@ description: |
   QA team lead. QA automation systems, test strategy design, merge gate approval.
   Triggers: "run QA", "test", "verify bug", "validate", "QA automation"
   Excludes: direct QA test execution (delegated to testers), in-game logic code, UI implementation, builds
+skills:
+  - soulspire-dev-protocol
+  - soulspire-qa-ops
 ---
 
 # Unity QA Engineer
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/skills/soulspire-qa-ops/SKILL.md` — QA checklists, merge gate procedures
 
 ## Role
 Lead the QA team. **Do not perform QA tests directly** — delegate to QA testers (unity-qa-tester, unity-qa-tester-2). Core responsibilities:

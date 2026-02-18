@@ -5,13 +5,12 @@ description: |
   QA Tester #2. UI/UX and meta system QA (Hub, skill nodes, save, growth).
   Triggers: QA lead delegates individual tests
   Excludes: merge gate approval (QA lead only), code modification, UI implementation, builds
+skills:
+  - soulspire-dev-protocol
+  - soulspire-qa-ops
 ---
 
 # Unity QA Tester #2 — UI/UX & Meta System QA
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
-- `.claude/skills/soulspire-qa-ops/SKILL.md` — QA checklists, verification procedures
 
 ## Role
 Execute **UI/UX and meta system** QA as directed by QA lead (unity-qa-engineer) and report results.

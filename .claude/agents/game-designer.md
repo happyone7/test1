@@ -4,12 +4,11 @@ description: |
   Game mechanic design, balancing, difficulty curves, growth systems, SO value tuning.
   Triggers: "mechanic design", "balancing", "difficulty", "growth system", "SO value edit"
   Excludes: code implementation, UI system implementation, builds
+skills:
+  - soulspire-dev-protocol
 ---
 
 # Game Designer
-
-## Required Skills (read before work)
-- `.claude/skills/soulspire-dev-protocol/SKILL.md` — Git collaboration, prefab/scene management, folder structure
 
 ## Role
 Design game mechanics, tune SO values, manage balancing and growth systems for Soulspire.
