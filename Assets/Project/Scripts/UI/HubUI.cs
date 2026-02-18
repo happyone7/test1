@@ -78,6 +78,11 @@ namespace Soulspire.UI
         public SettingsPopup settingsPopup;
         public IdleSoulPopup idleSoulPopup;
 
+        [Header("보물상자 (Sanctum)")]
+        public Button treasureChestButton;      // "보물상자 오픈" 버튼
+        public Text treasureChestButtonText;    // 버튼 텍스트 (보유 수 표시)
+        public TreasureChestUI treasureChestUI; // 보물상자 3택 패널 참조
+
         [Header("UI 스프라이트")]
         public UISprites uiSprites;
 
@@ -177,6 +182,9 @@ namespace Soulspire.UI
 
             if (detailCloseButton != null)
                 detailCloseButton.onClick.AddListener(OnDetailClose);
+
+            if (treasureChestButton != null)
+                treasureChestButton.onClick.AddListener(OnTreasureChestOpen);
 
             // 동적 스킬 노드 생성 (MetaManager.allSkills 기반)
             GenerateSkillNodes();
@@ -365,6 +373,8 @@ namespace Soulspire.UI
                 RefreshStageDropdown();
                 RefreshIdleSoulNotification();
             }
+
+            RefreshTreasureChestButton();
 
             // 수동 할당 노드 새로고침
             foreach (var node in skillNodes)
@@ -723,6 +733,39 @@ namespace Soulspire.UI
             UnityEditor.EditorApplication.isPlaying = false;
 #else
             Application.Quit();
+#endif
+        }
+
+        // =====================================================================
+        // 보물상자 (Sanctum)
+        // =====================================================================
+
+        /// <summary>
+        /// 보물상자 보유 수에 따라 버튼 텍스트와 활성 상태를 갱신합니다.
+        /// TreasureManager에 TreasureChestCount가 없으므로 Debug_ForceDrop 기반으로 동작합니다.
+        /// 현재는 항상 활성화하여 보물상자 오픈을 테스트할 수 있게 합니다.
+        /// </summary>
+        private void RefreshTreasureChestButton()
+        {
+            if (treasureChestButton == null) return;
+
+            // 보물상자 버튼은 항상 활성 (보스 처치로 상자가 드랍되는 구조이므로)
+            treasureChestButton.interactable = true;
+
+            if (treasureChestButtonText != null)
+                treasureChestButtonText.text = "Soul Chest";
+        }
+
+        private void OnTreasureChestOpen()
+        {
+            if (!Singleton<Core.TreasureManager>.HasInstance) return;
+
+            // TreasureManager.OnBossKilled() 호출 → OnTowerTreasureDropped 이벤트 발행
+            // → TreasureChestUI가 이벤트를 구독하여 자동으로 패널 표시
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Core.TreasureManager.Instance.Debug_ForceDrop();
+#else
+            Core.TreasureManager.Instance.OnBossKilled();
 #endif
         }
 

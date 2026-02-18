@@ -84,6 +84,9 @@ namespace Soulspire.UI
         public Outline hubButtonOutline;        // Hub 버튼 Outline
         public Outline retryButtonOutline;      // 재도전 버튼 Outline
 
+        [Header("콤보 카운터 HUD")]
+        public ComboCounterUI comboCounterUI;   // 콤보 카운터 UI (자동 생성 가능)
+
         [Header("배속 토글 버튼 (단일 순환)")]
         public Button speedToggleButton;        // 단일 배속 토글 버튼
         public Text speedToggleText;            // 배속 텍스트 (x1, x2, x3)
@@ -118,6 +121,14 @@ namespace Soulspire.UI
                 towerPurchasePanel.gameObject.SetActive(false);
             if (towerPurchaseButton != null)
                 towerPurchaseButton.gameObject.SetActive(false);
+
+            // 콤보 카운터 UI 자동 생성 (미할당 시)
+            if (comboCounterUI == null)
+            {
+                var comboGo = new GameObject("ComboCounterUI");
+                comboGo.transform.SetParent(transform, false);
+                comboCounterUI = comboGo.AddComponent<ComboCounterUI>();
+            }
 
             // UI 스프라이트 적용
             ApplyUISprites();
@@ -205,6 +216,10 @@ namespace Soulspire.UI
 
 public void ShowRunEnd(bool cleared, int bitEarned, int nodesKilled, int coreEarned)
         {
+            // 콤보 카운터 리셋
+            if (comboCounterUI != null)
+                comboCounterUI.ResetDisplay();
+
             // 런 종료 시 배속을 x1로 리셋 (SpeedController 경유)
             if (Singleton<Core.SpeedController>.HasInstance)
                 Core.SpeedController.Instance.ResetToDefault();
@@ -527,6 +542,10 @@ private IEnumerator SlideUpAnimation()
                 runEndPanel.SetActive(false);
             if (runEndOverlay != null)
                 runEndOverlay.SetActive(false);
+
+            // 콤보 카운터 리셋 (새 런 시작)
+            if (comboCounterUI != null)
+                comboCounterUI.ResetDisplay();
 
             SetInGameElementsActive(true);
         }
