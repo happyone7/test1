@@ -258,7 +258,7 @@ GDD 기준 수치. 공격속도는 "공격 간격(초)" 기반.
 
 | 순위 | 스킬 | 이유 |
 |------|------|------|
-| 1 | 기지 HP Lv1~2 | 생존 시간 증가 -> 더 많은 Bit 획득 기회. 가장 저렴 (40+50=90 Bit) |
+| 1 | 기지 HP Lv1~2 | 생존 시간 증가 -> 더 많은 Bit 획득 기회. 가장 저렴 (20+25=45 Bit) |
 | 2 | 공격력 Lv1~3 | DPS 직접 증가. 가장 높은 효율 |
 | 3 | 공속 Lv1 | DPS 5% 증가. 비용 대비 효율은 공격력보다 낮지만 체감 있음 |
 
@@ -357,7 +357,7 @@ Sprint 2까지의 SO 에셋과 GDD 수치 간 괴리가 존재한다. 아래는 
 | Stage_01 | baseHp | 5 | **20** | P0 |
 | Skill_AttackSpeed | baseCost | 80 | **80** | - (일치) |
 | Skill_AttackSpeed | growthRate | 1.3 | **1.3** | - (일치) |
-| Skill_BaseHp | baseCost | 40 | **40** | - (일치) |
+| Skill_BaseHp | baseCost | 20 | **20** | - (일치) |
 | Skill_BaseHp | growthRate | 1.25 | **1.25** | - (일치) |
 
 ---
