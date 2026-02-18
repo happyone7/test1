@@ -11,6 +11,9 @@ namespace Soulspire.Core
         [Header("스킬 데이터")]
         public Data.SkillNodeData[] allSkills;
 
+        /// <summary>스킬 구매 완료 시 발생. 인자: 구매된 skillId</summary>
+        public event Action<string> OnSkillPurchased;
+
         SaveManager<PlayerSaveData> _saveManager;
         PlayerSaveData _data;
         Dictionary<string, int> _skillLevelCache = new Dictionary<string, int>();
@@ -77,6 +80,7 @@ namespace Soulspire.Core
 
             _skillLevelCache[skillId] = currentLevel + 1;
             Save();
+            OnSkillPurchased?.Invoke(skillId);
             return true;
         }
 
@@ -132,6 +136,24 @@ namespace Soulspire.Core
         public void SetCurrentStageIndex(int index)
         {
             _data.currentStageIndex = index;
+        }
+
+        /// <summary>
+        /// speed_mode(SpeedControl 효과) 스킬이 하나라도 구매되어 있는지 확인.
+        /// UI에서 x2/x3 버튼 interactable 여부 판단에 사용.
+        /// CalculateModifiers()보다 가볍게 단일 여부만 반환.
+        /// </summary>
+        public bool HasSpeedControl()
+        {
+            if (allSkills == null) return false;
+
+            foreach (var skill in allSkills)
+            {
+                if (skill == null) continue;
+                if (skill.effectType != Data.SkillEffectType.SpeedControl) continue;
+                if (GetSkillLevel(skill.skillId) > 0) return true;
+            }
+            return false;
         }
 
         public RunModifiers CalculateModifiers()
